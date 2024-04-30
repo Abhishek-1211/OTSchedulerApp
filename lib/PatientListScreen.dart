@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http; // Import the http package
 import 'package:my_flutter_app/CapturedRecord.dart';
 
 class PatientListScreen extends StatefulWidget {
@@ -8,9 +10,13 @@ class PatientListScreen extends StatefulWidget {
 }
 
 class _PatientListScreenState extends State<PatientListScreen> {
-  DateTime? selectedDate; // Change to DateTime?
-  List<String> patientList = []; // Initialize empty list
+  DateTime? selectedDate;
+  List<String> patientList = [];
+  List<int> surgery_id = [];
+  List<String> ot_numbers =[];
   bool isSubmitted = false;
+  //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
+  String baseUrl = 'http://127.0.0.1:8000/api';
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +24,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
       appBar: AppBar(
         title: Text('Patient List'),
       ),
-      // backgroundColor: Colors.lightBlueAccent,
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -35,20 +39,11 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   child: Text('Select Date'),
                 ),
                 SizedBox(width: 20),
-
-                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // Show list of patients only if a date is selected
                     if (selectedDate != null) {
-                      // For demonstration, populating a dummy patient list
-                      patientList = ['Rahul', 'Ranjeet', 'Rinku Singh','Amma'];
-                      // Navigate to patient list details screen OR Make patient list visible
-                      setState(() {
-                        isSubmitted = true;
-                      });
+                      _fetchPatientList(selectedDate!); // Call function to fetch patient list
                     } else {
-                      // Show error message if no date is selected
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Please select a date first.'),
@@ -63,18 +58,19 @@ class _PatientListScreenState extends State<PatientListScreen> {
             SizedBox(height: 20),
             if (selectedDate != null)
               Text(
-                'Selected Date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}',
+                'Selected Date: ${DateFormat('MM-dd-yyyy').format(selectedDate!)}',
               ),
-
             SizedBox(height: 30),
-            if(isSubmitted)
+            if (isSubmitted)
               Expanded(
                 child: Column(
                   children: [
-                    Text('Patients', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18)),
+                    Text(
+                      'Patients',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
+                    ),
                     SizedBox(height: 5),
-                    Divider(height: 1, color: Colors.black87,thickness: 1),
-
+                    Divider(height: 1, color: Colors.black87, thickness: 1),
                     Expanded(
                       child: ListView.builder(
                         itemCount: patientList.length,
@@ -82,7 +78,14 @@ class _PatientListScreenState extends State<PatientListScreen> {
                           return ListTile(
                             title: Text(patientList[index]),
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => CapturedRecord(patientName: patientList[index])));
+                              // Handle onTap event
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CapturedRecord(patientName: patientList[index],
+                                        surgeryId: surgery_id[index],
+                                        otNumber: ot_numbers[index]
+                                      )));
                             },
                           );
                         },
@@ -91,7 +94,6 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   ],
                 ),
               ),
-
           ],
         ),
       ),
@@ -111,4 +113,50 @@ class _PatientListScreenState extends State<PatientListScreen> {
       });
     }
   }
+
+  Future<void> _fetchPatientList(DateTime date) async {
+    try {
+      Uri url = Uri.parse('$baseUrl/schedule/');
+      final headers = {
+        'Accept': 'application/json'
+
+      };
+      print(url);
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+      print('2');
+
+      print(response.statusCode);
+      //print(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = json.decode(response.body);
+        final List<Map<String, dynamic>> patients = data
+            .where((element) => element['surgery_date'] == DateFormat('MM/dd/yyyy').format(date))
+            .map<Map<String, dynamic>>((e) => {
+          'patientName': e['patient_name'] as String,
+          'scheduledSurgeryId': e['scheduled_surgery_id'] as int,
+          'otNumber': e['ot_number'] as String,
+        }).toList();
+
+        setState(() {
+          patientList = patients.map<String>((e) => e['patientName'] as String).toList();
+          surgery_id = patients.map<int>((e) => e['scheduledSurgeryId'] as int).toList();
+          ot_numbers = patients.map<String>((e) => e['otNumber'] as String).toList();
+          isSubmitted = true;
+        });
+      } else {
+        throw Exception('Failed to load patient list');
+      }
+    } catch (e) {
+      print('Error fetching patient list: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to fetch patient list. Please try again later.'),
+        ),
+      );
+    }
+  }
+
 }

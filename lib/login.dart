@@ -1,6 +1,10 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_flutter_app/MenuPage.dart';
 import 'package:my_flutter_app/PatientListScreen.dart';
-import 'package:my_flutter_app/OTScheduleScreen.dart'; // Import OTScheduleScreen.dart
+import 'package:my_flutter_app/OTScheduleScreen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -10,66 +14,121 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Login',
-          style: TextStyle(fontSize: 24),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
+    return Padding(
+        padding: const EdgeInsets.all(10),
+        child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.fromLTRB(150, 60, 150, 0),
+                child: const Text(
+                  'AMRITA  OT-SCHEDULER',
+                  style: TextStyle(
+                     //decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                )),
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.fromLTRB(150, 30, 150, 0),
+                child: const Text(
+                  'Sign in',
+                  style: TextStyle(fontSize: 20),
+                )),
+            Container(
+              padding: const EdgeInsets.fromLTRB(150, 60, 150, 0),
+              child: TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'User Name',
                 ),
               ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(150, 30, 150, 0),
+              child: TextField(
                 obscureText: true,
-                decoration: InputDecoration(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Password',
                 ),
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(150, 10, 150, 10),
+              child: TextButton(
                 onPressed: () {
-                  // Get the entered username
-                  String username = _usernameController.text.trim();
-
-                  // Check for specific usernames
-                  if (username == 'abcd' || username == 'doctor') {
-                    // Navigate to OTScheduleScreen if the username matches
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OTScheduleScreen()),
-                    );
-                  } else {
-                    // Navigate to PatientListScreen for other usernames
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PatientListScreen()),
-                    );
-                  }
+                  //forgot password screen
                 },
-                child: Text('Login'),
+                child: const Text('Forgot Password',
+                  style: TextStyle(
+                    fontSize: 18,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+
+            Container(
+                height: 50,
+                //width: 25,
+                padding: const EdgeInsets.fromLTRB(150, 0, 150, 0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                  textStyle: TextStyle(color: Colors.white)),
+                  child: const Text('Login',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20),),
+                  onPressed: () {
+                    // print(nameController.text);
+                    // print(passwordController.text);
+
+                    String username = nameController.text.trim();
+
+                    // Check for specific usernames
+                    if (username == 'abcd' || username == 'doctor') {
+                      // Navigate to OTScheduleScreen if the username matches
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MenuPage()),
+                      );
+                    } else {
+                      // Navigate to PatientListScreen for other usernames
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PatientListScreen()),
+                      );
+                    }
+
+                  },
+                )
+            ),
+            Row(
+              children: <Widget>[
+                const Text('Does not have account?'),
+                TextButton(
+                  child: const Text(
+                    'Register',
+                    style: TextStyle(fontSize: 20,decoration: TextDecoration.underline),
+                  ),
+                  onPressed: () {
+                    //signup screen
+                  },
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+          ],
+        ));
   }
 }

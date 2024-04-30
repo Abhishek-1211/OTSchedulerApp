@@ -161,14 +161,7 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           child: Text('End Time', style: TextStyle(color: Colors.white)),
         ),
       ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          color: Colors.blueAccent,
-          child:
-          Text('Special Equipment', style: TextStyle(color: Colors.white)),
-        ),
-      ),
+
       DataColumn(
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -181,6 +174,14 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           color: Colors.blueAccent,
           child: Text('Age/Sex', style: TextStyle(color: Colors.white)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          color: Colors.blueAccent,
+          child:
+          Text('Special Equipment', style: TextStyle(color: Colors.white)),
         ),
       ),
     ];
@@ -215,9 +216,10 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           DataCell(Text(surgery.length>20?'${surgery.substring(0, 20)}...':surgery)),
           DataCell(Text(startTime)),
           DataCell(Text(endTime)),
-          DataCell(Text(specialEquipment)),
+
           DataCell(Text(patientName)),
           DataCell(Text(ageSex)),
+          DataCell(Text(specialEquipment)),
           //DataCell(Text(endTime)),
         ],
       );
