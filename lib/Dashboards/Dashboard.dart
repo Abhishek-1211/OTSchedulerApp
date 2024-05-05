@@ -7,11 +7,11 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 //import 'package:my_flutter_app/OTScheduleScreen.dart';
 //import 'package:my_flutter_app/TimeMonitoringScreen.dart';
-import 'package:my_flutter_app/OTDashboard.dart';
-import 'package:my_flutter_app/DoctorDashboard.dart';
-import 'package:my_flutter_app/DepartmentDashboard.dart';
-import 'package:my_flutter_app/ProcedureDashboard.dart';
-import 'package:my_flutter_app/PatientDashboard.dart';
+import 'package:my_flutter_app/Dashboards/OTDashboard.dart';
+import 'package:my_flutter_app/Dashboards/DoctorDashboard.dart';
+import 'package:my_flutter_app/Dashboards/DepartmentDashboard.dart';
+import 'package:my_flutter_app/Dashboards/ProcedureDashboard.dart';
+import 'package:my_flutter_app/Dashboards/PatientDashboard.dart';
 
 class Dashboard extends StatefulWidget {
 

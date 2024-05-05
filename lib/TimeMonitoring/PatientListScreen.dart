@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http; // Import the http package
-import 'package:my_flutter_app/CapturedRecord.dart';
+import 'package:my_flutter_app/TimeMonitoring/CapturedRecord.dart';
 
 class PatientListScreen extends StatefulWidget {
   @override

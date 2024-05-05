@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:my_flutter_app/OTScheduleListScreen.dart';
+import 'package:my_flutter_app/OTSchedule/OTScheduleListScreen.dart';
 
 class OTScheduleScreen extends StatefulWidget {
   @override

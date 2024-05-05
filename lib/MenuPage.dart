@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:js';
 
 import 'package:flutter/material.dart';
-import 'package:my_flutter_app/OTScheduleScreen.dart';
-import 'package:my_flutter_app/Dashboard.dart';
+import 'package:my_flutter_app/OTSchedule/OTScheduleScreen.dart';
+import 'package:my_flutter_app/Dashboards/Dashboard.dart';
 //import 'package:my_flutter_app/TimeMonitoringScreen.dart';
 import 'package:http/http.dart' as http;
 
