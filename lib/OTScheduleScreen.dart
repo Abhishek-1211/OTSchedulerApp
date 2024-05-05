@@ -57,7 +57,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
                 },
                 child: Column(
                   children: [
-                    Icon(Icons.upload_file, size: 50),
+                    Icon(Icons.upload_file, size: 100),
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
@@ -117,6 +117,11 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
   }
 
   void _handleOTScheduleButtonPress() async {
+
+    setState(() {
+      _notificationMessage = ' '; // Show processing message
+    });
+
     try {
       List<int> fileBytes = _file != null ? await _file!.readAsBytes() : _webFile!;
       String base64File = base64Encode(fileBytes);
@@ -126,12 +131,31 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
       Map<String, dynamic> requestBody = {'doc': base64File};
       String requestBodyJson = jsonEncode(requestBody);
 
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                CircularProgressIndicator(),
+                SizedBox(height: 10),
+                Text('Processing...'),
+              ],
+            ),
+          );
+        },
+      );
+
       var response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: requestBodyJson,
       );
 
+      Navigator.pop(context);
       //print('Response body: ${response.body}'); // Add this line
 
       if (response.statusCode == 200) {
@@ -162,6 +186,8 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         Map<String, dynamic> start_time = jsonResponse['Start_time'];
         Map<String, dynamic> end_time = jsonResponse['End_time'];
         Map<String, dynamic> date = jsonResponse['Date of Surgery'];
+        Map<String, dynamic> mrdNumbers = jsonResponse['MRD'];
+
         print(date);
 
         for(var key in otData.keys) {
@@ -202,22 +228,28 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         //DateFormat inputFormat = DateFormat('dd/MM/yyyy');
 
         for(var key in procedure.keys){
-            //print('age-${jsonResponse['Age/Sex'][key].toString().split('/')[0].split('Y')[0]}');
-            // Introduce a delay of 1000 milliseconds (1 second)
-            // print('date: ${inputFormat.parse((date[key]))}');
-            // print('Data type of date[key]: ${inputFormat.parse(date[key])}');
-            await Future.delayed(Duration(milliseconds: 500));
-            sendScheduleSurgery(procedure[key], department[key], doctor[key], patient[key],
-                date[key], start_time[key], end_time[key], otData[key] );
+          //print('age-${jsonResponse['Age/Sex'][key].toString().split('/')[0].split('Y')[0]}');
+          // Introduce a delay of 1000 milliseconds (1 second)
+          // print('date: ${inputFormat.parse((date[key]))}');
+          // print('Data type of date[key]: ${inputFormat.parse(date[key])}');
+          await Future.delayed(Duration(milliseconds: 500));
+          sendScheduleSurgery(procedure[key], department[key], doctor[key], patient[key],
+              date[key], start_time[key], end_time[key], otData[key] );
 
         }
 
       } else {
-        print('Error-1: ${response.statusCode}');
-        print('Response body-1: ${response.body}');
+        setState(() {
+          _notificationMessage = 'Error: ${response.statusCode}'; // Update notification message with error
+        });
+        // print('Error-1: ${response.statusCode}');
+        // print('Response body-1: ${response.body}');
       }
 
     } catch (e) {
+      setState(() {
+        _notificationMessage = 'Error: $e'; // Update notification message with error
+      });
       print('Error-2: $e');
     }
   }
@@ -306,7 +338,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
       //Map<String, dynamic> responseBody = jsonDecode(response.body);
 
       // Retrieve the patient_id from the response body
-     // procedure_id = responseBody['procedure_id'];
+      // procedure_id = responseBody['procedure_id'];
       // Optionally, handle the response from the backend if needed
     } else {
       print('Error sending data to the backend: ${response.statusCode}');
@@ -387,3 +419,4 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
 
 
 }
+

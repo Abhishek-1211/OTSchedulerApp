@@ -23,20 +23,32 @@ class _LoginState extends State<Login> {
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: <Widget>[
+
             Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.fromLTRB(150, 60, 150, 0),
-                child: const Text(
-                  'AMRITA  OT-SCHEDULER',
-                  style: TextStyle(
-                     //decoration: TextDecoration.underline,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.fromLTRB(150, 10, 150, 0),
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/images/logo.jpeg', // Path to your logo image asset
+                    width: 180, // Adjust the width as needed
+                    height: 180, // Adjust the height as needed
+                  ),
+                  const SizedBox(height: 10), // Add spacing between logo and text
+                  const Text(
+                    'AMRITA  OT-SCHEDULER',
+                    style: TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,
-                      fontSize: 30),
-                )),
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.fromLTRB(150, 30, 150, 0),
+                padding: const EdgeInsets.fromLTRB(150, 10, 150, 0),
                 child: const Text(
                   'Sign in',
                   style: TextStyle(fontSize: 20),
@@ -47,7 +59,7 @@ class _LoginState extends State<Login> {
                 controller: nameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'User Name',
+                  labelText: 'Username',
                 ),
               ),
             ),

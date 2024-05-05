@@ -23,7 +23,15 @@ class _PatientListScreenState extends State<PatientListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Patient List'),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize:
+          Size.fromHeight(1.0), // Set the height of the divider
+          child:
+          Divider(color: Colors.grey), // Divider below the app bar title
+        ),
       ),
+
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -116,11 +124,17 @@ class _PatientListScreenState extends State<PatientListScreen> {
 
   Future<void> _fetchPatientList(DateTime date) async {
     try {
-      Uri url = Uri.parse('$baseUrl/schedule/');
+
+      //String formattedDate = "(${date.year},${date.month},${date.day})";
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      print('Date - $date');
+      print('Formatted date - $formattedDate');
+      Uri url = Uri.parse('$baseUrl/schedule/?surgery_date=$formattedDate');
+
       final headers = {
         'Accept': 'application/json'
-
       };
+
       print(url);
       final response = await http.get(
         url,

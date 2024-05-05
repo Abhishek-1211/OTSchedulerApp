@@ -3,19 +3,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class OTDashboard extends StatefulWidget{
+class OTDashboard extends StatefulWidget {
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
+
+  OTDashboard({required this.selectedFromDate, required this.selectedToDate});
+
   @override
   _OTDashboardState createState() => _OTDashboardState();
-
 }
 
-class _OTDashboardState  extends State<OTDashboard>{
-
+class _OTDashboardState extends State<OTDashboard> {
   Map<String, int> surgeryCountsMap = {};
   List<SurgeryData> chartData = [];
   List<UtilisationData> utilisationData = [];
+  List<MonitoringStepsData> monitoringStepsData = [];
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
   DateTime selectedFromDate = DateTime.now();
@@ -26,15 +31,56 @@ class _OTDashboardState  extends State<OTDashboard>{
   @override
   void initState() {
     super.initState();
+    selectedFromDate = widget.selectedFromDate ?? DateTime.now();
+    selectedToDate = widget.selectedToDate ?? DateTime.now();
+
+    fromDateController = TextEditingController(
+      text: selectedFromDate == DateTime(2015, 1, 1)
+          ? ''
+          : _formatDate(selectedFromDate),
+    );
+    toDateController = TextEditingController(
+      text: selectedToDate == DateTime(2015, 1, 1)
+          ? ''
+          : _formatDate(selectedToDate),
+    );
     _getSurgeryCount();
-    fromDateController = TextEditingController(text: '');
-    toDateController = TextEditingController(text: '');
     _otUtilization();
+    //_getSlotsUsageData();
+    _getStepsAverage();
   }
 
-  void _getSurgeryCount() async{
+  String _formatDate(DateTime dateTime) {
+    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+  }
 
+  void _getSurgeryCount() async {
     String apiUrl = '$baseUrl/ot-surgery-count/';
+
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(2015)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -48,13 +94,26 @@ class _OTDashboardState  extends State<OTDashboard>{
       //Parse the JSON response
       Map<String, dynamic> responseData = jsonDecode(response.body);
 
-      List<dynamic> surgeriesList = responseData['Count of surgeries per OT on all dates'];
+      List<dynamic> surgeriesList =[];
+
+      if(responseData.containsKey('Count of surgeries per OT on all dates')){
+        surgeriesList = responseData['Count of surgeries per OT on all dates'];
+      }else if (responseData.containsKey('Count of surgeries per OT from ${fromDate} to ${toDate}')) {
+        surgeriesList = responseData['Count of surgeries per OT from ${fromDate} to ${toDate}'];
+      }
+      else if(responseData.containsKey('Count of surgeries per OT from ${fromDate} onwards')){
+        surgeriesList = responseData['Count of surgeries per OT from ${fromDate} onwards'];
+      }
+      else if (responseData.containsKey('Count of surgeries per OT up to ${toDate}')){
+        surgeriesList = responseData['Count of surgeries per OT up to ${toDate}'];
+      }
+
       print('SurgeryList - $surgeriesList');
       setState(() {
-        chartData.addAll(surgeriesList.map((item) => SurgeryData.fromJson(item)).toList());
+        chartData.addAll(
+            surgeriesList.map((item) => SurgeryData.fromJson(item)).toList());
       });
       // print('Chart Data - ${chartData[0].otNumber} | ${chartData[0].surgeryCount}');
-
     } else {
       //print('Error sending data to the backend: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -63,6 +122,32 @@ class _OTDashboardState  extends State<OTDashboard>{
 
   void _otUtilization() async {
     String apiUrl = '$baseUrl/percent-ot-utilization/';
+
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    // if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+    //   // Format the dates to include only the date part (yyyy-MM-dd)
+    //   fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+    //   toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+    //   apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    // }
+    // // Check if only fromDate is selected
+    // else if (selectedFromDate != DateTime(2015)) {
+    //   fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+    //   apiUrl += '?start_date=$fromDate';
+    // }
+    // // Check if only toDate is selected
+    // else if (selectedToDate != DateTime(2015)) {
+    //   // Format the date to include only the date part (yyyy-MM-dd)
+    //   toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+    //   apiUrl += '?end_date=$toDate';
+    // }
+
+    print(apiUrl);
+
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
@@ -77,25 +162,143 @@ class _OTDashboardState  extends State<OTDashboard>{
       // List<dynamic> utilisationList = responseData.entries.map((entry) => MapEntry(entry.key, entry.value)).toList();
       // print('utilisationList $utilisationList');
       setState(() {
-        utilisationData.addAll(utilisationList.map((item) => UtilisationData.fromJson(item)).toList());
+        utilisationData.addAll(utilisationList
+            .map((item) => UtilisationData.fromJson(item))
+            .toList());
       });
     } else {
       //print('Error sending data to the backend: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
+  }
 
+  // void _getSlotsUsageData() async {
+  //
+  //   String apiUrl = '$baseUrl/ot-time-slot-usage/';
+  //   print('selectedFromDate:$selectedFromDate');
+  //   print('selectedToDate:$selectedToDate');
+  //
+  //   String fromDate ='';
+  //   String toDate = '';
+  //   if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+  //     // Format the dates to include only the date part (yyyy-MM-dd)
+  //     fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+  //     toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+  //     apiUrl += '?start_date=$fromDate&end_date=$toDate';
+  //   }
+  //   // Check if only fromDate is selected
+  //   else if (selectedFromDate != DateTime(2015)) {
+  //     fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+  //     apiUrl += '?start_date=$fromDate';
+  //   }
+  //   // Check if only toDate is selected
+  //   else if (selectedToDate != DateTime(2015)) {
+  //     // Format the date to include only the date part (yyyy-MM-dd)
+  //     toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+  //     apiUrl += '?end_date=$toDate';
+  //   }
+  //
+  //   print(apiUrl);
+  //
+  //   final response = await http.get(
+  //     Uri.parse(apiUrl),
+  //     headers: {'Content-Type': 'application/json'},
+  //   );
+  //
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     print(
+  //         '_getSlotsUsageData(): Data Received from the backend successfully');
+  //     // Optionally, handle the response from the backend if needed
+  //     print('_getSlotsUsageData():Response: ${response.body}');
+  //     //List<dynamic> utilisationList = jsonDecode(response.body);
+  //     // print(utilisationList);
+  //     // List<dynamic> utilisationList = responseData.entries.map((entry) => MapEntry(entry.key, entry.value)).toList();
+  //     // print('utilisationList $utilisationList');
+  //     // setState(() {
+  //     //   utilisationData.addAll(utilisationList.map((item) => UtilisationData.fromJson(item)).toList());
+  //     // });
+  //   } else {
+  //     //print('Error sending data to the backend: ${response.statusCode}');
+  //     print('Response body: ${response.body}');
+  //   }
+  // }
 
+  void _getStepsAverage() async {
+
+    String apiUrl = '$baseUrl/monitoring-steps-avg/';
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(2015)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('_getStepsAverage(): Data Received from the backend successfully');
+      // Optionally, handle the response from the backend if needed
+      print('_getStepsAverage():Response: ${response.body}');
+      List<dynamic> stepsList = jsonDecode(response.body);
+      print(stepsList);
+      setState(() {
+        monitoringStepsData = stepsList
+            .map((item) => MonitoringStepsData.fromJson(item))
+            .toList();
+      });
+
+      //print(monitoringStepsData);
+    } else {
+      //print('Error sending data to the backend: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
   }
 
   Widget _buildBarChart<T>(List<T> data, String xAxisTitle, String yAxisTitle) {
+
+    Color barColor = Colors.teal; // Default color
+    String legendItemText = 'Data';
+
+    if (T == SurgeryData) {
+      barColor = Colors.teal;
+      legendItemText = 'Surgery Count';
+    } else if (T == UtilisationData) {
+      barColor = Colors.redAccent;
+      legendItemText = 'Utilisation Percentage';
+    }
+
     return SfCartesianChart(
       isTransposed: true,
       backgroundColor: Colors.grey[200],
       primaryXAxis: CategoryAxis(
-        title: AxisTitle(text: xAxisTitle, textStyle: TextStyle(fontWeight: FontWeight.bold)),
+        title: AxisTitle(
+            text: xAxisTitle,
+            textStyle: TextStyle(fontWeight: FontWeight.bold)),
       ),
       primaryYAxis: NumericAxis(
-        title: AxisTitle(text: yAxisTitle, textStyle: TextStyle(fontWeight: FontWeight.bold)),
+        title: AxisTitle(
+            text: yAxisTitle,
+            textStyle: TextStyle(fontWeight: FontWeight.bold)),
       ),
       legend: Legend(isVisible: true, position: LegendPosition.top),
       series: <BarSeries<T, String>>[
@@ -111,22 +314,101 @@ class _OTDashboardState  extends State<OTDashboard>{
           },
           yValueMapper: (T data, _) {
             if (data is SurgeryData) {
-              return double.parse(data.surgeryCount); // Use surgeryCount for SurgeryData
+              return double.parse(
+                  data.surgeryCount); // Use surgeryCount for SurgeryData
             } else if (data is UtilisationData) {
-            return data.utilisationPercentage.toDouble(); // Convert to double for UtilisationData
+              return data.utilisationPercentage
+                  .toDouble(); // Convert to double for UtilisationData
             }
             return 0; // Default case
           },
           width: 0.2,
-          color: Colors.blueAccent,
+          color: barColor,
           name: 'Data',
           dataLabelSettings: DataLabelSettings(
             isVisible: true,
-            color: Colors.blue,
+            color: barColor,
             textStyle: TextStyle(color: Colors.white, fontSize: 10),
           ),
           legendIconType: LegendIconType.circle,
-          legendItemText: 'Data',
+          legendItemText: legendItemText,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMultipleBarChart(List<MonitoringStepsData> data, String xAxisTitle , String yAxisTitle ) {
+    return SfCartesianChart(
+      isTransposed: true,
+      backgroundColor: Colors.grey[200],
+      primaryXAxis: CategoryAxis(
+        title: AxisTitle(
+            text: xAxisTitle,
+            textStyle: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      primaryYAxis: NumericAxis(
+        title: AxisTitle(
+            text: yAxisTitle,
+            textStyle: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      legend: Legend(isVisible: true, position: LegendPosition.top),
+      series: <BarSeries<MonitoringStepsData, String>>[
+        BarSeries<MonitoringStepsData, String>(
+          dataSource: data,
+          xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
+          yValueMapper: (MonitoringStepsData stepsData, _) {
+            double value = double.parse(stepsData.avgIncisionDuration);
+            return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
+          },
+          width: 0.2,
+          spacing: 0.1,
+          color: Colors.lightBlueAccent,
+          name: 'Data',
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            color: Colors.lightBlueAccent,
+            textStyle: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+          legendIconType: LegendIconType.circle,
+          legendItemText: 'Incision Duration',
+        ),
+        BarSeries<MonitoringStepsData, String>(
+          dataSource: data,
+          xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
+          yValueMapper: (MonitoringStepsData stepsData, _) {
+            double value = double.parse(stepsData.avgInductionDuration);
+            return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
+          },
+          width: 0.2,
+          spacing: 0.1,
+          color: Colors.amberAccent,
+          name: 'Data',
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            color: Colors.amberAccent,
+            textStyle: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+          legendIconType: LegendIconType.circle,
+          legendItemText: 'Induction Duration',
+        ),
+        BarSeries<MonitoringStepsData, String>(
+          dataSource: data,
+          xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
+          yValueMapper: (MonitoringStepsData stepsData, _) {
+            double value = double.parse(stepsData.avgPaintingAndDrapingDuration);
+            return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
+          },
+          width: 0.2,
+          spacing: 0.2,
+          color: Colors.teal,
+          name: 'Data',
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            color: Colors.teal,
+            textStyle: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+          legendIconType: LegendIconType.circle,
+          legendItemText: 'Painting And Draping Duration',
         ),
       ],
     );
@@ -146,88 +428,106 @@ class _OTDashboardState  extends State<OTDashboard>{
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              //Padding()
-                Container(
-                  width: 200,
-                  child: TextField(
-                    controller: fromDateController,
-                    canRequestFocus: false,
-                    decoration: InputDecoration(
-                      labelText: 'From Date',
-                      isDense: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  //Padding()
+                  Container(
+                    width: 200,
+                    child: TextField(
+                      controller: fromDateController,
+                      canRequestFocus: false,
+                      decoration: InputDecoration(
+                        labelText: 'From Date',
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.calendar_today, size: 20),
                       ),
-                      prefixIcon: Icon(Icons.calendar_today, size: 20),
                     ),
                   ),
-                ),
-                SizedBox(width: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.indigoAccent,
-                  ),
-                  child: IconButton(
-                    onPressed: () => _selectFromDate(context),
-                    icon: Icon(Icons.calendar_today_outlined),
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(width: 50),
-                Container(
-                  width: 200,
-                  child: TextField(
-                    controller: toDateController,
-                    canRequestFocus: false,
-                    decoration: InputDecoration(
-                      labelText: 'To Date',
-                      isDense: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      prefixIcon: Icon(Icons.calendar_today, size: 20),
+                  SizedBox(width: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.indigoAccent,
+                    ),
+                    child: IconButton(
+                      onPressed: () => _selectFromDate(context),
+                      icon: Icon(Icons.calendar_today_outlined),
+                      color: Colors.white,
                     ),
                   ),
-                ),
-                SizedBox(width: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.indigoAccent,
+                  SizedBox(width: 50),
+                  Container(
+                    width: 200,
+                    child: TextField(
+                      controller: toDateController,
+                      canRequestFocus: false,
+                      decoration: InputDecoration(
+                        labelText: 'To Date',
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.calendar_today, size: 20),
+                      ),
+                    ),
                   ),
-                  child: IconButton(
-                    onPressed: () => _selectToDate(context),
-                    icon: Icon(Icons.calendar_today_outlined),
-                    color: Colors.white,
+                  SizedBox(width: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.indigoAccent,
+                    ),
+                    child: IconButton(
+                      onPressed: () => _selectToDate(context),
+                      icon: Icon(Icons.calendar_today_outlined),
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 50),
-            Row(
-              children: [
+                ],
+              ),
+              SizedBox(height: 50),
+              Row(
+                children: [
+                  Expanded(
+                    //width: 500,
+                    child:
+                        _buildBarChart(chartData, 'OT Number', 'Surgery Count'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 30),
+              Row(children: [
                 Expanded(
-                  // width: 500,
-                  child: _buildBarChart(chartData, 'OT Number', 'Surgery Count'),
+                  //width: 500,
+                  child: _buildBarChart(
+                      utilisationData, 'OT Number', 'Utilization Percentage'),
                 ),
-                SizedBox(width: 30),
+              ]),
+              SizedBox(height: 30),
+              Row(children: [
                 Expanded(
-                  // width: 500,
-                  child: _buildBarChart(utilisationData, 'OT Number', 'Utilization Percentage'),
+                  //width: 500,
+                  child: _buildMultipleBarChart(
+                      monitoringStepsData, 'OT Number', 'Average Time'),
                 ),
-              ],
-            ),
-          ],
+              ]),
+              // Row(
+              //   children: [
+              //     Expanded(child: null)
+              //   ],
+              // )
+            ],
+          ),
         ),
       ),
-
     );
   }
 
@@ -235,7 +535,7 @@ class _OTDashboardState  extends State<OTDashboard>{
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedFromDate,
-      firstDate: DateTime(1947), // Adjust the first and last date according to your needs1
+      firstDate: DateTime(2015),
       lastDate: DateTime.now(),
     );
 
@@ -245,6 +545,11 @@ class _OTDashboardState  extends State<OTDashboard>{
         String date = "${selectedFromDate.toLocal()}".split(' ')[0];
         fromDateController?.text = date;
       });
+    } else if (picked == null) {
+      setState(() {
+        selectedFromDate = DateTime(2015); // Set selectedFromDate to an initial value
+        fromDateController?.text = ''; // Set the text field to empty
+      });
     }
   }
 
@@ -252,7 +557,7 @@ class _OTDashboardState  extends State<OTDashboard>{
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedToDate,
-      firstDate: DateTime(1947), // Adjust the first and last date according to your needs1
+      firstDate: DateTime(2015),
       lastDate: DateTime.now(),
     );
 
@@ -262,14 +567,15 @@ class _OTDashboardState  extends State<OTDashboard>{
         String date = "${selectedToDate.toLocal()}".split(' ')[0];
         toDateController?.text = date;
       });
+    }else if (picked == null) {
+      setState(() {
+        selectedToDate = DateTime(2015); // Set selectedFromDate to an initial value
+        toDateController?.text = ''; // Set the text field to empty
+      });
     }
 
     //_setValues(context);
   }
-
-
-
-
 
 }
 
@@ -291,12 +597,36 @@ class UtilisationData {
   final String otNumber;
   final int utilisationPercentage;
 
-  UtilisationData({required this.otNumber, required this.utilisationPercentage});
+  UtilisationData(
+      {required this.otNumber, required this.utilisationPercentage});
 
   factory UtilisationData.fromJson(Map<String, dynamic> json) {
     return UtilisationData(
       otNumber: json.keys.first.toString(),
       utilisationPercentage: ((json.values.first as double) * 100).toInt(),
+    );
+  }
+}
+
+class MonitoringStepsData {
+  final String otNumber;
+  final String avgInductionDuration;
+  final String avgPaintingAndDrapingDuration;
+  final String avgIncisionDuration;
+
+  MonitoringStepsData({
+    required this.otNumber,
+    required this.avgInductionDuration,
+    required this.avgPaintingAndDrapingDuration,
+    required this.avgIncisionDuration,
+  });
+
+  factory MonitoringStepsData.fromJson(Map<String, dynamic> json) {
+    return MonitoringStepsData(
+      otNumber: json['ot_number'].toString(),
+      avgInductionDuration: json['avg_induction_duration'].toString(),
+      avgPaintingAndDrapingDuration: json['avg_painting_and_draping_duration'].toString(),
+      avgIncisionDuration: json['avg_incision_duration'].toString(),
     );
   }
 }

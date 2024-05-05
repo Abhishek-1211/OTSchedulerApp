@@ -228,6 +228,13 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('OT Schedule'),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize:
+          Size.fromHeight(1.0), // Set the height of the divider
+          child:
+          Divider(color: Colors.grey), // Divider below the app bar title
+        ),
       ),
       body: Column(
         // crossAxisAlignment: CrossAxisAlignment.stretch,
