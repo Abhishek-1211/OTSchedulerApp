@@ -17,33 +17,29 @@ class OTDashboard extends StatefulWidget {
 }
 
 class _OTDashboardState extends State<OTDashboard> {
+
   Map<String, int> surgeryCountsMap = {};
   List<SurgeryData> chartData = [];
   List<UtilisationData> utilisationData = [];
   List<MonitoringStepsData> monitoringStepsData = [];
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
-  DateTime selectedFromDate = DateTime.now();
-  DateTime selectedToDate = DateTime.now();
+  late DateTime selectedFromDate;
+  late DateTime selectedToDate;
 
   String baseUrl = 'http://127.0.0.1:8000/api';
 
   @override
   void initState() {
     super.initState();
-    selectedFromDate = widget.selectedFromDate ?? DateTime.now();
-    selectedToDate = widget.selectedToDate ?? DateTime.now();
 
-    fromDateController = TextEditingController(
-      text: selectedFromDate == DateTime(2015, 1, 1)
-          ? ''
-          : _formatDate(selectedFromDate),
-    );
-    toDateController = TextEditingController(
-      text: selectedToDate == DateTime(2015, 1, 1)
-          ? ''
-          : _formatDate(selectedToDate),
-    );
+    selectedFromDate = widget.selectedFromDate!;
+    selectedToDate = widget.selectedToDate!;
+    print('initState()-selectedFromDate: $selectedFromDate');
+    fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    toDateController = TextEditingController(text: _formatDate(selectedToDate));
+
+
     _getSurgeryCount();
     _otUtilization();
     //_getSlotsUsageData();
@@ -51,7 +47,8 @@ class _OTDashboardState extends State<OTDashboard> {
   }
 
   String _formatDate(DateTime dateTime) {
-    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+    return "${dateTime.toLocal()}".split(' ')[0];
+    //return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
   }
 
   void _getSurgeryCount() async {
@@ -128,23 +125,23 @@ class _OTDashboardState extends State<OTDashboard> {
 
     String fromDate ='';
     String toDate = '';
-    // if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
-    //   // Format the dates to include only the date part (yyyy-MM-dd)
-    //   fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
-    //   toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
-    //   apiUrl += '?start_date=$fromDate&end_date=$toDate';
-    // }
-    // // Check if only fromDate is selected
-    // else if (selectedFromDate != DateTime(2015)) {
-    //   fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
-    //   apiUrl += '?start_date=$fromDate';
-    // }
-    // // Check if only toDate is selected
-    // else if (selectedToDate != DateTime(2015)) {
-    //   // Format the date to include only the date part (yyyy-MM-dd)
-    //   toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
-    //   apiUrl += '?end_date=$toDate';
-    // }
+    if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(2015)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
 
     print(apiUrl);
 
@@ -317,8 +314,11 @@ class _OTDashboardState extends State<OTDashboard> {
               return double.parse(
                   data.surgeryCount); // Use surgeryCount for SurgeryData
             } else if (data is UtilisationData) {
+              print('else-f ${data.utilisationPercentage
+                  .toDouble()}');
               return data.utilisationPercentage
                   .toDouble(); // Convert to double for UtilisationData
+
             }
             return 0; // Default case
           },
@@ -491,6 +491,26 @@ class _OTDashboardState extends State<OTDashboard> {
                       color: Colors.white,
                     ),
                   ),
+                  SizedBox(width: 30),
+                  Container(
+                    width: 150,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                          textStyle: TextStyle(color: Colors.white),
+                          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24), ),
+                        child: const Text('Apply',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20),),
+                        onPressed: (){
+                          _getSurgeryCount();
+                          _otUtilization();
+                          _getStepsAverage();
+                        }
+
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 50),
@@ -534,8 +554,8 @@ class _OTDashboardState extends State<OTDashboard> {
   Future<void> _selectFromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedFromDate,
-      firstDate: DateTime(2015),
+      initialDate: widget.selectedFromDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -545,19 +565,42 @@ class _OTDashboardState extends State<OTDashboard> {
         String date = "${selectedFromDate.toLocal()}".split(' ')[0];
         fromDateController?.text = date;
       });
-    } else if (picked == null) {
+    }
+    else if (picked == null) {
       setState(() {
-        selectedFromDate = DateTime(2015); // Set selectedFromDate to an initial value
-        fromDateController?.text = ''; // Set the text field to empty
+        //selectedFromDate = selectedFromDate;
+        String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+        fromDateController?.text = date;
       });
     }
   }
+  // Future<void> _selectFromDate(BuildContext context) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: selectedFromDate,
+  //     firstDate: DateTime(2015),
+  //     lastDate: DateTime.now(),
+  //   );
+  //
+  //   if (picked != null && picked != selectedFromDate) {
+  //     setState(() {
+  //       selectedFromDate = picked;
+  //       String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+  //       fromDateController?.text = date;
+  //     });
+  //   } else if (picked == null) {
+  //     setState(() {
+  //       selectedFromDate = DateTime(2015); // Set selectedFromDate to an initial value
+  //       fromDateController?.text = ''; // Set the text field to empty
+  //     });
+  //   }
+  // }
 
   Future<void> _selectToDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedToDate,
-      firstDate: DateTime(2015),
+      initialDate: widget.selectedToDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -569,13 +612,35 @@ class _OTDashboardState extends State<OTDashboard> {
       });
     }else if (picked == null) {
       setState(() {
-        selectedToDate = DateTime(2015); // Set selectedFromDate to an initial value
-        toDateController?.text = ''; // Set the text field to empty
+        //selectedToDate = selectedToDate;
+        toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
       });
     }
-
-    //_setValues(context);
   }
+
+  // Future<void> _selectToDate(BuildContext context) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: selectedToDate,
+  //     firstDate: DateTime(2015),
+  //     lastDate: DateTime.now(),
+  //   );
+  //
+  //   if (picked != null && picked != selectedToDate) {
+  //     setState(() {
+  //       selectedToDate = picked;
+  //       String date = "${selectedToDate.toLocal()}".split(' ')[0];
+  //       toDateController?.text = date;
+  //     });
+  //   }else if (picked == null) {
+  //     setState(() {
+  //       selectedToDate = DateTime(2015); // Set selectedFromDate to an initial value
+  //       toDateController?.text = ''; // Set the text field to empty
+  //     });
+  //   }
+  //
+  //   //_setValues(context);
+  // }
 
 }
 
@@ -595,7 +660,7 @@ class SurgeryData {
 
 class UtilisationData {
   final String otNumber;
-  final int utilisationPercentage;
+  final double utilisationPercentage;
 
   UtilisationData(
       {required this.otNumber, required this.utilisationPercentage});
@@ -603,7 +668,7 @@ class UtilisationData {
   factory UtilisationData.fromJson(Map<String, dynamic> json) {
     return UtilisationData(
       otNumber: json.keys.first.toString(),
-      utilisationPercentage: ((json.values.first as double) * 100).toInt(),
+      utilisationPercentage: ((json.values.first as double)),
     );
   }
 }

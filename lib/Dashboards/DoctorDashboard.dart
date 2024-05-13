@@ -20,10 +20,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
 
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
-  // DateTime selectedFromDate = DateTime.now();
-  // DateTime selectedToDate = DateTime.now();
-   late DateTime selectedFromDate;
-   late DateTime selectedToDate;
+
+  late DateTime selectedFromDate;
+  late DateTime selectedToDate;
   List<SurgeryData> chartData = [];
   List<AverageSurgeryDuration> avgSurgeryDurationData = [];
 
@@ -35,15 +34,14 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
 
     //print('selectedDate_doctordashboard:${DateFormat('yyyy-MM-dd').format(widget.selectedFromDate)}');
     selectedFromDate = widget.selectedFromDate!;
+
     selectedToDate = widget.selectedToDate!;
 
-    // fromDateController = TextEditingController(
-    //   text: selectedFromDate == DateTime(2015, 1, 1)
-    //       ? ''
-    //       : _formatDate(selectedFromDate),
-    // );
+
+    print('initState()-selectedFromDate: $selectedFromDate');
+
     fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
-    toDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    toDateController = TextEditingController(text: _formatDate(selectedToDate));
     _getSurgeryCount();
     _getAverageSurgeryDuration();
     // selectedFromDate = widget.selectedFromDate!;
@@ -53,7 +51,8 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
   }
 
   String _formatDate(DateTime dateTime) {
-    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+    return "${dateTime.toLocal()}".split(' ')[0];
+    //return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
   }
 
 
@@ -134,23 +133,23 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
 
     String fromDate ='';
     String toDate = '';
-    // if (selectedFromDate != null && selectedToDate != null) {
-    //   // Format the dates to include only the date part (yyyy-MM-dd)
-    //   fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
-    //   toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
-    //   apiUrl += '?start_date=$fromDate&end_date=$toDate';
-    // }
-    // // Check if only fromDate is selected
-    // else if (selectedFromDate != DateTime(1947)) {
-    //   fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
-    //   apiUrl += '?start_date=$fromDate';
-    // }
-    // // Check if only toDate is selected
-    // else if (selectedToDate != DateTime(1947)) {
-    //   // Format the date to include only the date part (yyyy-MM-dd)
-    //   toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
-    //   apiUrl += '?end_date=$toDate';
-    // }
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(1947)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
 
     print('_getAverageSurgeryDuration-API URL :$apiUrl');
 
@@ -443,8 +442,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     }
     else if (picked == null) {
       setState(() {
-        selectedFromDate = widget.selectedFromDate!;
-        fromDateController?.text = '${widget.selectedFromDate!}';
+        //selectedFromDate = selectedFromDate;
+        String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+        fromDateController?.text = date;
       });
     }
   }
@@ -452,11 +452,8 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
   Future<void> _selectToDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      // initialDate: selectedToDate,
-      // firstDate: DateTime(1947),
-      // lastDate: DateTime.now(),
       initialDate: widget.selectedToDate!,
-      firstDate: widget.selectedToDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -468,8 +465,8 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       });
     }else if (picked == null) {
       setState(() {
-        selectedToDate = widget.selectedToDate!;
-        toDateController?.text = '${widget.selectedToDate!}';
+        //selectedToDate = selectedToDate;
+        toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
       });
     }
   }
@@ -527,9 +524,9 @@ class AverageSurgeryDuration {
       int? minutes = int.tryParse(parts[1]);
       int? seconds = int.tryParse(parts[2]);
 
-      print('hours $hours');
-      print('minutes $minutes');
-      print('seconds $seconds');
+      // print('hours $hours');
+      // print('minutes $minutes');
+      // print('seconds $seconds');
 
       if (hours != null && minutes != null) {
         double totalHours = hours + (minutes / 100);

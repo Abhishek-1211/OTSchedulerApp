@@ -6,6 +6,12 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProcedureDashboard extends StatefulWidget {
+
+
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
+
+  ProcedureDashboard({required this.selectedFromDate, required this.selectedToDate});
   @override
   _ProcedureDashboardState createState() => _ProcedureDashboardState();
 }
@@ -13,8 +19,9 @@ class ProcedureDashboard extends StatefulWidget {
 class _ProcedureDashboardState extends State<ProcedureDashboard> {
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
-  DateTime selectedFromDate = DateTime.now();
-  DateTime selectedToDate = DateTime.now();
+  late DateTime selectedFromDate;
+  late DateTime selectedToDate;
+
   //List<SurgeryData> chartData = [];
   Map <String, double> dataMap = {};
   final colorList = <Color>[
@@ -29,9 +36,17 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
     super.initState();
     _getSurgeryType();
     // _getAverageSurgeryDuration();
-    fromDateController = TextEditingController(text: '');
-    toDateController = TextEditingController(text: '');
+    selectedFromDate = widget.selectedFromDate!;
+    selectedToDate = widget.selectedToDate!;
+    print('initState()-selectedFromDate: $selectedFromDate');
+    fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    toDateController = TextEditingController(text: _formatDate(selectedToDate));
     //_otUtilization();
+  }
+
+  String _formatDate(DateTime dateTime) {
+    return "${dateTime.toLocal()}".split(' ')[0];
+    //return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
   }
 
   void _getSurgeryType() async {
@@ -218,6 +233,24 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
                           color: Colors.white,
                         ),
                       ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                              textStyle: TextStyle(color: Colors.white),
+                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24), ),
+                            child: const Text('Apply',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20),),
+                            onPressed: (){
+                              _getSurgeryType();
+                            }
+
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 50),
@@ -255,9 +288,8 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
   Future<void> _selectFromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedFromDate,
-      firstDate: DateTime(
-          1947), // Adjust the first and last date according to your needs1
+      initialDate: widget.selectedFromDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -268,14 +300,20 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
         fromDateController?.text = date;
       });
     }
+    else if (picked == null) {
+      setState(() {
+        //selectedFromDate = selectedFromDate;
+        String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+        fromDateController?.text = date;
+      });
+    }
   }
 
   Future<void> _selectToDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedToDate,
-      firstDate: DateTime(1947),
-      // Adjust the first and last date according to your needs1
+      initialDate: widget.selectedToDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -284,6 +322,11 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
         selectedToDate = picked;
         String date = "${selectedToDate.toLocal()}".split(' ')[0];
         toDateController?.text = date;
+      });
+    }else if (picked == null) {
+      setState(() {
+        //selectedToDate = selectedToDate;
+        toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
       });
     }
   }

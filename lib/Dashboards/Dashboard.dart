@@ -26,21 +26,35 @@ class Dashboard extends StatefulWidget {
   Dashboard({required this.otCount, required this.doctorsCount, required this.departmentCount,
     required this.patientCount, required this.procedureCount, required this.dateRangeMap});
 
+
+
   @override
   _DashboardState createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+
+  String baseUrl = 'http://127.0.0.1:8000/api';
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
   late DateTime selectedFromDate ;
   late DateTime selectedToDate;
-  String baseUrl = 'http://127.0.0.1:8000/api';
-  //int otCount = 100;
+
+  late int otCount;
+  late int doctorsCount;
+  late int departmentCount;
+  late int procedureCount;
+  late int patientCount;
 
   @override
   void initState() {
-    //print('dateRange:${widget.dateRangeList[0].toString().split(':')[1].trimLeft()}');
+
+    otCount = widget.otCount;
+    doctorsCount = widget.doctorsCount;
+    departmentCount = widget.departmentCount;
+    procedureCount = widget.procedureCount;
+    patientCount = widget.patientCount;
+
     print('daterange:${widget.dateRangeMap.values}');
     fromDateController = TextEditingController(text: '${widget.dateRangeMap['earliest date']}');
     toDateController = TextEditingController(text: '${widget.dateRangeMap['latest date']}');
@@ -48,8 +62,11 @@ class _DashboardState extends State<Dashboard> {
     // toDateController = TextEditingController(text: '');
     selectedFromDate = DateTime.parse(widget.dateRangeMap['earliest date']!);
     selectedToDate = DateTime.parse(widget.dateRangeMap['latest date']!);
+
     //_getDateRange();
     super.initState();
+
+    print('otCount-${widget.otCount}' + 'doctorsClount: ${widget.doctorsCount}' + 'departmentCount:${widget.departmentCount}');
   }
 
   @override
@@ -153,7 +170,7 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               CircleButton(
-                title: "${widget.otCount}",
+                title: "${otCount}",
                 label: 'OT',
                 circleColor: '#97E7E1',
                 onTap: () {
@@ -161,7 +178,7 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               CircleButton(
-                title: "${widget.doctorsCount}",
+                title: "${doctorsCount}",
                 label: 'Doctors',
                 circleColor: '#FFC55A',
                 onTap: () {
@@ -170,11 +187,12 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               CircleButton(
-                title: "${widget.departmentCount}",
+                title: "${departmentCount}",
                 label: 'Departments',
                 circleColor: '#7AA2E3',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => DepartmentDashboard()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      DepartmentDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
                 },
               ),
             ],
@@ -184,15 +202,16 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               CircleButton(
-                title: '${widget.procedureCount}',
+                title: '${procedureCount}',
                 label: 'Procedures',
                 circleColor: '#FC4100',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProcedureDashboard()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      ProcedureDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
                 },
               ),
               CircleButton(
-                title: '${widget.procedureCount}',
+                title: '${procedureCount}',
                 label: 'Patients',
                 circleColor: '#90D26D',
                 onTap: () {
@@ -244,7 +263,7 @@ class _DashboardState extends State<Dashboard> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2015),
+      firstDate: DateTime.parse(widget.dateRangeMap['earliest date']!),
       lastDate: DateTime.now(),
     );
 
@@ -289,6 +308,7 @@ class _DashboardState extends State<Dashboard> {
       apiUrl += '?end_date=$toDate';
     }
 
+    print('_getOTCount():$apiUrl');
 
 
     final response = await http.get(
@@ -306,7 +326,7 @@ class _DashboardState extends State<Dashboard> {
       // Update the widget's data based on the response
       setState(() {
         //widget.doctorsCount = responseData['doctorsCount'];
-        widget.otCount = int.parse(message.split(':').last.trim());
+        otCount = int.parse(message.split(':').last.trim());
         // Update other counts similarly
       });
     } else {
@@ -362,7 +382,7 @@ class _DashboardState extends State<Dashboard> {
       print(int.parse(message.split(':').last.trim()));
       setState(() {
         //widget.doctorsCount = responseData['doctorsCount'];
-        widget.otCount = int.parse(message.split(':').last.trim());
+        departmentCount = int.parse(message.split(':').last.trim());
         // Update other counts similarly
       });
 
@@ -415,8 +435,9 @@ class _DashboardState extends State<Dashboard> {
       print('doctors Count: ${int.parse(message.split(':').last.trim())}');
       setState(() {
         //widget.doctorsCount = responseData['doctorsCount'];
-        widget.doctorsCount = int.parse(message.split(':').last.trim());
+        //widget.doctorsCount = int.parse(message.split(':').last.trim());
         // Update other counts similarly
+        doctorsCount = int.parse(message.split(':').last.trim());
       });
 
     } else {
@@ -471,7 +492,8 @@ class _DashboardState extends State<Dashboard> {
           if (item is Map<String, dynamic> && item.containsKey('total_patients')) {
             setState(() {
               //widget.doctorsCount = responseData['doctorsCount'];
-              widget.patientCount = item['total_patients'];
+              //widget.patientCount = item['total_patients'];
+              patientCount = item['total_patients'];
               print('patientCount $widget.patientCount');
               // Update other counts similarly
             });
@@ -519,6 +541,7 @@ class _DashboardState extends State<Dashboard> {
       apiUrl += '?end_date=$toDate';
     }
 
+    print('dashboard_getProcedureCount:$apiUrl');
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
@@ -540,7 +563,7 @@ class _DashboardState extends State<Dashboard> {
         print('procedureCount: ${int.tryParse(numberString) ?? 0}');
         setState(() {
           //widget.doctorsCount = responseData['doctorsCount'];
-          widget.procedureCount = int.tryParse(numberString) ?? 0;
+          procedureCount = int.tryParse(numberString) ?? 0;
           // Update other counts similarly
         });
          // Parse the number, default to 0 if parsing fails

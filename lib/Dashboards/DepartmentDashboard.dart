@@ -5,15 +5,22 @@ import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DepartmentDashboard extends StatefulWidget {
+
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
+
+  DepartmentDashboard({required this.selectedFromDate, required this.selectedToDate});
   @override
   _DepartmentDashboardState createState() => _DepartmentDashboardState();
 }
 
 class _DepartmentDashboardState extends State<DepartmentDashboard> {
+
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
-  DateTime selectedFromDate = DateTime.now();
-  DateTime selectedToDate = DateTime.now();
+  late DateTime selectedFromDate;
+  late DateTime selectedToDate;
+
   List<SurgeryData> chartData = [];
   // List<AverageSurgeryDuration> avgSurgeryDurationData = [];
 
@@ -22,11 +29,24 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
   @override
   void initState() {
     super.initState();
+
+    selectedFromDate = widget.selectedFromDate!;
+
+    selectedToDate = widget.selectedToDate!;
+
+
+    print('initState()-selectedFromDate: $selectedFromDate');
+
+    fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    toDateController = TextEditingController(text: _formatDate(selectedToDate));
      _getSurgeryCount();
     // _getAverageSurgeryDuration();
-    fromDateController = TextEditingController(text: '');
-    toDateController = TextEditingController(text: '');
     //_otUtilization();
+  }
+
+  String _formatDate(DateTime dateTime) {
+    return "${dateTime.toLocal()}".split(' ')[0];
+    //return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
   }
 
   void _getSurgeryCount() async {
@@ -206,6 +226,25 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
                           color: Colors.white,
                         ),
                       ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                              textStyle: TextStyle(color: Colors.white),
+                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24), ),
+                            child: const Text('Apply',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20),),
+                            onPressed: (){
+                              _getSurgeryCount();
+                              //_getAverageSurgeryDuration();
+                            }
+
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 50),
@@ -233,9 +272,8 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
   Future<void> _selectFromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedFromDate,
-      firstDate: DateTime(
-          1947), // Adjust the first and last date according to your needs1
+      initialDate: widget.selectedFromDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -246,14 +284,20 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
         fromDateController?.text = date;
       });
     }
+    else if (picked == null) {
+      setState(() {
+        //selectedFromDate = selectedFromDate;
+        String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+        fromDateController?.text = date;
+      });
+    }
   }
 
   Future<void> _selectToDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedToDate,
-      firstDate: DateTime(1947),
-      // Adjust the first and last date according to your needs1
+      initialDate: widget.selectedToDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -262,6 +306,11 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
         selectedToDate = picked;
         String date = "${selectedToDate.toLocal()}".split(' ')[0];
         toDateController?.text = date;
+      });
+    }else if (picked == null) {
+      setState(() {
+        //selectedToDate = selectedToDate;
+        toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
       });
     }
   }

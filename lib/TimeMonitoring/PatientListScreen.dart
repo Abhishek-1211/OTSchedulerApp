@@ -14,6 +14,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
   List<String> patientList = [];
   List<int> surgery_id = [];
   List<String> ot_numbers =[];
+  List<DateTime> surgery_date = [];
   bool isSubmitted = false;
   //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
   String baseUrl = 'http://127.0.0.1:8000/api';
@@ -92,7 +93,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                   MaterialPageRoute(
                                       builder: (context) => CapturedRecord(patientName: patientList[index],
                                         surgeryId: surgery_id[index],
-                                        otNumber: ot_numbers[index]
+                                        otNumber: ot_numbers[index],
+                                        surgeryDate: surgery_date[index], // Pass DateTime value
                                       )));
                             },
                           );
@@ -146,18 +148,21 @@ class _PatientListScreenState extends State<PatientListScreen> {
       //print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = json.decode(response.body);
+        print("patientListScreen_fetchPatientList(): ${response.body}");
         final List<Map<String, dynamic>> patients = data
             .where((element) => element['surgery_date'] == DateFormat('MM/dd/yyyy').format(date))
             .map<Map<String, dynamic>>((e) => {
           'patientName': e['patient_name'] as String,
           'scheduledSurgeryId': e['scheduled_surgery_id'] as int,
           'otNumber': e['ot_number'] as String,
+          'surgery_date': DateFormat('MM/dd/yyyy').parse(e['surgery_date'] as String),
         }).toList();
 
         setState(() {
           patientList = patients.map<String>((e) => e['patientName'] as String).toList();
           surgery_id = patients.map<int>((e) => e['scheduledSurgeryId'] as int).toList();
           ot_numbers = patients.map<String>((e) => e['otNumber'] as String).toList();
+          surgery_date = patients.map<DateTime>((e) => e['surgery_date'] as DateTime).toList(); // Store as DateTime
           isSubmitted = true;
         });
       } else {

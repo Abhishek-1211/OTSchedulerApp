@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class CapturedRecord extends StatefulWidget {
   // int mrd;
   String patientName;
   int surgeryId;
   String otNumber;
+  final DateTime surgeryDate;
   // String dob;
   // String otType;
   // String surgeryName;
@@ -16,7 +18,7 @@ class CapturedRecord extends StatefulWidget {
   // String deptName;
 
   // CapturedRecord({required this.mrd, required this.patientName, required this.doctorName, required this.surgeryName, required this.otType, required this.deptName});
-  CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber});
+  CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber, required this.surgeryDate});
 
   @override
   State<CapturedRecord> createState() => _CapturedRecordState();
@@ -42,6 +44,18 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
   //button disable once pressed
   bool preOPStartDisabled = false;
+  bool prophylaxisStartDisabled = false;
+  bool wheelInStartDisabled = false;
+  bool inductionStartDisabled = false;
+  bool inductionEndDisabled = false;
+  bool paintAndDrapStartDisabled = false;
+  bool paintAndDrapEndDisabled = false;
+  bool incisionStartDisabled = false;
+  bool incisionEndDisabled = false;
+  bool extubationStartDisabled =false;
+  bool wheeledOutToTimeDisabled = false;
+  bool wheeledOutFromTimeDisabled = false;
+
 
 
   String baseUrl = 'http://127.0.0.1:8000/api';
@@ -120,8 +134,13 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: prophylaxisStartDisabled
+                                          ? null
+                                          : () {
                                         prophylaxisStartTime = getCurrentTime();
+                                        setState(() {
+                                          prophylaxisStartDisabled = true;
+                                        });
                                         print('Time - ${getCurrentTime()}');
                                       },
                                       child: Text('Start',
@@ -145,9 +164,14 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: wheelInStartDisabled
+                                          ? null
+                                          : () {
                                         wheelInOT = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          wheelInStartDisabled = true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
@@ -171,18 +195,28 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: inductionStartDisabled
+                                          ? null
+                                          : () {
                                         inductionStartTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          inductionStartDisabled =true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold, fontSize: 15))),
                                   SizedBox(width: 30),
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: inductionEndDisabled
+                                          ? null
+                                          :() {
                                         inductionEndTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          inductionEndDisabled = true;
+                                        });
                                       },
                                       child: Text('End',
                                           style: TextStyle(
@@ -204,18 +238,28 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: paintAndDrapStartDisabled
+                                          ? null
+                                          : () {
                                         paintAndDrapStartTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          paintAndDrapStartDisabled = true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold, fontSize: 15))),
                                   SizedBox(width: 30),
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: paintAndDrapEndDisabled
+                                          ? null
+                                          : () {
                                         paintAndDrapEndTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          paintAndDrapEndDisabled = true;
+                                        });
                                       },
                                       child: Text('End',
                                           style: TextStyle(
@@ -237,18 +281,28 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: incisionStartDisabled
+                                          ? null
+                                          : () {
                                         incisionStartTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          incisionStartDisabled =true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold, fontSize: 15))),
                                   SizedBox(width: 30),
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: incisionStartDisabled
+                                          ? null
+                                          : () {
                                         incisionEndTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          incisionEndDisabled = true;
+                                        });
                                       },
                                       child: Text('End',
                                           style: TextStyle(
@@ -270,9 +324,14 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: extubationStartDisabled
+                                          ? null
+                                          : () {
                                         extubationStartTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          extubationStartDisabled = true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
@@ -295,9 +354,14 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: wheeledOutToTimeDisabled
+                                          ? null
+                                          : () {
                                         wheeledOutToTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          wheeledOutToTimeDisabled = true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
@@ -320,9 +384,14 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: wheeledOutToTimeDisabled
+                                          ? null
+                                          : () {
                                         wheeledOutFromTime = getCurrentTime();
                                         print('Time - ${getCurrentTime()}');
+                                        setState(() {
+                                          wheeledOutFromTimeDisabled = true;
+                                        });
                                       },
                                       child: Text('Start',
                                           style: TextStyle(
@@ -353,6 +422,10 @@ class _CapturedRecordState extends State<CapturedRecord> {
   void _submitForm() async {
 
     // Prepare your data for the POST request
+    //String formattedDate = widget.surgeryDate.toIso8601String().split('T')[0];
+
+    String formattedDate = DateFormat('MM/dd/yyyy').format(widget.surgeryDate);
+
     Map<String, dynamic> postData = {
       'scheduled_surgery_id': widget.surgeryId,
       'ot_number': widget.otNumber,
@@ -368,7 +441,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
       'extubation_time_in_OT': extubationStartTime,
       'wheeled_out_time_to_Post_op_ICU': wheeledOutToTime,
       'wheeled_out_from_Post_OP': wheeledOutFromTime,
-      'surgery_date': '08/22/2023'
+      //'surgery_date': '08/22/2023'
+      'surgery_date': formattedDate,
     };
 
     // Send POST request using http package

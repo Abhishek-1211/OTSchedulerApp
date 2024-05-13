@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:js';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_flutter_app/OTSchedule/OTScheduleScreen.dart';
 import 'package:my_flutter_app/Dashboards/Dashboard.dart';
 //import 'package:my_flutter_app/TimeMonitoringScreen.dart';
@@ -23,6 +24,7 @@ class _MenuPageState extends State<MenuPage> {
   int procedureCount = 100;
   int patientCount = 100;
   Map<String, String> dateRangeMap = {};
+
   //const MenuPage({Key? key}) : super(key: key);
 
 
@@ -30,12 +32,13 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void initState() {
     super.initState();
+    _getDateRange();
     _getOTCount();
     _getDoctorsCount();
     _getDepartmentCount();
     _getProcedureCount();
     _getPatientCount();
-    _getDateRange();
+
     // Initialization code here
   }
 
@@ -91,6 +94,15 @@ class _MenuPageState extends State<MenuPage> {
   void _getOTCount() async{
 
     String apiUrl = '$baseUrl/ot-count/';
+
+    String selectedFromDate = dateRangeMap['earliest date'] ?? '';
+    print('selectedFromDate:$selectedFromDate');
+
+    // String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(dateRangeMap['earliest date']!));
+    // String toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(dateRangeMap['latest date']!));
+    // apiUrl += '?start_date=$fromDate&end_date=$toDate';
+
+    print('Menu-page():$apiUrl');
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -275,7 +287,7 @@ class _MenuPageState extends State<MenuPage> {
         }
       });
 
-      print(dateRangeMap);
+      print(dateRangeMap.keys);
 
 
 
