@@ -6,6 +6,12 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class PatientDashboard extends StatefulWidget {
+
+
+  DateTime? selectedFromDate;
+  DateTime? selectedToDate;
+
+  PatientDashboard({required this.selectedFromDate, required this.selectedToDate});
   @override
   _PatientDashboardState createState() => _PatientDashboardState();
 }
@@ -13,8 +19,10 @@ class PatientDashboard extends StatefulWidget {
 class _PatientDashboardState extends State<PatientDashboard> {
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
-  DateTime selectedFromDate = DateTime.now();
-  DateTime selectedToDate = DateTime.now();
+  late DateTime selectedFromDate;
+  late DateTime selectedToDate;
+  List<AgeDistributionData> chartData = [];
+
   //List<SurgeryData> chartData = [];
   Map <String, double> dataMap = {};
   final colorList = <Color>[
@@ -27,14 +35,23 @@ class _PatientDashboardState extends State<PatientDashboard> {
   @override
   void initState() {
     super.initState();
-    _getSurgeryType();
+    _getGenderDistribution();
+    _getAgeDistribution();
     // _getAverageSurgeryDuration();
-    fromDateController = TextEditingController(text: '');
-    toDateController = TextEditingController(text: '');
+    selectedFromDate = widget.selectedFromDate!;
+    selectedToDate = widget.selectedToDate!;
+    print('initState()-selectedFromDate: $selectedFromDate');
+    fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    toDateController = TextEditingController(text: _formatDate(selectedToDate));
     //_otUtilization();
   }
 
-  void _getSurgeryType() async {
+  String _formatDate(DateTime dateTime) {
+    return "${dateTime.toLocal()}".split(' ')[0];
+    //return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+  }
+
+  void _getGenderDistribution() async {
     String apiUrl = '$baseUrl/gender-distribution/';
 
     final response = await http.get(
@@ -43,24 +60,77 @@ class _PatientDashboardState extends State<PatientDashboard> {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('_getSurgeryType(): Data Received from the backend successfully.');
+      print('_getGenderDistribution(): Data Received from the backend successfully.');
 
       // Parse the JSON response
       Map<String, dynamic> responseData = jsonDecode(response.body);
 
       print(responseData);
 
-      List<dynamic> surgeryTypeList = responseData['message'];
-      for (var item in surgeryTypeList) {
-        item.forEach((key, value) {
-          dataMap[key] = value;
-        });
+      List<dynamic> genderDistributionList = responseData['message'];
+      double totalPercentage = 0.0;
+      dataMap.clear(); // Clear previous data
+
+      // Calculate total percentage and update dataMap
+      for (var item in genderDistributionList) {
+        Map<String, dynamic> genderData = item;
+        if (genderData.containsKey('Female')) {
+          double femalePercentage = genderData['Female'];
+          dataMap['Female'] = femalePercentage;
+          totalPercentage += femalePercentage;
+        } else if (genderData.containsKey('Male')) {
+          double malePercentage = genderData['Male'];
+          dataMap['Male'] = malePercentage;
+          totalPercentage += malePercentage;
+        }
       }
-      dataMap.remove('total_surgeries');
-      print(dataMap);
+
+      // Check if total percentage is less than 100 and add blank entry if needed
+      if (totalPercentage < 100.0) {
+        dataMap['Not Specified'] = 100.0 - totalPercentage;
+      }
+
       setState(() {
         // Update the state to trigger a rebuild with the new dataMap
       });
+    } else {
+      // Handle error cases
+      print('Error receiving data from the backend: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
+
+  void _getAgeDistribution() async {
+    String apiUrl = '$baseUrl/age-distribution/';
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('_getAgeDistribution(): Data Received from the backend successfully.');
+
+      // Parse the JSON response
+      Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      print(responseData);
+
+      List<dynamic> ageDistributionList = responseData['age_distribution'];
+      // for (var item in surgeryTypeList) {
+      //   item.forEach((key, value) {
+      //     dataMap[key] = value;
+      //   });
+      // }
+      // dataMap.remove('total_patients');
+      print('ageDistributionList:$ageDistributionList');
+      setState(() {
+        chartData.addAll(
+            ageDistributionList.map((item) => AgeDistributionData.fromJson(item)).toList());
+
+      });
+      print('chartData:$chartData');
       //
       // setState(() {
       //   chartData.addAll(
@@ -71,80 +141,53 @@ class _PatientDashboardState extends State<PatientDashboard> {
       //print('Error sending data to the backend: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
+
   }
 
-  // Widget _buildBarChart<T>(List<T> data, String xAxisTitle, String yAxisTitle) {
-  //   Color barColor = Colors.teal; // Default color
-  //   String legendItemText = 'Data';
-  //   Color labelColor = Colors.red;
-  //
-  //   if (T == SurgeryData) {
-  //     barColor = Colors.teal;
-  //     legendItemText = 'Surgery Count';
-  //     labelColor = Colors.red;
-  //   }
-  //   // else if (T == AverageSurgeryDuration) {
-  //   //   barColor = Colors.redAccent;
-  //   //   legendItemText = 'Avg Surgery DurationData';
-  //   //   labelColor = Colors.lightBlueAccent;
-  //   // }
-  //   return SfCartesianChart(
-  //     //title: ChartTitle(text: 'Surgery Count Per Doctor'),
-  //       isTransposed: true, // Change X and Y axis data
-  //       backgroundColor: Colors.grey[200],
-  //       primaryXAxis: CategoryAxis(
-  //         title: AxisTitle(
-  //             text: xAxisTitle,
-  //             textStyle: TextStyle(fontWeight: FontWeight.bold)),
-  //       ),
-  //       primaryYAxis: NumericAxis(
-  //         title: AxisTitle(
-  //             text: yAxisTitle,
-  //             textStyle: TextStyle(fontWeight: FontWeight.bold)),
-  //       ),
-  //       legend: Legend(isVisible: true, position: LegendPosition.top),
-  //       series: <BarSeries<T, String>>[
-  //         BarSeries<T, String>(
-  //           dataSource: data,
-  //           // xValueMapper: (SurgeryData surgeryData, _) => surgeryData.doctorName,
-  //           xValueMapper: (T data, _) {
-  //             if (data is SurgeryData) {
-  //               return data.departmentName; // Use otNumber for SurgeryData
-  //             }
-  //             // else if (data is AverageSurgeryDuration) {
-  //             //   return data.doctorName; // Use otNumber for UtilisationData
-  //             // }
-  //             return ''; // Default case
-  //           },
-  //           yValueMapper: (T data, _) {
-  //             if (data is SurgeryData) {
-  //               return double.parse(data.surgeryCount);
-  //             }
-  //             // else if (data is AverageSurgeryDuration) {
-  //             //   return data.getHoursDuration() ;
-  //             // }
-  //             return 0; // Default case
-  //           },
-  //           width: 0.2,
-  //           color: barColor,
-  //           name: 'Total Marks',
-  //           // gradient: LinearGradient(colors: Colors.primaries, tileMode: TileMode.clamp/*, transform: GradientRotation(10)*/),
-  //           dataLabelSettings: DataLabelSettings(
-  //               isVisible: true,
-  //               color: labelColor,
-  //               textStyle: TextStyle(color: Colors.white, fontSize: 10)),
-  //           legendIconType: LegendIconType.circle,
-  //           legendItemText: legendItemText,
-  //           enableTooltip: true,
-  //         ),
-  //       ]);
-  // }
+  Widget _buildBarChart<T>(List<AgeDistributionData> data, String xAxisTitle, String yAxisTitle) {
+
+    Color barColor = Colors.teal; // Default color
+    String legendItemText = 'Data';
+
+    return SfCartesianChart(
+      isTransposed: true,
+      backgroundColor: Colors.grey[200],
+      primaryXAxis: CategoryAxis(
+        title: AxisTitle(
+            text: xAxisTitle,
+            textStyle: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      primaryYAxis: NumericAxis(
+        title: AxisTitle(
+            text: yAxisTitle,
+            textStyle: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      //legend: Legend(isVisible: true, position: LegendPosition.top),
+      series: <BarSeries<AgeDistributionData, String>>[
+        BarSeries<AgeDistributionData, String>(
+          dataSource: data,
+          xValueMapper: (AgeDistributionData data, _) => data.ageRange,
+          yValueMapper: (AgeDistributionData data, _) => data.value.toDouble(),
+          width: 0.2,
+          color: barColor,
+          name: 'Data',
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            color: Colors.redAccent,
+            textStyle: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+          legendIconType: LegendIconType.circle,
+          legendItemText: legendItemText,
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Procedure Dashboard'),
+          title: Text('Patient Dashboard'),
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize:
@@ -218,6 +261,25 @@ class _PatientDashboardState extends State<PatientDashboard> {
                           color: Colors.white,
                         ),
                       ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 150,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                              textStyle: TextStyle(color: Colors.white),
+                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24), ),
+                            child: const Text('Apply',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20),),
+                            onPressed: (){
+                              _getGenderDistribution();
+                              _getAgeDistribution();
+                            }
+
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 50),
@@ -228,7 +290,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                         ? PieChart(
                       dataMap: dataMap,
                       chartType: ChartType.disc,
-                      centerText: "Surgery Type Percentage",
+                      centerText: "Gender Distribution of Patients",
                       baseChartColor: Colors.grey[300]!,
                     )
                         : Center(
@@ -237,6 +299,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
+                  ),
+                  Container(
+                    height: 400,
+                    child: _buildBarChart(chartData, 'age-range', 'value'),
                   ),
 
                   // SizedBox(height: 30),
@@ -255,9 +321,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
   Future<void> _selectFromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedFromDate,
-      firstDate: DateTime(
-          1947), // Adjust the first and last date according to your needs1
+      initialDate: widget.selectedFromDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -268,14 +333,20 @@ class _PatientDashboardState extends State<PatientDashboard> {
         fromDateController?.text = date;
       });
     }
+    else if (picked == null) {
+      setState(() {
+        //selectedFromDate = selectedFromDate;
+        String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+        fromDateController?.text = date;
+      });
+    }
   }
 
   Future<void> _selectToDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedToDate,
-      firstDate: DateTime(1947),
-      // Adjust the first and last date according to your needs1
+      initialDate: widget.selectedToDate!,
+      firstDate: widget.selectedFromDate!,
       lastDate: DateTime.now(),
     );
 
@@ -285,22 +356,27 @@ class _PatientDashboardState extends State<PatientDashboard> {
         String date = "${selectedToDate.toLocal()}".split(' ')[0];
         toDateController?.text = date;
       });
+    }else if (picked == null) {
+      setState(() {
+        //selectedToDate = selectedToDate;
+        toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
+      });
     }
   }
+
 }
 
-// class SurgeryData {
-//   final String departmentName;
-//   final String surgeryCount;
-//
-//   SurgeryData({required this.departmentName, required this.surgeryCount});
-//
-//   factory SurgeryData.fromJson(Map<String, dynamic> json) {
-//     return SurgeryData(
-//       departmentName: json.keys.first.toString(),
-//       surgeryCount: json.values.first.toString() ?? '',
-//     );
-//   }
-// }
+class AgeDistributionData {
 
+  String ageRange;
+  int value ;
+  AgeDistributionData({required this.ageRange, required this.value});
+
+  factory AgeDistributionData.fromJson(Map<String, dynamic> json) {
+    return AgeDistributionData(
+      ageRange: json.keys.first.toString(),
+      value: json.values.first,
+    );
+  }
+}
 

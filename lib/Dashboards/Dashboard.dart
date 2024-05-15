@@ -215,8 +215,8 @@ class _DashboardState extends State<Dashboard> {
                 label: 'Patients',
                 circleColor: '#90D26D',
                 onTap: () {
-                  null;
-                  //Navigator.push(context, MaterialPageRoute(builder: (context) => PatientDashboard()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      PatientDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
                 },
               ),
               CircleButton(
