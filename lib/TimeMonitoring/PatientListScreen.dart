@@ -13,7 +13,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
   DateTime? selectedDate;
   List<String> patientList = [];
   List<int> surgery_id = [];
-  List<String> ot_numbers =[];
+  List<String> ot_numbers = [];
   List<DateTime> surgery_date = [];
   bool isSubmitted = false;
   //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
@@ -26,13 +26,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
         title: Text('Patient List'),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize:
-          Size.fromHeight(1.0), // Set the height of the divider
-          child:
-          Divider(color: Colors.grey), // Divider below the app bar title
+          preferredSize: Size.fromHeight(1.0), // Set the height of the divider
+          child: Divider(color: Colors.grey), // Divider below the app bar title
         ),
       ),
-
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -51,7 +48,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (selectedDate != null) {
-                      _fetchPatientList(selectedDate!); // Call function to fetch patient list
+                      _fetchPatientList(
+                          selectedDate!); // Call function to fetch patient list
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -76,7 +74,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   children: [
                     Text(
                       'Patients',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 18),
                     ),
                     SizedBox(height: 5),
                     Divider(height: 1, color: Colors.black87, thickness: 1),
@@ -84,20 +85,33 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       child: ListView.builder(
                         itemCount: patientList.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
+                          Color tileColor =
+                              index.isEven ? Colors.blue[100]! : Colors.white;
+                          return Container(
+                              color: tileColor,
+                              child: ListTile(
                             title: Text(patientList[index]),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('OT Number: ${ot_numbers[index]}'),
+                                Text('Surgery ID: ${surgery_id[index]}'),
+                              ],
+                            ),
                             onTap: () {
                               // Handle onTap event
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CapturedRecord(patientName: patientList[index],
-                                        surgeryId: surgery_id[index],
-                                        otNumber: ot_numbers[index],
-                                        surgeryDate: surgery_date[index], // Pass DateTime value
-                                      )));
+                                      builder: (context) => CapturedRecord(
+                                            patientName: patientList[index],
+                                            surgeryId: surgery_id[index],
+                                            otNumber: ot_numbers[index],
+                                            surgeryDate: surgery_date[
+                                                index], // Pass DateTime value
+                                          )));
                             },
-                          );
+                          ));
                         },
                       ),
                     ),
@@ -126,16 +140,13 @@ class _PatientListScreenState extends State<PatientListScreen> {
 
   Future<void> _fetchPatientList(DateTime date) async {
     try {
-
       //String formattedDate = "(${date.year},${date.month},${date.day})";
       String formattedDate = DateFormat('yyyy-MM-dd').format(date);
       print('Date - $date');
       print('Formatted date - $formattedDate');
       Uri url = Uri.parse('$baseUrl/schedule/?surgery_date=$formattedDate');
 
-      final headers = {
-        'Accept': 'application/json'
-      };
+      final headers = {'Accept': 'application/json'};
 
       print(url);
       final response = await http.get(
@@ -150,19 +161,52 @@ class _PatientListScreenState extends State<PatientListScreen> {
         final List<dynamic> data = json.decode(response.body);
         print("patientListScreen_fetchPatientList(): ${response.body}");
         final List<Map<String, dynamic>> patients = data
-            .where((element) => element['surgery_date'] == DateFormat('MM/dd/yyyy').format(date))
+            .where((element) =>
+                element['surgery_date'] ==
+                DateFormat('MM/dd/yyyy').format(date))
             .map<Map<String, dynamic>>((e) => {
-          'patientName': e['patient_name'] as String,
-          'scheduledSurgeryId': e['scheduled_surgery_id'] as int,
-          'otNumber': e['ot_number'] as String,
-          'surgery_date': DateFormat('MM/dd/yyyy').parse(e['surgery_date'] as String),
-        }).toList();
+                  'patientName': e['patient_name'] as String,
+                  'scheduledSurgeryId': e['scheduled_surgery_id'] as int,
+                  'otNumber': e['ot_number'] as String,
+                  'surgery_date': DateFormat('MM/dd/yyyy')
+                      .parse(e['surgery_date'] as String),
+                })
+            .toList();
+
+        if (data.isEmpty){
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content:
+          //     Text('No data Available. Please select correct date.'),
+          //   ),
+          // );
+          showDialog(context: context, builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('No data available.\nPlease select correct date'),
+              //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+              actions: <Widget>[TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text('Disable'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),],
+            );
+          });
+        }
 
         setState(() {
-          patientList = patients.map<String>((e) => e['patientName'] as String).toList();
-          surgery_id = patients.map<int>((e) => e['scheduledSurgeryId'] as int).toList();
-          ot_numbers = patients.map<String>((e) => e['otNumber'] as String).toList();
-          surgery_date = patients.map<DateTime>((e) => e['surgery_date'] as DateTime).toList(); // Store as DateTime
+          patientList =
+              patients.map<String>((e) => e['patientName'] as String).toList();
+          surgery_id =
+              patients.map<int>((e) => e['scheduledSurgeryId'] as int).toList();
+          ot_numbers =
+              patients.map<String>((e) => e['otNumber'] as String).toList();
+          surgery_date = patients
+              .map<DateTime>((e) => e['surgery_date'] as DateTime)
+              .toList(); // Store as DateTime
           isSubmitted = true;
         });
       } else {
@@ -172,10 +216,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
       print('Error fetching patient list: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to fetch patient list. Please try again later.'),
+          content:
+              Text('Failed to fetch patient list. Please try again later.'),
         ),
       );
     }
   }
-
 }

@@ -69,10 +69,20 @@ class _CapturedRecordState extends State<CapturedRecord> {
     return formattedTime;
   }
 
+  Color getBoxColor(int index) {
+    return index % 2 == 0 ? Colors.blue[100]! : Colors.white; // Alternate colors
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('Record Monitoring')),
+    return Container(
+        color: Colors.yellowAccent,
+    child: Scaffold(
+        appBar: AppBar(title: Text('Record Monitoring'),
+          centerTitle: true,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(1.0), // Set the height of the divider
+            child: Divider(color: Colors.grey), // Divider below the app bar title
+          ),),
         body: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -96,7 +106,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                     children: [
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2)),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2), color: getBoxColor(0)),
                           child: Column(
                             children: [
                               Text('Pre-OP', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -155,7 +165,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2)),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2), color: getBoxColor(0)),
                           child: Column(
                             children: [
                               Text('Wheel-In', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -229,7 +239,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2)),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2),color: getBoxColor(0)),
                           child: Column(
                             children: [
                               Text('Painting & Draping', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -315,7 +325,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2)),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2),color: getBoxColor(0)),
                           child: Column(
                             children: [
                               Text('Extubation Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -375,7 +385,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
                       Container(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2)),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 2),color: getBoxColor(0)),
                           child: Column(
                             children: [
                               Text('Wheeled Out From Post-Op', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -416,7 +426,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
               ),
             ],
           ),
-        ));
+        )
+    ));
   }
 
   void _submitForm() async {
@@ -460,8 +471,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
         print('POST request successful');
         showDialog(context: context, builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Acknowledgement'),
-            content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+            title: const Text('Confirmation.\nYour inputs have been recorded successfully'),
+            //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
             actions: <Widget>[TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
@@ -477,6 +488,22 @@ class _CapturedRecordState extends State<CapturedRecord> {
       } else {
         // Handle other status codes if needed
         print('POST request failed with status: ${response.statusCode}');
+        showDialog(context: context, builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('OOPS !!!.\nYour inputs have not been recorded.\nPlease check again'),
+            //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+            actions: <Widget>[TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Disable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),],
+          );
+        });
+
       }
     } catch (e) {
       // Handle any exceptions or errors
