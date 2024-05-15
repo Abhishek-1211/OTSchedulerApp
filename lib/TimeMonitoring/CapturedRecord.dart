@@ -295,7 +295,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                               fontWeight: FontWeight.bold, fontSize: 15))),
                                   SizedBox(width: 30),
                                   ElevatedButton(
-                                      onPressed: incisionStartDisabled
+                                      onPressed: incisionEndDisabled
                                           ? null
                                           : () {
                                         incisionEndTime = getCurrentTime();
@@ -384,7 +384,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                      onPressed: wheeledOutToTimeDisabled
+                                      onPressed: wheeledOutFromTimeDisabled
                                           ? null
                                           : () {
                                         wheeledOutFromTime = getCurrentTime();
@@ -458,6 +458,21 @@ class _CapturedRecordState extends State<CapturedRecord> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle successful response
         print('POST request successful');
+        showDialog(context: context, builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Acknowledgement'),
+            content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+            actions: <Widget>[TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Disable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),],
+          );
+        });
         // Optionally, navigate to another screen or show a success message
       } else {
         // Handle other status codes if needed
