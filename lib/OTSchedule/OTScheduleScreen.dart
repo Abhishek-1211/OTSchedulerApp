@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:excel/excel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,11 +15,15 @@ class OTScheduleScreen extends StatefulWidget {
 }
 
 class _OTScheduleScreenState extends State<OTScheduleScreen> {
+  DateTime? _selectedDate;
+  String _uploadedDate ='';
+  TextEditingController fromDateController = TextEditingController();
+  bool isDateSelected = true;
+  bool isOTButtonVisible = false;
   File? _file;
   Uint8List? _webFile;
   String _notificationMessage = '';
-  //String baseUrl = 'https://1ca6-2409-4050-dc0-ea19-f16a-52c8-7658-58de.ngrok-free.app/api';
-  //String baseUrl = 'https://5e8d-2409-40d0-101f-8161-8434-4af8-305c-2efb.ngrok-free.app/api';
+  //TextEditingController fromDateController = TextEditingController();
   String baseUrl = 'http://127.0.0.1:8000/api';
   //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
   Map<String, dynamic> scheduledOTList = {};
@@ -45,13 +50,42 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         centerTitle: true,
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        // child: Padding(
+        //   padding: const EdgeInsets.all(5.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 250,
+                    child: TextField(
+                      controller: fromDateController,
+                      canRequestFocus: false,
+                      decoration: InputDecoration(labelText: 'Select date', isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        prefixIcon: Icon(Icons.calendar_month_rounded, size: 20),),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle, // Circular shape
+                      color: Colors.indigoAccent, // Lavender background color
+                    ),
+                    child: IconButton(
+                      onPressed: () => _selectDate(context),
+                      icon: Icon(Icons.calendar_month_outlined),
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 80),
               GestureDetector(
-                onTap: () {
+                onTap: isDateSelected
+                    ? null
+                    : () {
                   _pickFile();
                 },
                 child: Column(
@@ -59,7 +93,9 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
                     Icon(Icons.upload_file, size: 100),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: isDateSelected
+                          ? null
+                          : () {
                         _pickFile();
                       },
                       child: Text('Upload'),
@@ -67,7 +103,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               _file != null || _webFile != null
                   ? ElevatedButton(
                       onPressed: () {
@@ -76,13 +112,30 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
                       child: Text('OT Schedule'),
                     )
                   : Container(),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Text(_notificationMessage),
             ],
           ),
-        ),
+        //),
       ),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2023),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+        String date = "${_selectedDate}".split(' ')[0];
+        fromDateController?.text = date;
+        isDateSelected = false;
+      });
+    }
   }
 
   Future<void> _pickFile() async {
@@ -96,6 +149,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
           setState(() {
             _notificationMessage = 'File Uploaded: ${result.files.single.name}';
           });
+          _extractDateFromFile();
         } else {
           _file = File(result.files.single.path!);
           setState(() {
@@ -116,15 +170,46 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
   }
 
   void _handleOTScheduleButtonPress() async {
+
     setState(() {
       _notificationMessage = ' '; // Show processing message
+      // _webFile = null;
+      // _file = null;
     });
 
     try {
+
+      print('_selectedDate: $_selectedDate');
+      print('_uploadedDate: $_uploadedDate');
+      String formattedDate = _selectedDate.toString().split(' ')[0];
+      print('formattedDate:$formattedDate');
+      if (formattedDate != _uploadedDate) {
+        // setState(() {
+        //   _notificationMessage = 'Selected date does not match date in the uploaded file';
+        // });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.redAccent,
+            content:
+            Text('Selected date does not match date in the uploaded file.PLease select correct date'),
+          ),
+        );
+        return;
+      }
+
       List<int> fileBytes =
           _file != null ? await _file!.readAsBytes() : _webFile!;
       String base64File = base64Encode(fileBytes);
-      //print(base64File);
+
+
+      // Check if entries exist for the _uploadedDate
+      bool entriesExist = await _checkEntriesExist(_uploadedDate);
+      if (entriesExist) {
+        // Delete existing entries
+        await _deleteEntriesFromSchedule(_uploadedDate);
+        await _deleteEntriesFromPatients(_uploadedDate);
+      }
+
 
       String apiUrl =
           'https://us-central1-amrita-body-scan.cloudfunctions.net/OT_Scheduler';
@@ -159,6 +244,12 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+        setState(() {
+          //_notificationMessage = ' '; // Show processing message
+          _webFile = null;
+          _file = null;
+        });
 
         Navigator.push(
           context,
@@ -219,7 +310,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
           // Introduce a delay of 1000 milliseconds (1 second)
           await Future.delayed(Duration(milliseconds: 500));
           sendPatientList(patient[key].toString(), age[key].split('/')[0],
-              age[key].split('/')[1], mrdNumbers[key]);
+              age[key].split('/')[1], mrdNumbers[key], date[key]);
         }
 
         //print(patient_id);
@@ -233,6 +324,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
           // print('date: ${inputFormat.parse((date[key]))}');
           // print('Data type of date[key]: ${inputFormat.parse(date[key])}');
           await Future.delayed(Duration(milliseconds: 500));
+          //deleteEntries(date[key]);
           sendScheduleSurgery(
               procedure[key],
               department[key],
@@ -260,6 +352,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
       });
       print('Error-2: $e');
     }
+
   }
 
   void sendScheduledOT(String otNumber, String department) async {
@@ -299,8 +392,12 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
     }
   }
 
-  void sendPatientList(String name, String age, String gender, int mrd) async {
+  void sendPatientList(String name, String age, String gender, int mrd, String surgeryDate) async {
     String apiUrl = '$baseUrl/patient/';
+
+    //DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(surgeryDate.toString());
+    //String formattedDate = DateFormat('mm')
+    print('sendPatientList_surgeryDate: $surgeryDate');
 
     var response = await http.post(
       Uri.parse(apiUrl),
@@ -309,7 +406,8 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         'patient_name': name,
         'age': int.parse(age.split('Y')[0]),
         'gender': gender,
-        'mrd': mrd
+        'mrd': mrd,
+        'registration_date' : surgeryDate
       }),
     );
 
@@ -387,35 +485,35 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
   void sendScheduleSurgery(procedure, department, doctor, patient, mrd, date,
       start_time, end_time, otData) async {
     String apiUrl = '$baseUrl/schedule/';
-    print(
-        'DateFormat:${DateFormat('MM/dd/yyyy').parse(date).toString().split(' ')[0]}');
+    print('DateFormat:${DateFormat('MM/dd/yyyy').parse(date).toString().split(' ')[0]}');
 
     // print('sendScheduleSurgery:$apiUrl');
     // print('sendScheduleSurgery()-date:${date.runtimeType} ${DateTime.parse(date)}');
 
-    String formattedDate =
-        DateFormat('MM/dd/yyyy').parse(date).toString().split(' ')[0];
+    String formattedDate = DateFormat('MM/dd/yyyy').parse(date).toString().split(' ')[0];
     // print('formattedDate:$formattedDate');
 
-    String deleteUrl = apiUrl + '?surgery_date=$formattedDate';
-    print('deleteUrl:$deleteUrl');
-    //
-    var getResponse = await http.get(
-      Uri.parse(deleteUrl),
-      headers: {'Content-Type': 'application/json'},
-      //body: jsonEncode({'surgery_date': date}),
-    );
+    //String deleteUrl = apiUrl + 'delete-all-on-date/?surgery_date=$formattedDate';
+    // String checkUrl = apiUrl + '?surgery_date=$formattedDate';
+    // print('checkUrl:$checkUrl');
+    // //
+    // var getResponse = await http.get(
+    //   Uri.parse(checkUrl),
+    //   headers: {'Content-Type': 'application/json'},
+    //   //body: jsonEncode({'surgery_date': date}),
+    // );
 
     //print('responseGet.body::${getResponse.body}');
 
     // if (getResponse.statusCode == 200) {
     //   // Entries exist, proceed with deletion
+    //   String deleteUrl = apiUrl + 'delete-all-on-date/?surgery_date=$formattedDate';
     //   var deleteResponse = await http.delete(
     //     Uri.parse(deleteUrl),
     //     headers: {'Content-Type': 'application/json'},
     //   );
     //
-    //   if (deleteResponse.statusCode == 200) {
+    //   if (deleteResponse.statusCode == 200 || deleteResponse.statusCode == 204) {
     //     print('Entries deleted successfully.');
     //   } else {
     //     print('Error deleting entries: ${deleteResponse.statusCode}');
@@ -456,4 +554,87 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
       }
     //}
   }
+
+  Future<void> _extractDateFromFile() async {
+    try {
+      var bytes = _file != null ? await _file!.readAsBytes() : _webFile!;
+      var excel = Excel.decodeBytes(bytes);
+
+      if (excel.tables.keys.isNotEmpty) {
+        var table = excel.tables.values.first; // Assuming only one sheet
+        var dateColumn = table.cell(CellIndex.indexByString('A2')).value; // Adjust cell index as per your file
+
+        print('dateColumn: ${dateColumn.toString()}');
+        // Parse the date
+        DateTime parsedDate = DateFormat('M/d/yyyy').parse(dateColumn.toString());
+        // Format the date
+        String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+        setState(() {
+          _uploadedDate = formattedDate;
+        });
+      }
+    } catch (e) {
+      print('Error reading Excel file: $e');
+      setState(() {
+        _notificationMessage = 'Error reading Excel file: $e';
+      });
+    }
+  }
+
+  Future<bool> _checkEntriesExist(String uploadedDate) async {
+
+    String apiUrl = '$baseUrl/schedule/';
+    String checkUrl = apiUrl + '?surgery_date=$uploadedDate';
+    print('checkUrl:$checkUrl');
+
+    var response = await http.get(
+      Uri.parse(checkUrl),
+      headers: {'Content-Type': 'application/json'},
+      //body: jsonEncode({'surgery_date': date}),
+    );
+
+    if(response.statusCode == 200){
+      List<dynamic> data = jsonDecode(response.body);
+      return data.isNotEmpty;
+    }
+    else{
+      print('Error checking entries: ${response.statusCode}');
+      return false;
+    }
+
+  }
+
+  Future<void> _deleteEntriesFromSchedule(String uploadedDate) async {
+    String apiUrl = '$baseUrl/schedule/';
+    String deleteUrl = apiUrl + 'delete-all-on-date/?surgery_date=$uploadedDate';
+      var deleteResponse = await http.delete(
+        Uri.parse(deleteUrl),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (deleteResponse.statusCode == 200 || deleteResponse.statusCode == 204) {
+        print('Entries deleted successfully.');
+      } else {
+        print('Error deleting entries: ${deleteResponse.statusCode}');
+        print('Response body: ${deleteResponse.body}');
+      }
+  }
+
+  Future<void> _deleteEntriesFromPatients(String uploadedDate) async{
+    String apiUrl = '$baseUrl/patient/';
+    String deleteUrl = apiUrl + 'delete-all-on-date/?registration_date=$uploadedDate';
+    var deleteResponse = await http.delete(
+      Uri.parse(deleteUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (deleteResponse.statusCode == 200 || deleteResponse.statusCode == 204) {
+      print('Entries deleted successfully.');
+    } else {
+      print('Error deleting entries: ${deleteResponse.statusCode}');
+      print('Response body: ${deleteResponse.body}');
+    }
+  }
+
 }
