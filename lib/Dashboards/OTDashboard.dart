@@ -357,7 +357,7 @@ class _OTDashboardState extends State<OTDashboard> {
           dataSource: data,
           xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
           yValueMapper: (MonitoringStepsData stepsData, _) {
-            double value = double.parse(stepsData.avgIncisionDuration);
+            double value = double.tryParse(stepsData.avgIncisionDuration) ?? 0.0;
             return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
           },
           width: 0.2,
@@ -376,7 +376,7 @@ class _OTDashboardState extends State<OTDashboard> {
           dataSource: data,
           xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
           yValueMapper: (MonitoringStepsData stepsData, _) {
-            double value = double.parse(stepsData.avgInductionDuration);
+            double value = double.tryParse(stepsData.avgInductionDuration) ?? 0.0;
             return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
           },
           width: 0.2,
@@ -395,7 +395,8 @@ class _OTDashboardState extends State<OTDashboard> {
           dataSource: data,
           xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
           yValueMapper: (MonitoringStepsData stepsData, _) {
-            double value = double.parse(stepsData.avgPaintingAndDrapingDuration);
+            //double value = double.parse(stepsData.avgPaintingAndDrapingDuration) ?? 0.0;
+            double value = double.tryParse(stepsData.avgPaintingAndDrapingDuration) ?? 0.0;
             return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
           },
           width: 0.2,
