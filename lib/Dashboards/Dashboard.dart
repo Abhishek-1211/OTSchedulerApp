@@ -155,7 +155,7 @@ class _DashboardState extends State<Dashboard> {
                               _getDoctorCount(selectedFromDate,selectedToDate);
                               _getDepartmentCount(selectedFromDate,selectedToDate);
                               _getProcedureCount(selectedFromDate,selectedToDate);
-                              //_getPatientCount(selectedFromDate,selectedToDate);
+                              _getPatientCount(selectedFromDate,selectedToDate);
                             }
 
                         ),
@@ -211,7 +211,7 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               CircleButton(
-                title: '${procedureCount}',
+                title: '${patientCount}',
                 label: 'Patients',
                 circleColor: '#90D26D',
                 onTap: () {

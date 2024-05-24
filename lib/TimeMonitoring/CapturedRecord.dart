@@ -488,21 +488,21 @@ class _CapturedRecordState extends State<CapturedRecord> {
       } else {
         // Handle other status codes if needed
         print('POST request failed with status: ${response.statusCode}');
-        showDialog(context: context, builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('OOPS !!!.\nYour inputs have not been recorded.\nPlease check again'),
-            //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-            actions: <Widget>[TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Disable'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),],
-          );
-        });
+        // showDialog(context: context, builder: (BuildContext context) {
+        //   return AlertDialog(
+        //     title: const Text('OOPS !!!.\nYour inputs have not been recorded.\nPlease check again'),
+        //     //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+        //     actions: <Widget>[TextButton(
+        //       style: TextButton.styleFrom(
+        //         textStyle: Theme.of(context).textTheme.labelLarge,
+        //       ),
+        //       child: const Text('Disable'),
+        //       onPressed: () {
+        //         Navigator.of(context).pop();
+        //       },
+        //     ),],
+        //   );
+        // });
 
       }
     } catch (e) {

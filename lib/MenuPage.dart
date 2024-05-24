@@ -220,7 +220,7 @@ class _MenuPageState extends State<MenuPage> {
 
   void _getPatientCount() async {
     //String apiUrl = '$baseUrl/procedure-count/';
-    String apiUrl = '$baseUrl/patient-count/';
+    String apiUrl = '$baseUrl/patient-count/?start_date=2023-08-15&end_date=2024-04-26';
 
     final response = await http.get(
       Uri.parse(apiUrl),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -5,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_app/MenuPage.dart';
 import 'package:my_flutter_app/TimeMonitoring/PatientListScreen.dart';
 import 'package:my_flutter_app/OTSchedule/OTScheduleScreen.dart';
+import 'package:my_flutter_app/register.dart';
+import 'package:http/http.dart' as http;
+
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -16,6 +20,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  String baseUrl = 'http://127.0.0.1:8000/api';
 
   @override
   Widget build(BuildContext context) {
@@ -101,24 +106,25 @@ class _LoginState extends State<Login> {
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                         fontSize: 20),),
-                  onPressed: () {
-                    // print(nameController.text);
-                    // print(passwordController.text);
+                  onPressed: () async {
 
-                    String username = nameController.text.trim();
-
-                    // Check for specific usernames
-                    if (username == 'abcd' || username == 'doctor') {
+                    String user_type = await _validateuser(nameController.text, passwordController.text);
+                    // String username = nameController.text.trim();
+                    //
+                    // // Check for specific usernames
+                    print(user_type);
+                    if (user_type == 'Nurse' || user_type == 'Technician') {
                       // Navigate to OTScheduleScreen if the username matches
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MenuPage()),
+                        MaterialPageRoute(builder: (context) => PatientListScreen()),
                       );
-                    } else {
+
+                    } else if (user_type == 'Scheduler' || user_type == 'Administration') {
                       // Navigate to PatientListScreen for other usernames
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PatientListScreen()),
+                        MaterialPageRoute(builder: (context) => MenuPage()),
                       );
                     }
 
@@ -134,7 +140,13 @@ class _LoginState extends State<Login> {
                     style: TextStyle(fontSize: 20,decoration: TextDecoration.underline),
                   ),
                   onPressed: () {
-                    //signup screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Register(),
+                      ),
+                    );
                   },
                 )
               ],
@@ -142,5 +154,55 @@ class _LoginState extends State<Login> {
             ),
           ],
         ));
+  }
+
+  Future<String> _validateuser(String email, String password) async {
+    String apiUrl = '$baseUrl/login/';
+    String user_type ='';
+
+    try {
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'password': password,
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('login successful!');
+        print('response_login(): ${response.body}');
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        print('jsonResponse(): ${jsonResponse}');
+        if(jsonResponse.containsKey('user')){
+          print(jsonResponse['user'].runtimeType);
+          user_type = jsonResponse['user']['user_type'];
+        }
+      }
+      else{
+        print('login failed. Status code: ${response.statusCode}');
+        showDialog(context: context, builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Please enter valid credentials'),
+            //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+            actions: <Widget>[TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Disable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),],
+          );
+        });
+      }
+      //return user_type;
+    }
+    catch (e){
+      print('Error sending request: $e');
+    }
+    return user_type;
   }
 }
