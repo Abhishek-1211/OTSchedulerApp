@@ -282,12 +282,22 @@ class _MenuPageState extends State<MenuPage> {
       responseData.forEach((dynamic item) {
         if (item is Map<String, dynamic>) {
           item.forEach((key, value) {
-            dateRangeMap[key] = value.toString(); // Convert value to String if needed
+            // handled edge case if earliest date and latest date is null
+            // as for null values error screen was being shown
+            if (value == null) {
+              if (key == 'earliest date') {
+                dateRangeMap[key] = "2023-01-01";
+              } else if (key == 'latest date') {
+                dateRangeMap[key] = "2024-01-01";
+              }
+            } else {
+              dateRangeMap[key] = value.toString(); // Convert value to String if needed
+            }
           });
         }
       });
 
-      print(dateRangeMap.keys);
+      print(dateRangeMap.values);
 
 
 
