@@ -12,6 +12,8 @@ class PatientListScreen extends StatefulWidget {
 class _PatientListScreenState extends State<PatientListScreen> {
   DateTime? selectedDate;
   List<String> patientList = [];
+  List<String> doctorList = [];
+  List<String> procedureList = [];
   List<int> surgery_id = [];
   List<String> ot_numbers = [];
   List<DateTime> surgery_date = [];
@@ -109,6 +111,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                             otNumber: ot_numbers[index],
                                             surgeryDate: surgery_date[
                                                 index], // Pass DateTime value
+                                            doctorName: doctorList[index],
+                                            procedureName: procedureList[index],
                                           )));
                             },
                           ));
@@ -170,6 +174,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   'otNumber': e['ot_number'] as String,
                   'surgery_date': DateFormat('MM/dd/yyyy')
                       .parse(e['surgery_date'] as String),
+                  'doctor_name': e['doctor_name'] as String,
+                  'procedure_name' : e['procedure_name'] as String,
                 })
             .toList();
 
@@ -207,6 +213,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
           surgery_date = patients
               .map<DateTime>((e) => e['surgery_date'] as DateTime)
               .toList(); // Store as DateTime
+          doctorList = patients.map<String>((e) => e['doctor_name'] as String).toList();
+          procedureList = patients.map<String>((e) => e['procedure_name'] as String).toList();
           isSubmitted = true;
         });
       } else {

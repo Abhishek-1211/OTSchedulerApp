@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 class CapturedRecord extends StatefulWidget {
   // int mrd;
   String patientName;
+  String doctorName;
+  String procedureName;
   int surgeryId;
   String otNumber;
   final DateTime surgeryDate;
@@ -18,7 +20,7 @@ class CapturedRecord extends StatefulWidget {
   // String deptName;
 
   // CapturedRecord({required this.mrd, required this.patientName, required this.doctorName, required this.surgeryName, required this.otType, required this.deptName});
-  CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber, required this.surgeryDate});
+  CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber, required this.surgeryDate, required this.doctorName, required this.procedureName});
 
   @override
   State<CapturedRecord> createState() => _CapturedRecordState();
@@ -67,6 +69,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     // Format the time as desired
     String formattedTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
     return formattedTime;
+
   }
 
   Color getBoxColor(int index) {
@@ -398,6 +401,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                           ? null
                                           : () {
                                         wheeledOutFromTime = getCurrentTime();
+                                        print('wheeledOutToTime $wheeledOutToTime');
                                         print('Time - ${getCurrentTime()}');
                                         setState(() {
                                           wheeledOutFromTimeDisabled = true;
@@ -437,6 +441,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
     String formattedDate = DateFormat('MM/dd/yyyy').format(widget.surgeryDate);
 
+    print(widget.doctorName);
     Map<String, dynamic> postData = {
       'scheduled_surgery_id': widget.surgeryId,
       'ot_number': widget.otNumber,
@@ -454,6 +459,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
       'wheeled_out_from_Post_OP': wheeledOutFromTime,
       //'surgery_date': '08/22/2023'
       'surgery_date': formattedDate,
+      'doctor_name' : widget.doctorName,
+      'procedure_name' : widget.procedureName
     };
 
     // Send POST request using http package
