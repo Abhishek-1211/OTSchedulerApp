@@ -21,10 +21,18 @@ class _LoginState extends State<Login> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String baseUrl = 'http://127.0.0.1:8000/api';
+  bool _passwordVisible = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: <Widget>[
@@ -64,18 +72,29 @@ class _LoginState extends State<Login> {
                 controller: nameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Username',
+                  labelText: 'email',
                 ),
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(150, 30, 150, 0),
               child: TextField(
-                obscureText: true,
+                obscureText: !_passwordVisible,
                 controller: passwordController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),

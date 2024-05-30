@@ -14,12 +14,18 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   Map userData = {};
-  List<String> dropdownItems = ['Nurse', 'Technician', 'Scheduler', 'Administration'];
+  List<String> dropdownItems = [
+    'Nurse',
+    'Technician',
+    'Scheduler',
+    'Administration'
+  ];
   late String selectedDropdownItem;
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  bool _passwordVisible = false;
   String baseUrl = 'http://127.0.0.1:8000/api';
 
   final _formkey = GlobalKey<FormState>();
@@ -28,6 +34,7 @@ class _RegisterState extends State<Register> {
     super.initState();
     selectedDropdownItem =
         dropdownItems[0]; // Initialize selectedDropdownItem here
+    _passwordVisible = false;
   }
 
   @override
@@ -101,7 +108,7 @@ class _RegisterState extends State<Register> {
                       padding: const EdgeInsets.fromLTRB(180, 15, 180, 0),
                       child: TextFormField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: !_passwordVisible,
                         validator: MultiValidator([
                           RequiredValidator(errorText: 'Enter the password'),
                           MinLengthValidator(4,
@@ -114,6 +121,17 @@ class _RegisterState extends State<Register> {
                             prefixIcon: Icon(
                               Icons.password_rounded,
                               color: Colors.grey,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
                             ),
                             errorStyle: TextStyle(fontSize: 18.0),
                             border: OutlineInputBorder(
@@ -217,6 +235,7 @@ class _RegisterState extends State<Register> {
                               //   'user_type': selectedDropdownItem,
                               // };
                               _registerUser();
+                              //Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
                             }
                           },
                         ),
@@ -226,52 +245,10 @@ class _RegisterState extends State<Register> {
                         height: 50,
                       ),
                     )),
-                    // Center(
-                    //   child: Padding(
-                    //     padding: EdgeInsets.only(top: 20),
-                    //     child: Center(
-                    //       child: Text(
-                    //         'Or Sign Up Using',
-                    //         style: TextStyle(fontSize: 18, color: Colors.black),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Center(
-                    //   child: Padding(
-                    //     padding: EdgeInsets.only(top: 20, left: 90),
-                    //     child: Row(
-                    //       children: [
-                    //         Container(
-                    //             height: 40,
-                    //             width: 40,
-                    //             child: Image.asset(
-                    //               'assets/google.png',
-                    //               fit: BoxFit.cover,
-                    //             )),
-                    //         Container(
-                    //           height: 70,
-                    //           width: 70,
-                    //           child: Image.asset(
-                    //             'assets/vishal.png',
-                    //             fit: BoxFit.cover,
-                    //           ),
-                    //         ),
-                    //         Container(
-                    //           height: 40,
-                    //           width: 40,
-                    //           child: Image.asset(
-                    //             'assets/google.png',
-                    //             fit: BoxFit.cover,
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
                     Center(
                       child: GestureDetector(
                         onTap: () {
+                          Navigator.pop(context);
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(builder: (context) => Login()),
@@ -280,7 +257,7 @@ class _RegisterState extends State<Register> {
                         child: Container(
                           padding: EdgeInsets.only(top: 20),
                           child: Text(
-                            'SIGN IN',
+                            'Already Have account? SIGN IN',
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -312,21 +289,31 @@ class _RegisterState extends State<Register> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Registration successful
         print('Registration successful!');
-        showDialog(context: context, builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Confirmation.\nYour Have been successfully registered'),
-            //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-            actions: <Widget>[TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Disable'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),],
-          );
-        });
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                    'Confirmation.\nYou have been successfully registered'),
+                //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+                actions: <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => Login()),
+                      // );
+                    },
+                  ),
+                ],
+              );
+            });
       } else {
         // Registration failed
         print('Registration failed. Status code: ${response.statusCode}');
