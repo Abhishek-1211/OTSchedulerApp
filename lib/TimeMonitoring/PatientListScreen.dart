@@ -18,6 +18,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
   List<String> ot_numbers = [];
   List<DateTime> surgery_date = [];
   bool isSubmitted = false;
+
   //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
   String baseUrl = 'http://127.0.0.1:8000/api';
 
@@ -47,21 +48,21 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   child: Text('Select Date'),
                 ),
                 SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (selectedDate != null) {
-                      _fetchPatientList(
-                          selectedDate!); // Call function to fetch patient list
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Please select a date first.'),
-                        ),
-                      );
-                    }
-                  },
-                  child: Text('Submit'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     if (selectedDate != null) {
+                //       _fetchPatientList(
+                //           selectedDate!); // Call function to fetch patient list
+                //     } else {
+                //       ScaffoldMessenger.of(context).showSnackBar(
+                //         SnackBar(
+                //           content: Text('Please select a date first.'),
+                //         ),
+                //       );
+                //     }
+                //   },
+                //   child: Text('Submit'),
+                // ),
               ],
             ),
             SizedBox(height: 20),
@@ -92,30 +93,32 @@ class _PatientListScreenState extends State<PatientListScreen> {
                           return Container(
                               color: tileColor,
                               child: ListTile(
-                            title: Text(patientList[index]),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('OT Number: ${ot_numbers[index]}'),
-                                Text('Surgery ID: ${surgery_id[index]}'),
-                              ],
-                            ),
-                            onTap: () {
-                              // Handle onTap event
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CapturedRecord(
-                                            patientName: patientList[index],
-                                            surgeryId: surgery_id[index],
-                                            otNumber: ot_numbers[index],
-                                            surgeryDate: surgery_date[
-                                                index], // Pass DateTime value
-                                            doctorName: doctorList[index],
-                                            procedureName: procedureList[index],
-                                          )));
-                            },
-                          ));
+                                title: Text(patientList[index]),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('OT Number: ${ot_numbers[index]}'),
+                                    Text('Surgery ID: ${surgery_id[index]}'),
+                                  ],
+                                ),
+                                onTap: () {
+                                  // Handle onTap event
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CapturedRecord(
+                                                patientName: patientList[index],
+                                                surgeryId: surgery_id[index],
+                                                otNumber: ot_numbers[index],
+                                                surgeryDate:
+                                                    surgery_date[index],
+                                                // Pass DateTime value
+                                                doctorName: doctorList[index],
+                                                procedureName:
+                                                    procedureList[index],
+                                              )));
+                                },
+                              ));
                         },
                       ),
                     ),
@@ -126,20 +129,6 @@ class _PatientListScreenState extends State<PatientListScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-    );
-    if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
-    }
   }
 
   Future<void> _fetchPatientList(DateTime date) async {
@@ -175,32 +164,37 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   'surgery_date': DateFormat('MM/dd/yyyy')
                       .parse(e['surgery_date'] as String),
                   'doctor_name': e['doctor_name'] as String,
-                  'procedure_name' : e['procedure_name'] as String,
+                  'procedure_name': e['procedure_name'] as String,
                 })
             .toList();
 
-        if (data.isEmpty){
+        if (data.isEmpty) {
           // ScaffoldMessenger.of(context).showSnackBar(
           //   SnackBar(
           //     content:
           //     Text('No data Available. Please select correct date.'),
           //   ),
           // );
-          showDialog(context: context, builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('No data available.\nPlease select correct date'),
-              //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-              actions: <Widget>[TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text('Disable'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),],
-            );
-          });
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                      'No data available.\nPlease select correct date'),
+                  //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+                  actions: <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child: const Text('Disable'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
         }
 
         setState(() {
@@ -213,8 +207,11 @@ class _PatientListScreenState extends State<PatientListScreen> {
           surgery_date = patients
               .map<DateTime>((e) => e['surgery_date'] as DateTime)
               .toList(); // Store as DateTime
-          doctorList = patients.map<String>((e) => e['doctor_name'] as String).toList();
-          procedureList = patients.map<String>((e) => e['procedure_name'] as String).toList();
+          doctorList =
+              patients.map<String>((e) => e['doctor_name'] as String).toList();
+          procedureList = patients
+              .map<String>((e) => e['procedure_name'] as String)
+              .toList();
           isSubmitted = true;
         });
       } else {
@@ -228,6 +225,31 @@ class _PatientListScreenState extends State<PatientListScreen> {
               Text('Failed to fetch patient list. Please try again later.'),
         ),
       );
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+      _fetchPatientList(selectedDate!);
+      //   if (selectedDate != null) {
+      //      // Call function to fetch patient list
+      //   // } else {
+      //   //   ScaffoldMessenger.of(context).showSnackBar(
+      //   //     SnackBar(
+      //   //       content: Text('Please select a date first.'),
+      //   //     ),
+      //   //   );
+      //   // }
+      // } else {}
     }
   }
 }

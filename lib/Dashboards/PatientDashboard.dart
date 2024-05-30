@@ -6,12 +6,12 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class PatientDashboard extends StatefulWidget {
-
-
   DateTime? selectedFromDate;
   DateTime? selectedToDate;
 
-  PatientDashboard({required this.selectedFromDate, required this.selectedToDate});
+  PatientDashboard(
+      {required this.selectedFromDate, required this.selectedToDate});
+
   @override
   _PatientDashboardState createState() => _PatientDashboardState();
 }
@@ -24,10 +24,11 @@ class _PatientDashboardState extends State<PatientDashboard> {
   List<AgeDistributionData> chartData = [];
 
   //List<SurgeryData> chartData = [];
-  Map <String, double> dataMap = {};
+  Map<String, double> dataMap = {};
   final colorList = <Color>[
     Colors.greenAccent,
   ];
+
   // List<AverageSurgeryDuration> avgSurgeryDurationData = [];
 
   String baseUrl = 'http://127.0.0.1:8000/api';
@@ -41,7 +42,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
     selectedFromDate = widget.selectedFromDate!;
     selectedToDate = widget.selectedToDate!;
     print('initState()-selectedFromDate: $selectedFromDate');
-    fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    fromDateController =
+        TextEditingController(text: _formatDate(selectedFromDate));
     toDateController = TextEditingController(text: _formatDate(selectedToDate));
     //_otUtilization();
   }
@@ -60,7 +62,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('_getGenderDistribution(): Data Received from the backend successfully.');
+      print(
+          '_getGenderDistribution(): Data Received from the backend successfully.');
 
       // Parse the JSON response
       Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -100,7 +103,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
     }
   }
 
-
   void _getAgeDistribution() async {
     String apiUrl = '$baseUrl/age-distribution/';
 
@@ -110,7 +112,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('_getAgeDistribution(): Data Received from the backend successfully.');
+      print(
+          '_getAgeDistribution(): Data Received from the backend successfully.');
 
       // Parse the JSON response
       Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -126,9 +129,9 @@ class _PatientDashboardState extends State<PatientDashboard> {
       // dataMap.remove('total_patients');
       print('ageDistributionList:$ageDistributionList');
       setState(() {
-        chartData.addAll(
-            ageDistributionList.map((item) => AgeDistributionData.fromJson(item)).toList());
-
+        chartData.addAll(ageDistributionList
+            .map((item) => AgeDistributionData.fromJson(item))
+            .toList());
       });
       print('chartData:$chartData');
       //
@@ -141,11 +144,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
       //print('Error sending data to the backend: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
-
   }
 
-  Widget _buildBarChart<T>(List<AgeDistributionData> data, String xAxisTitle, String yAxisTitle) {
-
+  Widget _buildBarChart<T>(
+      List<AgeDistributionData> data, String xAxisTitle, String yAxisTitle) {
     Color barColor = Colors.teal; // Default color
     String legendItemText = 'Data';
 
@@ -191,130 +193,172 @@ class _PatientDashboardState extends State<PatientDashboard> {
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize:
-            Size.fromHeight(1.0), // Set the height of the divider
+                Size.fromHeight(1.0), // Set the height of the divider
             child:
-            Divider(color: Colors.grey), // Divider below the app bar title
+                Divider(color: Colors.grey), // Divider below the app bar title
           ),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      //Padding()
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: fromDateController,
-                          canRequestFocus: false,
-                          decoration: InputDecoration(
-                            labelText: 'From Date',
-                            isDense: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            prefixIcon: Icon(Icons.calendar_today, size: 20),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.indigoAccent,
-                        ),
-                        child: IconButton(
-                          onPressed: () => _selectFromDate(context),
-                          icon: Icon(Icons.calendar_today_outlined),
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 50),
-                      Container(
-                        width: 200,
-                        child: TextField(
-                          controller: toDateController,
-                          canRequestFocus: false,
-                          decoration: InputDecoration(
-                            labelText: 'To Date',
-                            isDense: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            prefixIcon: Icon(Icons.calendar_today, size: 20),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.indigoAccent,
-                        ),
-                        child: IconButton(
-                          onPressed: () => _selectToDate(context),
-                          icon: Icon(Icons.calendar_today_outlined),
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 30),
-                      Container(
-                        width: 150,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
-                              textStyle: TextStyle(color: Colors.white),
-                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24), ),
-                            child: const Text('Apply',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20),),
-                            onPressed: (){
-                              _getGenderDistribution();
-                              _getAgeDistribution();
-                            }
-
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 50),
+                  //Padding()
                   Container(
-                    width: 550,
-                    height: 550,
-                    child: dataMap.isNotEmpty
-                        ? PieChart(
-                      dataMap: dataMap,
-                      chartType: ChartType.disc,
-                      centerText: "Gender Distribution of Patients",
-                      baseChartColor: Colors.grey[300]!,
-                    )
-                        : Center(
-                      child: Text(
-                        'No data available',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    width: 200,
+                    child: TextField(
+                      controller: fromDateController,
+                      canRequestFocus: false,
+                      decoration: InputDecoration(
+                        labelText: 'From Date',
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.calendar_today, size: 20),
                       ),
                     ),
                   ),
+                  SizedBox(width: 10),
                   Container(
-                    height: 400,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.indigoAccent,
+                    ),
+                    child: IconButton(
+                      onPressed: () => _selectFromDate(context),
+                      icon: Icon(Icons.calendar_today_outlined),
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 50),
+                  Container(
+                    width: 200,
+                    child: TextField(
+                      controller: toDateController,
+                      canRequestFocus: false,
+                      decoration: InputDecoration(
+                        labelText: 'To Date',
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.calendar_today, size: 20),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.indigoAccent,
+                    ),
+                    child: IconButton(
+                      onPressed: () => _selectToDate(context),
+                      icon: Icon(Icons.calendar_today_outlined),
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 30),
+                  Container(
+                    width: 150,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlueAccent,
+                          textStyle: TextStyle(color: Colors.white),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 18, horizontal: 24),
+                        ),
+                        child: const Text(
+                          'Apply',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20),
+                        ),
+                        onPressed: () {
+                          _getGenderDistribution();
+                          _getAgeDistribution();
+                        }),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    //color: Color(0xFF381460),
+                    width: 400,
+                    height: 40,
+                    child: Text("Gender distribution of Patients",
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
+              Container(
+                width: 550,
+                height: 550,
+                child: dataMap.isNotEmpty
+                    ? PieChart(
+                        dataMap: dataMap,
+                        chartType: ChartType.disc,
+                        centerText: "Gender Distribution of Patients",
+                        baseChartColor: Colors.grey[300]!,
+                      )
+                    : Center(
+                        child: Text(
+                          'No data available',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+              ),
+              Divider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    //color: Color(0xFF381460),
+                    width: 400,
+                    height: 40,
+                    child: Text("Age distribution of Patients",
+                        textAlign: TextAlign.center,
+                        style:
+                        TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    //height: 400,
                     child: _buildBarChart(chartData, 'age-range', 'value'),
                   ),
-
-                  // SizedBox(height: 30),
-                  // Row(children: [
-                  //   Expanded(
-                  //     //width: 500,
-                  //     child: _buildBarChart(avgSurgeryDurationData, 'Doctor',
-                  //         'Average Surgery Time (hours)'),
-                  //   ),
-                  // ]),
                 ],
-              )),
+              ),
+              // SizedBox(height: 30),
+              // Row(children: [
+              //   Expanded(
+              //     //width: 500,
+              //     child: _buildBarChart(avgSurgeryDurationData, 'Doctor',
+              //         'Average Surgery Time (hours)'),
+              //   ),
+              // ]),
+            ],
+          )),
         ));
   }
 
@@ -332,8 +376,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         String date = "${selectedFromDate.toLocal()}".split(' ')[0];
         fromDateController?.text = date;
       });
-    }
-    else if (picked == null) {
+    } else if (picked == null) {
       setState(() {
         //selectedFromDate = selectedFromDate;
         String date = "${selectedFromDate.toLocal()}".split(' ')[0];
@@ -356,20 +399,19 @@ class _PatientDashboardState extends State<PatientDashboard> {
         String date = "${selectedToDate.toLocal()}".split(' ')[0];
         toDateController?.text = date;
       });
-    }else if (picked == null) {
+    } else if (picked == null) {
       setState(() {
         //selectedToDate = selectedToDate;
         toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
       });
     }
   }
-
 }
 
 class AgeDistributionData {
-
   String ageRange;
-  int value ;
+  int value;
+
   AgeDistributionData({required this.ageRange, required this.value});
 
   factory AgeDistributionData.fromJson(Map<String, dynamic> json) {
@@ -379,4 +421,3 @@ class AgeDistributionData {
     );
   }
 }
-

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:js_util';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,11 +21,16 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
   late TextEditingController toDateController;
   late DateTime selectedFromDate;
   late DateTime selectedToDate;
-
+  String selectedSpeciality = 'Ophthalmology';
+  //String selectedSurgery = '';
   List<SurgeryData> chartData = [];
+  List<UniqueSurgeryData> chartData2 = [];
   // List<AverageSurgeryDuration> avgSurgeryDurationData = [];
 
   String baseUrl = 'http://127.0.0.1:8000/api';
+
+  List<String> specialityList = [];
+  //Map<String, List<String>> surgeryMap = {};
 
   @override
   void initState() {
@@ -40,8 +46,41 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
     fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
     toDateController = TextEditingController(text: _formatDate(selectedToDate));
      _getSurgeryCount();
+     _getUniqueSurgeryCount();
     // _getAverageSurgeryDuration();
     //_otUtilization();
+    specialityList = [
+      'Ophthalmology',
+      'Dentistry',
+      'ORTHO',
+      'ENT',
+      'OBG',
+      'Plastic Surgery',
+      'Neuro Surgery',
+      'HBP Surgery/Organ Transplant'
+    ];
+
+    // surgeryMap = {
+    //   'Opthalmology': ['Cataract Left Eye', 'MICS+PCIOL Left Eye','MICS+PCIOL Right Eye','SICS+IOL'],
+    //   'Dentistry': ['Root Canal', 'Teeth Cleaning'],
+    //   'ORTHO': [
+    //     'Knee Replacement',
+    //     'Hip Replacement',
+    //     'Spinal Injection Epidural'
+    //   ],
+    //   'ENT': ['Oral Cavity Lesion Excisional Biopsy - Major', 'Septoplasty'],
+    //   'OBG': ['C-Section', 'Hysterectomy','Hysteroscopic Resection of Uterin Septum'],
+    //   'Plastic Surgery': [
+    //     'Rhinoplasty',
+    //     'Liposuction',
+    //     'Debridement',
+    //     'Secondary Suturing'
+    //   ],
+    //   'Neuro Surgery': ['Brain Tumor Removal', 'Spinal Fusion','Bifrontal Carinotomy'],
+    // };
+    //
+    // selectedSurgery =
+    //     surgeryMap[selectedSpeciality]!.first;
   }
 
   String _formatDate(DateTime dateTime) {
@@ -79,9 +118,51 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
     }
   }
 
+  void _getUniqueSurgeryCount() async {
+    String apiUrl = '$baseUrl/unique-department-surgery-count/';
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('_getUniqueSurgeryCount(): Data Received from the backend successfully.');
+
+      // Parse the JSON response
+      Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      //print(response.body.runtimeType);
+      List<dynamic> uniqueSurgeryList = [];
+
+
+      chartData2.clear();
+      if(responseData.containsKey('$selectedSpeciality')){
+        print(responseData.containsKey('$selectedSpeciality'));
+        uniqueSurgeryList = responseData['$selectedSpeciality'];
+      }
+
+
+      //print(chartData2.toString());
+      print('uniqueSurgeryList$uniqueSurgeryList');
+      setState(() {
+
+        for(var item in uniqueSurgeryList){
+          //print('${item['procedure_name']} + ${item['count']}');
+          chartData2.add(UniqueSurgeryData(procedureName: item['procedure_name'], count: item['count']));
+        }
+      });
+      // print('Chart Data - ${chartData[0].otNumber} | ${chartData[0].surgeryCount}');
+    } else {
+      //print('Error sending data to the backend: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
 
 
   Widget _buildBarChart<T>(List<T> data, String xAxisTitle, String yAxisTitle) {
+
     Color barColor = Colors.teal; // Default color
     String legendItemText = 'Data';
     Color labelColor = Colors.red;
@@ -91,11 +172,11 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
       legendItemText = 'Surgery Count';
       labelColor = Colors.red;
     }
-    // else if (T == AverageSurgeryDuration) {
-    //   barColor = Colors.redAccent;
-    //   legendItemText = 'Avg Surgery DurationData';
-    //   labelColor = Colors.lightBlueAccent;
-    // }
+    else if (T == UniqueSurgeryData) {
+      barColor = Colors.amberAccent;
+      //legendItemText = 'Avg Surgery DurationData';
+      labelColor = Colors.lightBlueAccent;
+    }
     return SfCartesianChart(
       //title: ChartTitle(text: 'Surgery Count Per Doctor'),
         isTransposed: true, // Change X and Y axis data
@@ -119,23 +200,23 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
               if (data is SurgeryData) {
                 return data.departmentName; // Use otNumber for SurgeryData
               }
-              // else if (data is AverageSurgeryDuration) {
-              //   return data.doctorName; // Use otNumber for UtilisationData
-              // }
+              else if (data is UniqueSurgeryData) {
+                return data.procedureName; // Use otNumber for UtilisationData
+              }
               return ''; // Default case
             },
             yValueMapper: (T data, _) {
               if (data is SurgeryData) {
                 return double.parse(data.surgeryCount);
               }
-              // else if (data is AverageSurgeryDuration) {
-              //   return data.getHoursDuration() ;
-              // }
+              else if (data is UniqueSurgeryData) {
+                return data.count ;
+              }
               return 0; // Default case
             },
             width: 0.2,
             color: barColor,
-            name: 'Total Marks',
+            //name: 'Total Marks',
             // gradient: LinearGradient(colors: Colors.primaries, tileMode: TileMode.clamp/*, transform: GradientRotation(10)*/),
             dataLabelSettings: DataLabelSettings(
                 isVisible: true,
@@ -150,6 +231,23 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
 
   @override
   Widget build(BuildContext context) {
+
+    // List<DropdownMenuItem<String>> dropdownItemsSurgery = [
+    //   for (String item in surgeryMap['$selectedSpeciality']!)
+    //     DropdownMenuItem<String>(
+    //       value: item,
+    //       child: Text(item),
+    //     )
+    // ];
+
+    List<DropdownMenuItem<String>> dropdownItemsSpeciality = [
+      for (String item in specialityList)
+        DropdownMenuItem<String>(
+          value: item,
+          child: Text(item),
+        )
+    ];
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Department Dashboard'),
@@ -240,6 +338,7 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
                                   fontSize: 20),),
                             onPressed: (){
                               _getSurgeryCount();
+                              _getUniqueSurgeryCount();
                               //_getAverageSurgeryDuration();
                             }
 
@@ -247,7 +346,20 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        //color: Color(0xFF381460),
+                        width: 400,
+                        height: 40,
+                        child: Text("Surgery Count:Speciality wise",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                      ),
+                    ],
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -256,16 +368,60 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
                       SizedBox(width: 30)
                     ],
                   ),
-                 // SizedBox(height: 30),
-                  // Row(children: [
-                  //   Expanded(
-                  //     //width: 500,
-                  //     child: _buildBarChart(avgSurgeryDurationData, 'Doctor',
-                  //         'Average Surgery Time (hours)'),
-                  //   ),
-                  // ]),
-                ],
-              )),
+                 SizedBox(height: 30),
+                  Divider(
+                    color: Colors.black54,
+                    thickness: 2,
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        //color: Color(0xFF381460),
+                        width: 450,
+                        height: 40,
+                        child: Text("Unique Surgery Count:Speciality wise",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 275,
+                          child: DropdownButtonFormField(
+                              items: dropdownItemsSpeciality,
+                              decoration: InputDecoration(
+                                labelText: 'Select Speciality',
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                              hint: Text('Select Item'),
+                              value: selectedSpeciality,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedSpeciality = newValue!;
+                                  _getUniqueSurgeryCount();
+                                  //selectedSurgery = surgeryMap[newValue]!.first;
+                                  //_filterDoctorData(selectedSurgery);
+                                });
+                              }),
+                        ),
+                        //SizedBox(width: 50),
+                  ]),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: _buildBarChart(chartData2, 'Surgery Name', 'Count'))
+                    ],
+                  ),
+                ],)),
         ));
   }
 
@@ -330,4 +486,16 @@ class SurgeryData {
   }
 }
 
+class UniqueSurgeryData {
+  final String procedureName;
+  final int count;
+
+  UniqueSurgeryData({required this.procedureName, required this.count});
+  // factory SurgeryData.fromJson(Map<String, dynamic> json) {
+  //   return SurgeryData(
+  //     departmentName: json.keys.first.toString(),
+  //     surgeryCount: json.values.first.toString() ?? '',
+  //   );
+  // }
+}
 

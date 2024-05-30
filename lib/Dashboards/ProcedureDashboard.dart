@@ -23,12 +23,12 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
   late TextEditingController toDateController;
   late DateTime selectedFromDate;
   late DateTime selectedToDate;
-  String selectedSpeciality = 'Opthalmology';
+  String selectedSpeciality = 'Ophthalmology';
   String selectedSurgery = '';
 
   // List of items in our dropdown menu
   List<String> specialityList = [
-    'Opthalmology',
+    'Ophthalmology',
     'Dentistry',
     'ORTHO',
     'ENT',
@@ -38,7 +38,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
   ];
 
   Map<String, List<String>> surgeryMap = {
-    'Opthalmology': ['Cataract Left Eye', 'MICS+PCIOL Left Eye'],
+    'Ophthalmology': ['Cataract Left Eye', 'MICS+PCIOL Left Eye'],
     'Dentistry': ['Root Canal', 'Teeth Cleaning'],
     'ORTHO': [
       'Knee Replacement',
@@ -54,6 +54,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
       'Secondary Suturing'
     ],
     'Neuro Surgery': ['Brain Tumor Removal', 'Spinal Fusion'],
+    'HBP Surgery/Organ Transplant' : [],
   };
 
   List<DoctorData> doctorDataList = [];
@@ -585,8 +586,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
       );
 
       if (response.statusCode == 200) {
-        print(
-            '_getProcedureTimeComparison(): Data Received from the backend successfully.');
+        print('_getProcedureTimeComparison(): Data Received from the backend successfully.');
 
         // Parse the JSON response
         List<dynamic> responseList = jsonDecode(response.body);
