@@ -277,8 +277,11 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         Map<String, dynamic> end_time = jsonResponse['End_time'];
         Map<String, dynamic> date = jsonResponse['Date of Surgery'];
         Map<String, dynamic> mrdNumbers = jsonResponse['MRD'];
+        Map<String, dynamic> technicalLeads = jsonResponse['Technicial T/L'];
+        Map<String, dynamic> nursingLeads = jsonResponse['Nursing T/L'];
 
-        print(mrdNumbers.values);
+        //print(mrdNumbers.values);
+        //print('nursingLeads $nursingLeads');
 
         for (var key in otData.keys) {
           // scheduledOTList[otData[key].toString()] = department[key];
@@ -334,7 +337,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
               date[key],
               start_time[key],
               end_time[key],
-              otData[key]
+              otData[key],
           );
         }
       } else {

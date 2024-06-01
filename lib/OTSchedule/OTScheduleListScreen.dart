@@ -184,6 +184,22 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           Text('Special Equipment', style: TextStyle(color: Colors.white)),
         ),
       ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          color: Colors.blueAccent,
+          child:
+          Text('Technical T/L', style: TextStyle(color: Colors.white)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          color: Colors.blueAccent,
+          child:
+          Text('Nursing T/L', style: TextStyle(color: Colors.white)),
+        ),
+      ),
     ];
 
     // Define table rows
@@ -200,6 +216,8 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
       widget.scheduleData['Special Equipment'][entry.key];
       final String department = widget.scheduleData['Department'][entry.key];
       final String ageSex = widget.scheduleData['Age/Sex'][entry.key];
+      final String technicalLeads = widget.scheduleData['Technicial T/L'][entry.key];
+      final String nursingLeads = widget.scheduleData['Nursing T/L'][entry.key];
 
       return DataRow(
         color: MaterialStateColor.resolveWith((states) {
@@ -220,7 +238,8 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           DataCell(Text(patientName)),
           DataCell(Text(ageSex)),
           DataCell(Text(specialEquipment)),
-          //DataCell(Text(endTime)),
+          DataCell(Text(technicalLeads)),
+          DataCell(Text(nursingLeads)),
         ],
       );
     }).toList();
