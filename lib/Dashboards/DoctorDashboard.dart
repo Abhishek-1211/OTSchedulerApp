@@ -403,16 +403,47 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    height: 50,
+                    child:
+                    Text("Surgery Count per Doctor",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
               Row(
                 children: [
                   Expanded(
                     child: _buildBarChart(chartData, 'Doctor', 'Surgery Count'),
                   ),
-                  SizedBox(width: 30)
+                  //SizedBox(width: 30)
                 ],
               ),
-              SizedBox(height: 30),
+              SizedBox(height:20),
+              Divider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    height: 50,
+                    child:
+                    Text("Average Surgery Duration",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
               Row(children: [
                 Expanded(
                   //width: 500,

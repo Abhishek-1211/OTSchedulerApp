@@ -431,7 +431,8 @@ class _OTDashboardState extends State<OTDashboard> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            //mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -514,7 +515,21 @@ class _OTDashboardState extends State<OTDashboard> {
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    height: 50,
+                    child:
+                    Text("Surgery Count per OT",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
+              //SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
@@ -524,7 +539,25 @@ class _OTDashboardState extends State<OTDashboard> {
                   ),
                 ],
               ),
-              SizedBox(height: 30),
+              SizedBox(height:20),
+              Divider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    height: 50,
+                    child:
+                    Text("Percentage Utilisation of  OT's",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
               Row(children: [
                 Expanded(
                   //width: 500,
@@ -532,7 +565,25 @@ class _OTDashboardState extends State<OTDashboard> {
                       utilisationData, 'OT Number', 'Utilization Percentage'),
                 ),
               ]),
-              SizedBox(height: 30),
+              SizedBox(height:20),
+              Divider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    height: 50,
+                    child:
+                    Text("Average time taken per Step for OT",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                ],
+              ),
               Row(children: [
                 Expanded(
                   //width: 500,
