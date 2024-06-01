@@ -279,6 +279,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         Map<String, dynamic> mrdNumbers = jsonResponse['MRD'];
         Map<String, dynamic> technicalLeads = jsonResponse['Technicial T/L'];
         Map<String, dynamic> nursingLeads = jsonResponse['Nursing T/L'];
+        Map<String, dynamic> specialEquipment = jsonResponse['Special Equipment'];
 
         //print(mrdNumbers.values);
         //print('nursingLeads $nursingLeads');
@@ -316,6 +317,17 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
               age[key].split('/')[1], mrdNumbers[key], date[key]);
         }
 
+        //API for OT staff
+        for (var key in nursingLeads.keys) {
+          await Future.delayed(Duration(milliseconds: 500));
+          sendOtStafffList(nursingLeads[key], department[key], 'Nursing T/L');
+        }
+
+        for (var key in technicalLeads.keys) {
+          await Future.delayed(Duration(milliseconds: 500));
+          sendOtStafffList(technicalLeads[key], department[key], 'Technical T/L');
+        }
+
         //print(patient_id);
         //API for scheduled surgeries
         //DateFormat format = DateFormat('MM/dd/yy');
@@ -338,6 +350,10 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
               start_time[key],
               end_time[key],
               otData[key],
+              technicalLeads[key],
+              nursingLeads[key],
+              specialEquipment[key],
+
           );
         }
       } else {
@@ -388,6 +404,26 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('Data sent to the backend successfully.');
+      // Optionally, handle the response from the backend if needed
+    } else {
+      print('Error sending data to the backend: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
+  void sendOtStafffList(String staff_name, String department, String designation) async {
+    String apiUrl = '$baseUrl/otstaff/';
+
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(
+          {'ot_staff_name': staff_name, 'ot_staff_department':
+          department, 'ot_staff_designation': designation}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('otStafffList():Data sent to the backend successfully.');
       // Optionally, handle the response from the backend if needed
     } else {
       print('Error sending data to the backend: ${response.statusCode}');
@@ -486,7 +522,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
   }
 
   void sendScheduleSurgery(procedure, department, doctor, patient, mrd, date,
-      start_time, end_time, otData) async {
+      start_time, end_time, otData, technician_tl, nurse_tl, specialEquipment) async {
     String apiUrl = '$baseUrl/schedule/';
     print('DateFormat:${DateFormat('MM/dd/yyyy').parse(date).toString().split(' ')[0]}');
 
@@ -536,7 +572,10 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
           'surgery_start_time': start_time,
           'surgery_end_time': end_time,
           'surgery_date': date,
-          'ot_number': otData
+          'ot_number': otData,
+          'technician_tl': technician_tl,
+          'nurse_tl': nurse_tl,
+          'special_equipment': specialEquipment,
         }),
       );
 
