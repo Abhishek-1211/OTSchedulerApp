@@ -558,7 +558,35 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
     //}
   }
 
+  String detectDateFormat(String dateString) {
+    List<String> dateFormats = [
+      "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+      "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      "yyyy-MM-dd",
+      "MM/dd/yyyy",
+      "dd/MM/yyyy",
+      "yyyy/MM/dd",
+      // Add more formats as needed
+    ];
+
+    for (String format in dateFormats) {
+      try {
+        DateFormat dateFormat = DateFormat(format);
+        dateFormat.parseStrict(dateString); // If parsing succeeds, the format is correct
+        return format; // Return the format that successfully parsed the date
+      } catch (e) {
+        // Continue to the next format if parsing fails
+      }
+    }
+
+    throw FormatException("Unknown date format: $dateString");
+  }
+
   Future<void> _extractDateFromFile() async {
+
+    DateTime parsedDate = DateTime(1970, 1, 1);
+    String formattedDate ='';
+
     try {
       var bytes = _file != null ? await _file!.readAsBytes() : _webFile!;
       var excel = Excel.decodeBytes(bytes);
@@ -568,10 +596,14 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
         var dateColumn = table.cell(CellIndex.indexByString('A2')).value; // Adjust cell index as per your file
 
         print('dateColumn: ${dateColumn.toString()}');
-        // Parse the date
-        DateTime parsedDate = DateFormat('M/d/yyyy').parse(dateColumn.toString());
-        // Format the date
-        String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+        String format = detectDateFormat(dateColumn.toString());
+        print('Detected date format: $format');//Detected date format: MM/dd/yyyy
+        parsedDate = DateFormat(format).parse(dateColumn.toString());
+        //print('parsedDate:$parsedDate');
+        formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+        //print('formattedDate:$formattedDate');
+        //formattedDate:2024-05-20
 
         setState(() {
           _uploadedDate = formattedDate;
