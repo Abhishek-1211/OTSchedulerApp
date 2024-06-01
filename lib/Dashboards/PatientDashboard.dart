@@ -121,18 +121,19 @@ class _PatientDashboardState extends State<PatientDashboard> {
       print(responseData);
 
       List<dynamic> ageDistributionList = responseData['age_distribution'];
-      // for (var item in surgeryTypeList) {
-      //   item.forEach((key, value) {
-      //     dataMap[key] = value;
-      //   });
-      // }
-      // dataMap.remove('total_patients');
+
+      for(var item in ageDistributionList){
+        print(item.runtimeType);//_JsonMap
+        print(item['age_group']);
+      }
+
       print('ageDistributionList:$ageDistributionList');
       setState(() {
-        chartData.addAll(ageDistributionList
-            .map((item) => AgeDistributionData.fromJson(item))
-            .toList());
+        for(var item in ageDistributionList){
+          chartData.add(AgeDistributionData(ageRange: item['age_group'], value: item['count']));
+        }
       });
+
       print('chartData:$chartData');
       //
       // setState(() {
@@ -146,8 +147,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     }
   }
 
-  Widget _buildBarChart<T>(
-      List<AgeDistributionData> data, String xAxisTitle, String yAxisTitle) {
+  Widget _buildBarChart<T>(List<AgeDistributionData> data, String xAxisTitle, String yAxisTitle) {
     Color barColor = Colors.teal; // Default color
     String legendItemText = 'Data';
 
@@ -169,7 +169,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         BarSeries<AgeDistributionData, String>(
           dataSource: data,
           xValueMapper: (AgeDistributionData data, _) => data.ageRange,
-          yValueMapper: (AgeDistributionData data, _) => data.value.toDouble(),
+          yValueMapper: (AgeDistributionData data, _) => data.value,
           width: 0.2,
           color: barColor,
           name: 'Data',
@@ -411,13 +411,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
 class AgeDistributionData {
   String ageRange;
   int value;
+  //double percentage;
 
   AgeDistributionData({required this.ageRange, required this.value});
 
-  factory AgeDistributionData.fromJson(Map<String, dynamic> json) {
-    return AgeDistributionData(
-      ageRange: json.keys.first.toString(),
-      value: json.values.first,
-    );
-  }
 }
