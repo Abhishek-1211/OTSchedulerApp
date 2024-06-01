@@ -99,6 +99,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                   children: [
                                     Text('OT Number: ${ot_numbers[index]}'),
                                     Text('Surgery ID: ${surgery_id[index]}'),
+                                    Text('Surgeon: ${doctorList[index]}'),
                                   ],
                                 ),
                                 onTap: () {

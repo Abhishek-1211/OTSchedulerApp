@@ -72,7 +72,7 @@ class _LoginState extends State<Login> {
                 controller: nameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'email',
+                  labelText: 'Email',
                 ),
               ),
             ),
@@ -98,21 +98,22 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(150, 10, 150, 10),
-              child: TextButton(
-                onPressed: () {
-                  //forgot password screen
-                },
-                child: const Text('Forgot Password',
-                  style: TextStyle(
-                    fontSize: 18,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.fromLTRB(150, 10, 150, 10),
+            //   child: TextButton(
+            //     onPressed: () {
+            //       //forgot password screen
+            //     },
+            //     child: const Text('Forgot Password',
+            //       style: TextStyle(
+            //         fontSize: 18,
+            //         decoration: TextDecoration.underline,
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
+            SizedBox(height:25),
             Container(
                 height: 50,
                 //width: 25,
@@ -133,6 +134,8 @@ class _LoginState extends State<Login> {
                     // // Check for specific usernames
                     print(user_type);
                     if (user_type == 'Nurse' || user_type == 'Technician') {
+                      nameController.clear();
+                      passwordController.clear();
                       // Navigate to OTScheduleScreen if the username matches
                       Navigator.push(
                         context,
@@ -140,6 +143,8 @@ class _LoginState extends State<Login> {
                       );
 
                     } else if (user_type == 'Scheduler' || user_type == 'Administration') {
+                      nameController.clear();
+                      passwordController.clear();
                       // Navigate to PatientListScreen for other usernames
                       Navigator.push(
                         context,
