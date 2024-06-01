@@ -20,11 +20,13 @@ class Dashboard extends StatefulWidget {
   int departmentCount;
   int procedureCount;
   int patientCount;
+  int otStaffCount;
   Map<String, String> dateRangeMap;
   //Date earliestDate;
   //Date
   Dashboard({required this.otCount, required this.doctorsCount, required this.departmentCount,
-    required this.patientCount, required this.procedureCount, required this.dateRangeMap});
+    required this.patientCount,
+    required this.procedureCount, required this.otStaffCount, required this.dateRangeMap});
 
 
 
@@ -45,6 +47,7 @@ class _DashboardState extends State<Dashboard> {
   late int departmentCount;
   late int procedureCount;
   late int patientCount;
+  late int otStaffCount;
 
   @override
   void initState() {
@@ -54,7 +57,7 @@ class _DashboardState extends State<Dashboard> {
     departmentCount = widget.departmentCount;
     procedureCount = widget.procedureCount;
     patientCount = widget.patientCount;
-
+    otStaffCount = widget.otStaffCount;
     print('daterange:${widget.dateRangeMap.values}');
     fromDateController = TextEditingController(text: '${widget.dateRangeMap['earliest date']}');
     toDateController = TextEditingController(text: '${widget.dateRangeMap['latest date']}');
@@ -220,7 +223,7 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               CircleButton(
-                title: '0',
+                title: '${otStaffCount}',
                 label: 'OT Staff',
                 circleColor: '#93B1A6',
                 onTap: () {
