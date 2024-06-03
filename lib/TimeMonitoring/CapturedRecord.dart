@@ -12,6 +12,9 @@ class CapturedRecord extends StatefulWidget {
   String procedureName;
   int surgeryId;
   String otNumber;
+  String technician;
+  String nurse;
+  String specialEquipment;
   final DateTime surgeryDate;
   // String dob;
   // String otType;
@@ -20,7 +23,9 @@ class CapturedRecord extends StatefulWidget {
   // String deptName;
 
   // CapturedRecord({required this.mrd, required this.patientName, required this.doctorName, required this.surgeryName, required this.otType, required this.deptName});
-  CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber, required this.surgeryDate, required this.doctorName, required this.procedureName});
+  CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber, required this.surgeryDate,
+    required this.doctorName, required this.procedureName, required this.technician, required this.nurse,
+  required this.specialEquipment});
 
   @override
   State<CapturedRecord> createState() => _CapturedRecordState();
@@ -94,7 +99,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
               Text('Name - ${widget.patientName}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               Text('Surgery ID - ${widget.surgeryId}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               Text('OT Number - ${widget.otNumber}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              // Text('OT Type - ${widget.patientName}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Surgeon - ${widget.doctorName}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               // Text('Department - ${widget.patientName}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
               SizedBox(height: 20),
@@ -132,6 +137,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                   SizedBox(width: 30),
                                 ],
                               ),
+                              //Text('$preOPStartTime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                             ],
                           )),
                       SizedBox(height: 20),
@@ -460,7 +466,10 @@ class _CapturedRecordState extends State<CapturedRecord> {
       //'surgery_date': '08/22/2023'
       'surgery_date': formattedDate,
       'doctor_name' : widget.doctorName,
-      'procedure_name' : widget.procedureName
+      'procedure_name' : widget.procedureName,
+      'technician_tl': widget.technician,
+      'nurse_tl': widget.nurse,
+      'special_equipment': widget.specialEquipment,
     };
 
     // Send POST request using http package
@@ -484,7 +493,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Disable'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

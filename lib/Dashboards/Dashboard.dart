@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:my_flutter_app/Dashboards/OTDashboard.dart';
 import 'package:my_flutter_app/Dashboards/DoctorDashboard.dart';
 import 'package:my_flutter_app/Dashboards/DepartmentDashboard.dart';
+import 'package:my_flutter_app/Dashboards/OTStaffDashboard.dart';
 import 'package:my_flutter_app/Dashboards/ProcedureDashboard.dart';
 import 'package:my_flutter_app/Dashboards/PatientDashboard.dart';
 
@@ -159,6 +160,8 @@ class _DashboardState extends State<Dashboard> {
                               _getDepartmentCount(selectedFromDate,selectedToDate);
                               _getProcedureCount(selectedFromDate,selectedToDate);
                               _getPatientCount(selectedFromDate,selectedToDate);
+                              _getOTStaffCount(selectedFromDate,selectedToDate);
+
                             }
 
                         ),
@@ -227,6 +230,8 @@ class _DashboardState extends State<Dashboard> {
                 label: 'OT Staff',
                 circleColor: '#93B1A6',
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      OTStaffDashboard(selectedFromDate: selectedFromDate, selectedToDate: selectedToDate)));
 
                   // Implement onTap for Option 6
                 },
@@ -516,6 +521,35 @@ class _DashboardState extends State<Dashboard> {
 
   }
 
+
+  void _getOTStaffCount(DateTime selectedFromDate, DateTime selectedToDate) async {
+    String apiUrl = '$baseUrl/ot_staff_count/';
+    //String apiUrl = '$baseUrl/patient-count/';
+
+    String fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+    String toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+    apiUrl += '?start_date=$fromDate&end_date=$toDate';
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('_getOTStaffCount(): Data Received from the backend successfully.');
+
+      print(jsonDecode(response.body).runtimeType);
+
+      Map<String,dynamic> responseData = jsonDecode(response.body);
+      print(responseData['message']);
+      // Extract the count value from the message
+      //List<dynamic> message = responseData['message'];
+      otStaffCount = int.parse(responseData['message'].toString().split(':').last.trim());
+      print('otstaffCount:$otStaffCount');
+    } else {
+      //print('Error sending data to the backend: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
 
   void _getProcedureCount(DateTime selectedFromDate, DateTime selectedToDate) async{
 

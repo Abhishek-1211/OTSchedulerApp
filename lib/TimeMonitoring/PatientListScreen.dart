@@ -14,6 +14,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
   List<String> patientList = [];
   List<String> doctorList = [];
   List<String> procedureList = [];
+  List<String> techniciansList = [];
+  List<String> nursesList = [];
+  List<String> specialEquipmentList = [];
   List<int> surgery_id = [];
   List<String> ot_numbers = [];
   List<DateTime> surgery_date = [];
@@ -117,6 +120,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                                 doctorName: doctorList[index],
                                                 procedureName:
                                                     procedureList[index],
+                                                technician: techniciansList[index],
+                                                nurse: nursesList[index],
+                                                specialEquipment: specialEquipmentList[index],
                                               )));
                                 },
                               ));
@@ -166,6 +172,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       .parse(e['surgery_date'] as String),
                   'doctor_name': e['doctor_name'] as String,
                   'procedure_name': e['procedure_name'] as String,
+                  'technician': e['technician_tl'] as String,
+                  'nurse': e['nurse_tl'] as String,
+                  'specialEquipment': e['special_equipment'] as String,
                 })
             .toList();
 
@@ -213,6 +222,12 @@ class _PatientListScreenState extends State<PatientListScreen> {
           procedureList = patients
               .map<String>((e) => e['procedure_name'] as String)
               .toList();
+          techniciansList =
+              patients.map<String>((e) => e['technician'] as String).toList();
+          nursesList =
+              patients.map<String>((e) => e['nurse'] as String).toList();
+          specialEquipmentList =
+              patients.map<String>((e) => e['specialEquipment'] as String).toList();
           isSubmitted = true;
         });
       } else {
@@ -220,6 +235,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
       }
     } catch (e) {
       print('Error fetching patient list: $e');
+      print(techniciansList);
+      print(nursesList);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content:
