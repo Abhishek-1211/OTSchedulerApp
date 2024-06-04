@@ -120,14 +120,59 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                                 doctorName: doctorList[index],
                                                 procedureName:
                                                     procedureList[index],
-                                                technician: techniciansList[index],
+                                                technician:
+                                                    techniciansList[index],
                                                 nurse: nursesList[index],
-                                                specialEquipment: specialEquipmentList[index],
+                                                specialEquipment:
+                                                    specialEquipmentList[index],
                                               )));
                                 },
                               ));
                         },
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 180,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                                  textStyle: const TextStyle(color: Colors.white),
+                                  elevation: 40,
+                                  shape: const RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.all(Radius.circular(2)))),
+                              onPressed: (){
+                                _showDialogForm(0);
+                              },
+                              child: Text('           Add\nEmergency Surgery',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15),)),
+                        ),
+                        SizedBox(width: 40),
+                        Container(
+                          height: 50,
+                          width: 180,
+                          child: ElevatedButton(
+                              //style: ElevatedButton.styleFrom( disabledForegroundColor: Colors.red.withOpacity(0.38), disabledBackgroundColor: Colors.red.withOpacity(0.12)),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                                  textStyle: const TextStyle(color: Colors.white),
+                                  elevation: 40,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(2)))),
+                              onPressed: (){
+                                _showDialogForm(1);
+                              },
+                              child: Text('        Add\nAdd-on Surgery',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15),)),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -226,8 +271,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
               patients.map<String>((e) => e['technician'] as String).toList();
           nursesList =
               patients.map<String>((e) => e['nurse'] as String).toList();
-          specialEquipmentList =
-              patients.map<String>((e) => e['specialEquipment'] as String).toList();
+          specialEquipmentList = patients
+              .map<String>((e) => e['specialEquipment'] as String)
+              .toList();
           isSubmitted = true;
         });
       } else {
@@ -269,5 +315,117 @@ class _PatientListScreenState extends State<PatientListScreen> {
       //   // }
       // } else {}
     }
+  }
+
+  void _showDialogForm(int id) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          var nameController = TextEditingController();
+          var mrdNumber = TextEditingController();
+          var surgeonName = TextEditingController();
+          var department = TextEditingController();
+          var otNumber = TextEditingController();
+          var surgeryName = TextEditingController();
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(2.0))),
+            scrollable: true,
+            title: const Text(
+                'Please Enter Patient Details'),
+            //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+            content: Padding(padding: const EdgeInsets.all(8.0),
+            child: Form (
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Patient Name',
+                        //icon: Icon(Icons.account_box)
+                      ),
+                    ),
+                    TextFormField(
+                      controller: mrdNumber,
+                      decoration: InputDecoration(
+                          labelText: 'MRD Number',
+                          //icon: Icon(Icons.account_box)
+                      ),
+                    ),
+                    TextFormField(
+                      controller: surgeonName,
+                      decoration: InputDecoration(
+                          labelText: 'Surgeon Name',
+                          //icon: Icon(Icons.account_box)
+                      ),
+                    ),
+                    TextFormField(
+                      controller: department,
+                      decoration: InputDecoration(
+                          labelText: 'Department',
+                          //icon: Icon(Icons.account_box)
+                      ),
+                    ),
+                    TextFormField(
+                      controller: otNumber,
+                      decoration: InputDecoration(
+                          labelText: 'OT Number',
+                          //icon: Icon(Icons.account_box)
+                      ),
+                    ),
+                    TextFormField(
+                      controller: surgeryName,
+                      decoration: InputDecoration(
+                          labelText: 'Surgery Name',
+                          //icon: Icon(Icons.account_box)
+                      ),
+                    ),
+                  ],
+                ),
+             ),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(2)))
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CapturedRecord.emergency(
+                              patientName: nameController.text,
+                              otNumber: otNumber.text,
+                              //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
+                              surgeryDate:selectedDate!,
+                              surgeryId: id,
+                              doctorName: surgeonName.text,
+                              procedureName: surgeryName.text,
+                            )));
+                  }
+                  , child: Text("Submit",
+                style: TextStyle(color: Colors.white),
+              )
+              )
+              // TextButton(
+              //   style: TextButton.styleFrom(
+              //     textStyle: Theme.of(context).textTheme.labelLarge,
+              //   ),
+              //   child: const Text('OK'),
+              //   onPressed: () {
+              //     Navigator.of(context).pop();
+              //     //Navigator.of(context).pop();
+              //     // Navigator.push(
+              //     //   context,
+              //     //   MaterialPageRoute(builder: (context) => Login()),
+              //     // );
+              //   },
+              // ),
+            ],
+          );
+        });
   }
 }

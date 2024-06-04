@@ -15,7 +15,7 @@ class CapturedRecord extends StatefulWidget {
   String technician;
   String nurse;
   String specialEquipment;
-  final DateTime surgeryDate;
+  DateTime surgeryDate;
   // String dob;
   // String otType;
   // String surgeryName;
@@ -26,6 +26,9 @@ class CapturedRecord extends StatefulWidget {
   CapturedRecord({required this.patientName, required this.surgeryId, required this.otNumber, required this.surgeryDate,
     required this.doctorName, required this.procedureName, required this.technician, required this.nurse,
   required this.specialEquipment});
+
+  CapturedRecord.emergency({required this.patientName, required this.otNumber, required this.surgeryDate,
+    required this.doctorName, required this.procedureName, required this.surgeryId}) : nurse ='', specialEquipment='', technician='';
 
   @override
   State<CapturedRecord> createState() => _CapturedRecordState();
@@ -449,7 +452,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
     print(widget.doctorName);
     Map<String, dynamic> postData = {
-      'scheduled_surgery_id': widget.surgeryId,
+      'scheduled_surgery_id': widget.surgeryId==0 ? null : widget.surgeryId==1? null: widget.surgeryId,
       'ot_number': widget.otNumber,
       'patient_received_in_pre_op_time': preOPStartTime,
       'antibiotic_prophylaxis_time': prophylaxisStartTime,
@@ -470,6 +473,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
       'technician_tl': widget.technician,
       'nurse_tl': widget.nurse,
       'special_equipment': widget.specialEquipment,
+      'surgery_type': widget.surgeryId == 0 ?'Emergency':
+                      widget.surgeryId == 1 ? 'Add-on':'Pre-planned'
     };
 
     // Send POST request using http package
