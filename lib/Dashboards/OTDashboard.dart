@@ -17,15 +17,32 @@ class OTDashboard extends StatefulWidget {
 }
 
 class _OTDashboardState extends State<OTDashboard> {
-
   Map<String, int> surgeryCountsMap = {};
   List<SurgeryData> chartData = [];
   List<UtilisationData> utilisationData = [];
   List<MonitoringStepsData> monitoringStepsData = [];
+  List<AuxiliaryClass> chartData2 = [];
+  List<AvgTimeDifferenceData> avgTimeDifferenceData = [];
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
   late DateTime selectedFromDate;
   late DateTime selectedToDate;
+  // String selectedSpeciality = 'Ophthalmology';
+  String selectedOT = '1';
+  List<String> otList = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11'
+  ];
+  List<Map<String, String>> otSpecificData = [];
 
   String baseUrl = 'http://127.0.0.1:8000/api';
 
@@ -36,14 +53,17 @@ class _OTDashboardState extends State<OTDashboard> {
     selectedFromDate = widget.selectedFromDate!;
     selectedToDate = widget.selectedToDate!;
     print('initState()-selectedFromDate: $selectedFromDate');
-    fromDateController = TextEditingController(text: _formatDate(selectedFromDate));
+    fromDateController =
+        TextEditingController(text: _formatDate(selectedFromDate));
     toDateController = TextEditingController(text: _formatDate(selectedToDate));
-
 
     _getSurgeryCount();
     _otUtilization();
     //_getSlotsUsageData();
     _getStepsAverage();
+    _getAverageTimeDifference();
+    //otList.add("1");
+    //selectedOT = otList[0];
   }
 
   String _formatDate(DateTime dateTime) {
@@ -57,9 +77,10 @@ class _OTDashboardState extends State<OTDashboard> {
     print('selectedFromDate:$selectedFromDate');
     print('selectedToDate:$selectedToDate');
 
-    String fromDate ='';
+    String fromDate = '';
     String toDate = '';
-    if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+    if (selectedFromDate != DateTime(2015) &&
+        selectedToDate != DateTime(2015)) {
       // Format the dates to include only the date part (yyyy-MM-dd)
       fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
       toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
@@ -91,18 +112,22 @@ class _OTDashboardState extends State<OTDashboard> {
       //Parse the JSON response
       Map<String, dynamic> responseData = jsonDecode(response.body);
 
-      List<dynamic> surgeriesList =[];
+      List<dynamic> surgeriesList = [];
 
-      if(responseData.containsKey('Count of surgeries per OT on all dates')){
+      if (responseData.containsKey('Count of surgeries per OT on all dates')) {
         surgeriesList = responseData['Count of surgeries per OT on all dates'];
-      }else if (responseData.containsKey('Count of surgeries per OT from ${fromDate} to ${toDate}')) {
-        surgeriesList = responseData['Count of surgeries per OT from ${fromDate} to ${toDate}'];
-      }
-      else if(responseData.containsKey('Count of surgeries per OT from ${fromDate} onwards')){
-        surgeriesList = responseData['Count of surgeries per OT from ${fromDate} onwards'];
-      }
-      else if (responseData.containsKey('Count of surgeries per OT up to ${toDate}')){
-        surgeriesList = responseData['Count of surgeries per OT up to ${toDate}'];
+      } else if (responseData.containsKey(
+          'Count of surgeries per OT from ${fromDate} to ${toDate}')) {
+        surgeriesList = responseData[
+            'Count of surgeries per OT from ${fromDate} to ${toDate}'];
+      } else if (responseData
+          .containsKey('Count of surgeries per OT from ${fromDate} onwards')) {
+        surgeriesList =
+            responseData['Count of surgeries per OT from ${fromDate} onwards'];
+      } else if (responseData
+          .containsKey('Count of surgeries per OT up to ${toDate}')) {
+        surgeriesList =
+            responseData['Count of surgeries per OT up to ${toDate}'];
       }
 
       print('SurgeryList - $surgeriesList');
@@ -123,9 +148,10 @@ class _OTDashboardState extends State<OTDashboard> {
     print('selectedFromDate:$selectedFromDate');
     print('selectedToDate:$selectedToDate');
 
-    String fromDate ='';
+    String fromDate = '';
     String toDate = '';
-    if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+    if (selectedFromDate != DateTime(2015) &&
+        selectedToDate != DateTime(2015)) {
       // Format the dates to include only the date part (yyyy-MM-dd)
       fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
       toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
@@ -163,6 +189,68 @@ class _OTDashboardState extends State<OTDashboard> {
             .map((item) => UtilisationData.fromJson(item))
             .toList());
       });
+    } else {
+      //print('Error sending data to the backend: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
+  void _getAverageTimeDifference() async {
+    String apiUrl = '$baseUrl/avg-time-difference/';
+
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate = '';
+    String toDate = '';
+    if (selectedFromDate != DateTime(2015) &&
+        selectedToDate != DateTime(2015)) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(2015)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Data Received from the backend successfully.-_getOtUtilization()');
+      // Optionally, handle the response from the backend if needed
+      print('Utilisation Response: ${response.body}');
+      List<dynamic> avgTimeDifferenceList = jsonDecode(response.body);
+
+      print(avgTimeDifferenceList);
+      for (var item in avgTimeDifferenceList) {
+        print(item['ot_number'].runtimeType);
+        print(item['avg_time_difference'].runtimeType);
+        avgTimeDifferenceData.add(AvgTimeDifferenceData(
+            otNumber: item['ot_number'],
+            timeDifference: item['avg_time_difference']));
+      }
+
+      // setState(() {
+      //   for(var item in avgTimeDifferenceList){
+      //     print(item['ot_number']);
+      //     print( item['avg_time_difference']);
+      //     avgTimeDifferenceData.add(AvgTimeDifferenceData(otNumber: item['ot_number'], timeDifference: item['avg_time_difference']));
+      //   }
+      // });
     } else {
       //print('Error sending data to the backend: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -221,14 +309,14 @@ class _OTDashboardState extends State<OTDashboard> {
   // }
 
   void _getStepsAverage() async {
-
     String apiUrl = '$baseUrl/monitoring-steps-avg/';
     print('selectedFromDate:$selectedFromDate');
     print('selectedToDate:$selectedToDate');
 
-    String fromDate ='';
+    String fromDate = '';
     String toDate = '';
-    if (selectedFromDate != DateTime(2015) && selectedToDate != DateTime(2015)) {
+    if (selectedFromDate != DateTime(2015) &&
+        selectedToDate != DateTime(2015)) {
       // Format the dates to include only the date part (yyyy-MM-dd)
       fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
       toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
@@ -260,9 +348,39 @@ class _OTDashboardState extends State<OTDashboard> {
       print(stepsList);
       setState(() {
         monitoringStepsData = stepsList
+            .where((item) =>
+                item['ot_number'] == '$selectedOT') // Filter based on ot_number
             .map((item) => MonitoringStepsData.fromJson(item))
             .toList();
+
+        otSpecificData = stepsList
+            .where((item) => item['ot_number'] == '$selectedOT')
+            .map((item) => {
+                  'avg_induction_duration':
+                      item['avg_induction_duration'].toString(),
+                  'avg_painting_and_draping_duration':
+                      item['avg_painting_and_draping_duration'].toString(),
+                  'avg_incision_duration':
+                      item['avg_incision_duration'].toString(),
+                  'avg_pre_op_to_ot': item['avg_pre_op_to_ot'].toString(),
+                  'avg_extubation_duration':
+                      item['avg_extubation_duration'].toString(),
+                  'avg_incision_to_extubation':
+                      item['avg_incision_to_extubation'].toString(),
+                  'avg_wheeled_duration':
+                      item['avg_wheeled_duration'].toString(),
+                })
+            .toList();
+
+        chartData2.clear(); // Clear the chartData2 before adding new items
+        for (var item in otSpecificData) {
+          item.forEach((key, value) {
+            chartData2.add(AuxiliaryClass(stepName: key, duration: value));
+          });
+        }
       });
+
+      //print(otList);
 
       //print(monitoringStepsData);
     } else {
@@ -272,7 +390,6 @@ class _OTDashboardState extends State<OTDashboard> {
   }
 
   Widget _buildBarChart<T>(List<T> data, String xAxisTitle, String yAxisTitle) {
-
     Color barColor = Colors.teal; // Default color
     String legendItemText = 'Data';
 
@@ -282,6 +399,9 @@ class _OTDashboardState extends State<OTDashboard> {
     } else if (T == UtilisationData) {
       barColor = Colors.redAccent;
       legendItemText = 'Utilisation Percentage';
+    } else if (T == AvgTimeDifferenceData) {
+      barColor = Colors.amberAccent;
+      legendItemText = 'Average Time Difference';
     }
 
     return SfCartesianChart(
@@ -306,6 +426,10 @@ class _OTDashboardState extends State<OTDashboard> {
               return data.otNumber; // Use otNumber for SurgeryData
             } else if (data is UtilisationData) {
               return data.otNumber; // Use otNumber for UtilisationData
+            } else if (data is AvgTimeDifferenceData) {
+              return data.otNumber;
+            } else if (data is AuxiliaryClass) {
+              return data.stepName;
             }
             return ''; // Default case
           },
@@ -314,11 +438,13 @@ class _OTDashboardState extends State<OTDashboard> {
               return double.parse(
                   data.surgeryCount); // Use surgeryCount for SurgeryData
             } else if (data is UtilisationData) {
-              print('else-f ${data.utilisationPercentage
-                  .toDouble()}');
-              return data.utilisationPercentage
-                  .toDouble(); // Convert to double for UtilisationData
-
+              print('else-f ${data.utilisationPercentage.toDouble()}');
+              return data
+                  .utilisationPercentage; // Convert to double for UtilisationData
+            } else if (data is AvgTimeDifferenceData) {
+              return double.tryParse(data.timeDifference);
+            } else if (data is AuxiliaryClass) {
+              return double.tryParse(data.duration);
             }
             return 0; // Default case
           },
@@ -337,87 +463,104 @@ class _OTDashboardState extends State<OTDashboard> {
     );
   }
 
-  Widget _buildMultipleBarChart(List<MonitoringStepsData> data, String xAxisTitle , String yAxisTitle ) {
-    return SfCartesianChart(
-      isTransposed: true,
-      backgroundColor: Colors.grey[200],
-      primaryXAxis: CategoryAxis(
-        title: AxisTitle(
-            text: xAxisTitle,
-            textStyle: TextStyle(fontWeight: FontWeight.bold)),
-      ),
-      primaryYAxis: NumericAxis(
-        title: AxisTitle(
-            text: yAxisTitle,
-            textStyle: TextStyle(fontWeight: FontWeight.bold)),
-      ),
-      legend: Legend(isVisible: true, position: LegendPosition.top),
-      series: <BarSeries<MonitoringStepsData, String>>[
-        BarSeries<MonitoringStepsData, String>(
-          dataSource: data,
-          xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
-          yValueMapper: (MonitoringStepsData stepsData, _) {
-            double value = double.tryParse(stepsData.avgIncisionDuration) ?? 0.0;
-            return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
-          },
-          width: 0.2,
-          spacing: 0.1,
-          color: Colors.lightBlueAccent,
-          name: 'Data',
-          dataLabelSettings: DataLabelSettings(
-            isVisible: true,
-            color: Colors.lightBlueAccent,
-            textStyle: TextStyle(color: Colors.white, fontSize: 10),
-          ),
-          legendIconType: LegendIconType.circle,
-          legendItemText: 'Incision Duration',
-        ),
-        BarSeries<MonitoringStepsData, String>(
-          dataSource: data,
-          xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
-          yValueMapper: (MonitoringStepsData stepsData, _) {
-            double value = double.tryParse(stepsData.avgInductionDuration) ?? 0.0;
-            return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
-          },
-          width: 0.2,
-          spacing: 0.1,
-          color: Colors.amberAccent,
-          name: 'Data',
-          dataLabelSettings: DataLabelSettings(
-            isVisible: true,
-            color: Colors.amberAccent,
-            textStyle: TextStyle(color: Colors.white, fontSize: 10),
-          ),
-          legendIconType: LegendIconType.circle,
-          legendItemText: 'Induction Duration',
-        ),
-        BarSeries<MonitoringStepsData, String>(
-          dataSource: data,
-          xValueMapper: (MonitoringStepsData stepsData , _) => stepsData.otNumber,
-          yValueMapper: (MonitoringStepsData stepsData, _) {
-            //double value = double.parse(stepsData.avgPaintingAndDrapingDuration) ?? 0.0;
-            double value = double.tryParse(stepsData.avgPaintingAndDrapingDuration) ?? 0.0;
-            return double.parse(value.toStringAsFixed(1)); // Keep only two digits after the decimal point
-          },
-          width: 0.2,
-          spacing: 0.2,
-          color: Colors.teal,
-          name: 'Data',
-          dataLabelSettings: DataLabelSettings(
-            isVisible: true,
-            color: Colors.teal,
-            textStyle: TextStyle(color: Colors.white, fontSize: 10),
-          ),
-          legendIconType: LegendIconType.circle,
-          legendItemText: 'Painting And Draping Duration',
-        ),
-      ],
-    );
-  }
-
+  // Widget _buildMultipleBarChart(List<MonitoringStepsData> data, String xAxisTitle, String yAxisTitle) {
+  //   return SfCartesianChart(
+  //     isTransposed: true,
+  //     backgroundColor: Colors.grey[200],
+  //     primaryXAxis: CategoryAxis(
+  //       title: AxisTitle(
+  //           text: xAxisTitle,
+  //           textStyle: TextStyle(fontWeight: FontWeight.bold)),
+  //     ),
+  //     primaryYAxis: NumericAxis(
+  //       title: AxisTitle(
+  //           text: yAxisTitle,
+  //           textStyle: TextStyle(fontWeight: FontWeight.bold)),
+  //     ),
+  //     legend: Legend(isVisible: true, position: LegendPosition.top),
+  //     series: <BarSeries<MonitoringStepsData, String>>[
+  //       BarSeries<MonitoringStepsData, String>(
+  //         dataSource: data,
+  //         xValueMapper: (MonitoringStepsData stepsData, _) =>
+  //             stepsData.otNumber,
+  //         yValueMapper: (MonitoringStepsData stepsData, _) {
+  //           double value =
+  //               double.tryParse(stepsData.avgIncisionDuration) ?? 0.0;
+  //           return double.parse(value.toStringAsFixed(
+  //               1)); // Keep only two digits after the decimal point
+  //         },
+  //         width: 0.4,
+  //         spacing: 0.4,
+  //         color: Colors.lightBlueAccent,
+  //         name: 'Data',
+  //         dataLabelSettings: DataLabelSettings(
+  //           isVisible: true,
+  //           color: Colors.lightBlueAccent,
+  //           textStyle: TextStyle(color: Colors.white, fontSize: 10),
+  //         ),
+  //         legendIconType: LegendIconType.circle,
+  //         legendItemText: 'Incision Duration',
+  //       ),
+  //       BarSeries<MonitoringStepsData, String>(
+  //         dataSource: data,
+  //         xValueMapper: (MonitoringStepsData stepsData, _) =>
+  //             stepsData.otNumber,
+  //         yValueMapper: (MonitoringStepsData stepsData, _) {
+  //           double value =
+  //               double.tryParse(stepsData.avgInductionDuration) ?? 0.0;
+  //           return double.parse(value.toStringAsFixed(
+  //               1)); // Keep only two digits after the decimal point
+  //         },
+  //         width: 0.4,
+  //         spacing: 0.4,
+  //         color: Colors.amberAccent,
+  //         name: 'Data',
+  //         dataLabelSettings: DataLabelSettings(
+  //           isVisible: true,
+  //           color: Colors.amberAccent,
+  //           textStyle: TextStyle(color: Colors.white, fontSize: 10),
+  //         ),
+  //         legendIconType: LegendIconType.circle,
+  //         legendItemText: 'Induction Duration',
+  //       ),
+  //       BarSeries<MonitoringStepsData, String>(
+  //         dataSource: data,
+  //         xValueMapper: (MonitoringStepsData stepsData, _) =>
+  //             stepsData.otNumber,
+  //         yValueMapper: (MonitoringStepsData stepsData, _) {
+  //           //double value = double.parse(stepsData.avgPaintingAndDrapingDuration) ?? 0.0;
+  //           double value =
+  //               double.tryParse(stepsData.avgPaintingAndDrapingDuration) ?? 0.0;
+  //           return double.parse(value.toStringAsFixed(
+  //               1)); // Keep only two digits after the decimal point
+  //         },
+  //         width: 0.4,
+  //         spacing: 0.4,
+  //         color: Colors.teal,
+  //         name: 'Data',
+  //         dataLabelSettings: DataLabelSettings(
+  //           isVisible: true,
+  //           color: Colors.teal,
+  //           textStyle: TextStyle(color: Colors.white, fontSize: 10),
+  //         ),
+  //         legendIconType: LegendIconType.circle,
+  //         legendItemText: 'Painting And Draping Duration',
+  //       ),
+  //       //
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<String>> dropdownItems = [
+      for (String item in otList)
+        DropdownMenuItem<String>(
+          value: item,
+          child: Text(item),
+        )
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text('OT Dashboard'),
@@ -497,21 +640,25 @@ class _OTDashboardState extends State<OTDashboard> {
                   Container(
                     width: 150,
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlueAccent,
                           textStyle: TextStyle(color: Colors.white),
-                          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24), ),
-                        child: const Text('Apply',
+                          padding: EdgeInsets.symmetric(
+                              vertical: 18, horizontal: 24),
+                        ),
+                        child: const Text(
+                          'Apply',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
-                              fontSize: 20),),
-                        onPressed: (){
+                              fontSize: 20),
+                        ),
+                        onPressed: () {
                           _getSurgeryCount();
                           _otUtilization();
                           _getStepsAverage();
-                        }
-
-                    ),
+                          _getAverageTimeDifference();
+                        }),
                   ),
                 ],
               ),
@@ -522,10 +669,10 @@ class _OTDashboardState extends State<OTDashboard> {
                   Container(
                     width: 400,
                     height: 50,
-                    child:
-                    Text("Surgery Count per OT",
+                    child: Text("Surgery Count per OT",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                        style:
+                            TextStyle(fontSize: 25, color: Colors.blueAccent)),
                   ),
                 ],
               ),
@@ -539,7 +686,7 @@ class _OTDashboardState extends State<OTDashboard> {
                   ),
                 ],
               ),
-              SizedBox(height:20),
+              SizedBox(height: 20),
               Divider(
                 color: Colors.black,
                 thickness: 2,
@@ -551,10 +698,10 @@ class _OTDashboardState extends State<OTDashboard> {
                   Container(
                     width: 400,
                     height: 50,
-                    child:
-                    Text("Percentage Utilisation of  OT's",
+                    child: Text("Percentage Utilisation of  OT's",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                        style:
+                            TextStyle(fontSize: 25, color: Colors.blueAccent)),
                   ),
                 ],
               ),
@@ -565,7 +712,59 @@ class _OTDashboardState extends State<OTDashboard> {
                       utilisationData, 'OT Number', 'Utilization Percentage'),
                 ),
               ]),
-              SizedBox(height:20),
+              SizedBox(height: 20),
+              Divider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+              SizedBox(height: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    height: 50,
+                    child: Text("Average time taken per Step for OT",
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                  ),
+                  Container(
+                    width: 100,
+                    child: DropdownButtonFormField(
+                        items: dropdownItems,
+                        decoration: InputDecoration(
+                          labelText: 'Select OT',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        value: selectedOT,
+                        //hint: Text('Select OT'),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedOT = newValue!;
+                            _getStepsAverage();
+                          });
+                        }),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(children: [
+                Expanded(
+                  //width: 500,
+                  child: chartData2.isNotEmpty
+                      ? _buildBarChart(chartData2, 'OT', 'Average Time')
+                      : Center(
+                          child: Text(
+                            'No data available',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                ),
+              ]),
+              SizedBox(height: 20),
               Divider(
                 color: Colors.black,
                 thickness: 2,
@@ -577,18 +776,18 @@ class _OTDashboardState extends State<OTDashboard> {
                   Container(
                     width: 400,
                     height: 50,
-                    child:
-                    Text("Average time taken per Step for OT",
+                    child: Text("Average Time Difference",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+                        style:
+                            TextStyle(fontSize: 25, color: Colors.blueAccent)),
                   ),
                 ],
               ),
               Row(children: [
                 Expanded(
                   //width: 500,
-                  child: _buildMultipleBarChart(
-                      monitoringStepsData, 'OT Number', 'Average Time'),
+                  child: _buildBarChart(avgTimeDifferenceData, 'OT Number',
+                      'Average Time Difference'),
                 ),
               ]),
               // Row(
@@ -617,8 +816,7 @@ class _OTDashboardState extends State<OTDashboard> {
         String date = "${selectedFromDate.toLocal()}".split(' ')[0];
         fromDateController?.text = date;
       });
-    }
-    else if (picked == null) {
+    } else if (picked == null) {
       setState(() {
         //selectedFromDate = selectedFromDate;
         String date = "${selectedFromDate.toLocal()}".split(' ')[0];
@@ -662,7 +860,7 @@ class _OTDashboardState extends State<OTDashboard> {
         String date = "${selectedToDate.toLocal()}".split(' ')[0];
         toDateController?.text = date;
       });
-    }else if (picked == null) {
+    } else if (picked == null) {
       setState(() {
         //selectedToDate = selectedToDate;
         toDateController?.text = "${selectedToDate.toLocal()}".split(' ')[0];
@@ -693,7 +891,6 @@ class _OTDashboardState extends State<OTDashboard> {
   //
   //   //_setValues(context);
   // }
-
 }
 
 class SurgeryData {
@@ -725,25 +922,52 @@ class UtilisationData {
   }
 }
 
+class AvgTimeDifferenceData {
+  final String otNumber;
+  final String timeDifference;
+
+  AvgTimeDifferenceData({required this.otNumber, required this.timeDifference});
+}
+
 class MonitoringStepsData {
   final String otNumber;
   final String avgInductionDuration;
   final String avgPaintingAndDrapingDuration;
   final String avgIncisionDuration;
+  final String avg_pre_op_to_ot;
+  final String avg_extubation_duration;
+  final String avg_incision_to_extubation;
+  final String avg_wheeled_duration;
 
   MonitoringStepsData({
     required this.otNumber,
     required this.avgInductionDuration,
     required this.avgPaintingAndDrapingDuration,
     required this.avgIncisionDuration,
+    required this.avg_pre_op_to_ot,
+    required this.avg_extubation_duration,
+    required this.avg_incision_to_extubation,
+    required this.avg_wheeled_duration,
   });
 
   factory MonitoringStepsData.fromJson(Map<String, dynamic> json) {
     return MonitoringStepsData(
       otNumber: json['ot_number'].toString(),
       avgInductionDuration: json['avg_induction_duration'].toString(),
-      avgPaintingAndDrapingDuration: json['avg_painting_and_draping_duration'].toString(),
+      avgPaintingAndDrapingDuration:
+          json['avg_painting_and_draping_duration'].toString(),
       avgIncisionDuration: json['avg_incision_duration'].toString(),
+      avg_pre_op_to_ot: json['avg_pre_op_to_ot'].toString(),
+      avg_extubation_duration: json['avg_extubation_duration'].toString(),
+      avg_incision_to_extubation: json['avg_incision_to_extubation'].toString(),
+      avg_wheeled_duration: json['avg_wheeled_duration'].toString(),
     );
   }
+}
+
+class AuxiliaryClass {
+  String stepName;
+  String duration;
+
+  AuxiliaryClass({required this.stepName, required this.duration});
 }
