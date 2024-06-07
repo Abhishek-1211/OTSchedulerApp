@@ -448,7 +448,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                 Expanded(
                   //width: 500,
                   child: _buildBarChart(avgSurgeryDurationData, 'Doctor',
-                      'Average Surgery Time (hours)'),
+                      'Average Surgery Time (Min)'),
                 ),
               ]),
             ],
@@ -551,17 +551,18 @@ class AverageSurgeryDuration {
   double getHoursDuration() {
     List<String> parts = avgDuration.split(':');
     if (parts.length == 3) {
-      int? hours = int.tryParse(parts[0]);
-      int? minutes = int.tryParse(parts[1]);
-      int? seconds = int.tryParse(parts[2]);
+      double? hours = double.tryParse(parts[0]);
+      double? minutes = double.tryParse(parts[1]);
+      double? seconds = double.tryParse(parts[2]);
 
       // print('hours $hours');
       // print('minutes $minutes');
       // print('seconds $seconds');
 
-      if (hours != null && minutes != null) {
-        double totalHours = hours + (minutes / 100);
-        return double.parse(totalHours.toStringAsFixed(2));
+      if (hours != null && minutes != null && seconds!=null) {
+        //double totalHours = hours + (minutes / 100);
+        double totalMinutes = minutes + (seconds / 100);
+        return double.parse(totalMinutes.toStringAsFixed(2));
       } else {
         throw FormatException("Invalid duration format-2");
       }
