@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http; // Import the http package
@@ -21,6 +22,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
   List<String> ot_numbers = [];
   List<DateTime> surgery_date = [];
   bool isSubmitted = false;
+  bool isSurgeryDone = false;
 
   //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
   String baseUrl = 'http://127.0.0.1:8000/api';
@@ -29,7 +31,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Patient List'),
+        title: Text('Patient List',style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0), // Set the height of the divider
@@ -44,34 +49,38 @@ class _PatientListScreenState extends State<PatientListScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _selectDate(context);
-                  },
-                  child: Text('Select Date'),
+                Container(
+                  height: 50,
+                  width: 150,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlueAccent,
+                        textStyle: const TextStyle(color: Colors.white),
+                        elevation: 4.0,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(2)))),
+                    onPressed: () {
+                      _selectDate(context);
+                    },
+                    child: Text('Select Date',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18),),
+                  ),
                 ),
                 SizedBox(width: 20),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     if (selectedDate != null) {
-                //       _fetchPatientList(
-                //           selectedDate!); // Call function to fetch patient list
-                //     } else {
-                //       ScaffoldMessenger.of(context).showSnackBar(
-                //         SnackBar(
-                //           content: Text('Please select a date first.'),
-                //         ),
-                //       );
-                //     }
-                //   },
-                //   child: Text('Submit'),
-                // ),
               ],
             ),
             SizedBox(height: 20),
             if (selectedDate != null)
               Text(
                 'Selected Date: ${DateFormat('MM-dd-yyyy').format(selectedDate!)}',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18),
               ),
             SizedBox(height: 30),
             if (isSubmitted)
@@ -93,44 +102,90 @@ class _PatientListScreenState extends State<PatientListScreen> {
                         itemBuilder: (context, index) {
                           Color tileColor =
                               index.isEven ? Colors.blue[100]! : Colors.white;
-                          return Container(
-                              color: tileColor,
-                              child: ListTile(
-                                title: Text(patientList[index]),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('OT Number: ${ot_numbers[index]}'),
-                                    Text('Surgery ID: ${surgery_id[index]}'),
-                                    Text('Surgeon: ${doctorList[index]}'),
-                                  ],
+                          return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child:Stack(
+                              children:[
+                                Card(
+                                  elevation: 16.0,
+                                  //color: tileColor,
+                                  shadowColor: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(2.0))),
+                                  child: ListTile(
+                                    title: Text(patientList[index], style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Procedure: ${procedureList[index]}'),
+                                        Text(
+                                            'Surgery ID: ${surgery_id[index]}'),
+                                        Text('Surgeon: ${doctorList[index]}'),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      // Handle onTap event
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CapturedRecord(
+                                                    patientName:
+                                                        patientList[index],
+                                                    surgeryId:
+                                                        surgery_id[index],
+                                                    otNumber: ot_numbers[index],
+                                                    surgeryDate:
+                                                        surgery_date[index],
+                                                    // Pass DateTime value
+                                                    doctorName:
+                                                        doctorList[index],
+                                                    procedureName:
+                                                        procedureList[index],
+                                                    technician:
+                                                        techniciansList[index],
+                                                    nurse: nursesList[index],
+                                                    specialEquipment:
+                                                        specialEquipmentList[
+                                                            index],
+                                                  )));
+                                    },
+                                  )
                                 ),
-                                onTap: () {
-                                  // Handle onTap event
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => CapturedRecord(
-                                                patientName: patientList[index],
-                                                surgeryId: surgery_id[index],
-                                                otNumber: ot_numbers[index],
-                                                surgeryDate:
-                                                    surgery_date[index],
-                                                // Pass DateTime value
-                                                doctorName: doctorList[index],
-                                                procedureName:
-                                                    procedureList[index],
-                                                technician:
-                                                    techniciansList[index],
-                                                nurse: nursesList[index],
-                                                specialEquipment:
-                                                    specialEquipmentList[index],
-                                              )));
-                                },
-                              ));
+                                Positioned(
+                                  top: 20,
+                                  right: 80,
+                                  child: Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      color: Colors.lightBlueAccent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${ot_numbers[index]}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ])
+                          );
                         },
                       ),
                     ),
+                    SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -138,19 +193,24 @@ class _PatientListScreenState extends State<PatientListScreen> {
                           height: 50,
                           width: 180,
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
-                                  textStyle: const TextStyle(color: Colors.white),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.lightBlueAccent,
+                                  textStyle:
+                                      const TextStyle(color: Colors.white),
                                   elevation: 40,
                                   shape: const RoundedRectangleBorder(
-                                         borderRadius: BorderRadius.all(Radius.circular(2)))),
-                              onPressed: (){
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(2)))),
+                              onPressed: () {
                                 _showDialogForm(0);
                               },
-                              child: Text('           Add\nEmergency Surgery',
+                              child: Text(
+                                '           Add\nEmergency Surgery',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 15),)),
+                                    fontSize: 15),
+                              )),
                         ),
                         SizedBox(width: 40),
                         Container(
@@ -158,19 +218,24 @@ class _PatientListScreenState extends State<PatientListScreen> {
                           width: 180,
                           child: ElevatedButton(
                               //style: ElevatedButton.styleFrom( disabledForegroundColor: Colors.red.withOpacity(0.38), disabledBackgroundColor: Colors.red.withOpacity(0.12)),
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlueAccent,
-                                  textStyle: const TextStyle(color: Colors.white),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.lightBlueAccent,
+                                  textStyle:
+                                      const TextStyle(color: Colors.white),
                                   elevation: 40,
                                   shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(2)))),
-                              onPressed: (){
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(2)))),
+                              onPressed: () {
                                 _showDialogForm(1);
                               },
-                              child: Text('        Add\nAdd-on Surgery',
+                              child: Text(
+                                '        Add\nAdd-on Surgery',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 15),)),
+                                    fontSize: 15),
+                              )),
                         ),
                       ],
                     ),
@@ -181,6 +246,33 @@ class _PatientListScreenState extends State<PatientListScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> _isSurgeryDone(int surgery_id) async {
+    try {
+      Uri url = Uri.parse('$baseUrl/monitor/');
+      final headers = {'Content-Type': 'application/json'};
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Handle successful response
+        print('GET request successful');
+        print(response.body);
+        // Optionally, navigate to another screen or show a success message
+        return true;
+      } else {
+        // Handle other status codes if needed
+        print('GET request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle any exceptions or errors
+      print('Error sending GET request: $e');
+    }
+
+    return false;
   }
 
   Future<void> _fetchPatientList(DateTime date) async {
@@ -276,6 +368,17 @@ class _PatientListScreenState extends State<PatientListScreen> {
               .toList();
           isSubmitted = true;
         });
+
+        // Check if any surgery is done
+        for (int id in surgery_id) {
+          bool isDone = await _isSurgeryDone(id);
+          if (isDone) {
+            print('Surgery $id is done');
+            // Handle the case when surgery is done
+          } else {
+            print('Surgery $id is not done');
+          }
+        }
       } else {
         throw Exception('Failed to load patient list');
       }
@@ -304,6 +407,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
         selectedDate = pickedDate;
       });
       _fetchPatientList(selectedDate!);
+      //_isSurgeryDone(surgery_id[index]);
       //   if (selectedDate != null) {
       //      // Call function to fetch patient list
       //   // } else {
@@ -329,13 +433,13 @@ class _PatientListScreenState extends State<PatientListScreen> {
           var surgeryName = TextEditingController();
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(2.0))),
+                borderRadius: BorderRadius.all(Radius.circular(2.0))),
             scrollable: true,
-            title: const Text(
-                'Please Enter Patient Details'),
+            title: const Text('Please Enter Patient Details'),
             //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-            content: Padding(padding: const EdgeInsets.all(8.0),
-            child: Form (
+            content: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
                 child: Column(
                   children: [
                     TextFormField(
@@ -348,68 +452,67 @@ class _PatientListScreenState extends State<PatientListScreen> {
                     TextFormField(
                       controller: mrdNumber,
                       decoration: InputDecoration(
-                          labelText: 'MRD Number',
-                          //icon: Icon(Icons.account_box)
+                        labelText: 'MRD Number',
+                        //icon: Icon(Icons.account_box)
                       ),
                     ),
                     TextFormField(
                       controller: surgeonName,
                       decoration: InputDecoration(
-                          labelText: 'Surgeon Name',
-                          //icon: Icon(Icons.account_box)
+                        labelText: 'Surgeon Name',
+                        //icon: Icon(Icons.account_box)
                       ),
                     ),
                     TextFormField(
                       controller: department,
                       decoration: InputDecoration(
-                          labelText: 'Department',
-                          //icon: Icon(Icons.account_box)
+                        labelText: 'Department',
+                        //icon: Icon(Icons.account_box)
                       ),
                     ),
                     TextFormField(
                       controller: otNumber,
                       decoration: InputDecoration(
-                          labelText: 'OT Number',
-                          //icon: Icon(Icons.account_box)
+                        labelText: 'OT Number',
+                        //icon: Icon(Icons.account_box)
                       ),
                     ),
                     TextFormField(
                       controller: surgeryName,
                       decoration: InputDecoration(
-                          labelText: 'Surgery Name',
-                          //icon: Icon(Icons.account_box)
+                        labelText: 'Surgery Name',
+                        //icon: Icon(Icons.account_box)
                       ),
                     ),
                   ],
                 ),
-             ),
+              ),
             ),
             actions: <Widget>[
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(2)))
-                  ),
+                          borderRadius: BorderRadius.all(Radius.circular(2)))),
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => CapturedRecord.emergency(
-                              patientName: nameController.text,
-                              otNumber: otNumber.text,
-                              //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
-                              surgeryDate:selectedDate!,
-                              surgeryId: id,
-                              doctorName: surgeonName.text,
-                              procedureName: surgeryName.text,
-                            )));
-                  }
-                  , child: Text("Submit",
-                style: TextStyle(color: Colors.white),
-              )
-              )
+                                  patientName: nameController.text,
+                                  otNumber: otNumber.text,
+                                  //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
+                                  surgeryDate: selectedDate!,
+                                  surgeryId: id,
+                                  doctorName: surgeonName.text,
+                                  procedureName: surgeryName.text,
+                                )));
+                  },
+                  child: Text(
+                    "Submit",
+                    style: TextStyle(color: Colors.white),
+                  ))
               // TextButton(
               //   style: TextButton.styleFrom(
               //     textStyle: Theme.of(context).textTheme.labelLarge,
