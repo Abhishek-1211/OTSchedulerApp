@@ -43,6 +43,8 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
         'Special Equipment',
         'Name of Patient',
         'Age/Sex',
+        'Nursing T/l',
+        'Technician T/L'
       ];
       rows.add(headers);
 
@@ -64,6 +66,9 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
         final String department =
         widget.scheduleData['Department'][entry.key];
         final String ageSex = widget.scheduleData['Age/Sex'][entry.key];
+        final String nusringTL = widget.scheduleData['Nursing T/L'][entry.key];
+        final String technicianTL = widget.scheduleData['Technicial T/L'][entry.key];
+        //final String mrdNumber = widget.scheduleData['MRD'][entry.key];
 
         rows.add([
           date,
@@ -76,6 +81,8 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           specialEquipment,
           patientName,
           ageSex,
+          nusringTL,
+          technicianTL,
         ]);
       });
 
@@ -169,6 +176,14 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           child: Text('Name of Patient', style: TextStyle(color: Colors.white)),
         ),
       ),
+      // DataColumn(
+      //   label: Container(
+      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      //     color: Colors.blueAccent,
+      //     child:
+      //     Text('MRD Number', style: TextStyle(color: Colors.white)),
+      //   ),
+      // ),
       DataColumn(
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -218,6 +233,7 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
       final String ageSex = widget.scheduleData['Age/Sex'][entry.key];
       final String technicalLeads = widget.scheduleData['Technicial T/L'][entry.key];
       final String nursingLeads = widget.scheduleData['Nursing T/L'][entry.key];
+      //final String mrdNumber = widget.scheduleData['MRD'][entry.key];
 
       return DataRow(
         color: MaterialStateColor.resolveWith((states) {
@@ -236,6 +252,7 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           DataCell(Text(endTime)),
 
           DataCell(Text(patientName)),
+          //DataCell(Text(mrdNumber)),
           DataCell(Text(ageSex)),
           DataCell(Text(specialEquipment)),
           DataCell(Text(technicalLeads)),
