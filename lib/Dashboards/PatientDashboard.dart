@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -36,11 +37,12 @@ class _PatientDashboardState extends State<PatientDashboard> {
   @override
   void initState() {
     super.initState();
+    selectedFromDate = widget.selectedFromDate!;
+    selectedToDate = widget.selectedToDate!;
     _getGenderDistribution();
     _getAgeDistribution();
     // _getAverageSurgeryDuration();
-    selectedFromDate = widget.selectedFromDate!;
-    selectedToDate = widget.selectedToDate!;
+
     print('initState()-selectedFromDate: $selectedFromDate');
     fromDateController =
         TextEditingController(text: _formatDate(selectedFromDate));
@@ -55,6 +57,32 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   void _getGenderDistribution() async {
     String apiUrl = '$baseUrl/gender-distribution/';
+
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
+
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -105,6 +133,31 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   void _getAgeDistribution() async {
     String apiUrl = '$baseUrl/age-distribution/';
+
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
 
     final response = await http.get(
       Uri.parse(apiUrl),

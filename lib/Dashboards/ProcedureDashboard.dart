@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -23,7 +24,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
   late TextEditingController toDateController;
   late DateTime selectedFromDate;
   late DateTime selectedToDate;
-  String selectedSpeciality = 'Ophthalmology';
+  String selectedSpeciality = 'Plastic Surgery';
   String selectedSurgery = '';
 
   // List of items in our dropdown menu
@@ -39,7 +40,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
 
   Map<String, List<String>> surgeryMap = {
     'Ophthalmology': ['Cataract Left Eye', 'MICS+PCIOL Left Eye'],
-    'Dentistry': ['Root Canal', 'Teeth Cleaning'],
+    'Dentistry': ['Root Canal', 'Teeth Cleaning','cavity'],
     'ORTHO': [
       'Knee Replacement',
       'Hip Replacement',
@@ -48,12 +49,12 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
     'ENT': ['Tonsillectomy', 'Sinus Surgery'],
     'OBG': ['C-Section', 'Hysterectomy'],
     'Plastic Surgery': [
+      'Secondary Suturing',
       'Rhinoplasty',
       'Liposuction',
       'Debridement',
-      'Secondary Suturing'
     ],
-    'Neuro Surgery': ['Brain Tumor Removal', 'Spinal Fusion'],
+    'Neuro Surgery': ['Brain Tumor Removal', 'Spinal Fusion','Bifrontal Carinotomy'],
     'HBP Surgery/Organ Transplant' : [],
   };
 
@@ -92,12 +93,13 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
   @override
   void initState() {
     super.initState();
+    selectedFromDate = widget.selectedFromDate!;
+    selectedToDate = widget.selectedToDate!;
     _getSurgeryType();
     _getSurgeryTimings();
     _getProcedureTimeComparison();
     // _getAverageSurgeryDuration();
-    selectedFromDate = widget.selectedFromDate!;
-    selectedToDate = widget.selectedToDate!;
+
     print('initState()-selectedFromDate: $selectedFromDate');
     fromDateController =
         TextEditingController(text: _formatDate(selectedFromDate));
@@ -114,6 +116,31 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
 
   void _getSurgeryType() async {
     String apiUrl = '$baseUrl/surgery-type-percentage/';
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
+
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -153,6 +180,32 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
 
   void _getSurgeryTimings() async {
     String apiUrl = '$baseUrl/surgery-timing-percentage/';
+
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
+
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -370,6 +423,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
                         onPressed: () {
                           _getSurgeryType();
                           _getSurgeryTimings();
+                          _getProcedureTimeComparison();
                         }),
                   ),
                 ],
@@ -490,42 +544,42 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
                 thickness: 2,
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    //color: Color(0xFF381460),
-                    width: 400,
-                    height: 40,
-                    child: Text("Surgery Timings Percentage",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 550,
-                    height: 450,
-                    child: dataMap.isNotEmpty
-                        ? pie.PieChart(
-                      dataMap: dataMap,
-                      chartType: pie.ChartType.disc,
-                      centerText: "Surgery Timings Percentage",
-                      baseChartColor: Colors.grey[300]!,
-                    )
-                        : Center(
-                      child: Text(
-                        'No data available',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Container(
+              //       //color: Color(0xFF381460),
+              //       width: 400,
+              //       height: 40,
+              //       child: Text("Surgery Timings Percentage",
+              //           textAlign: TextAlign.center,
+              //           style: TextStyle(fontSize: 25, color: Colors.blueAccent)),
+              //     ),
+              //   ],
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Container(
+              //       width: 550,
+              //       height: 450,
+              //       child: dataMap.isNotEmpty
+              //           ? pie.PieChart(
+              //         dataMap: dataMap,
+              //         chartType: pie.ChartType.disc,
+              //         centerText: "Surgery Timings Percentage",
+              //         baseChartColor: Colors.grey[300]!,
+              //       )
+              //           : Center(
+              //         child: Text(
+              //           'No data available',
+              //           style: TextStyle(
+              //               fontSize: 20, fontWeight: FontWeight.bold),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           )),
         ));
@@ -579,6 +633,31 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
   void _getProcedureTimeComparison() async {
     String apiUrl = '$baseUrl/procedure-time-comparison';
 
+    print('selectedFromDate:$selectedFromDate');
+    print('selectedToDate:$selectedToDate');
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
+
     try {
       final response = await http.get(
         Uri.parse(apiUrl),
@@ -590,7 +669,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
 
         // Parse the JSON response
         List<dynamic> responseList = jsonDecode(response.body);
-
+        print('_getProcedureTimeComparison()-responseList: $responseList');
         List<DoctorData> fetchedDoctorDataList = [];
         if (responseList is List) {
           for (var procedure in responseList) {

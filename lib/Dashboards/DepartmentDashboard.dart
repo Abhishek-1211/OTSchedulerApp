@@ -3,6 +3,7 @@ import 'dart:js_util';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DepartmentDashboard extends StatefulWidget {
@@ -90,6 +91,27 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
 
   void _getSurgeryCount() async {
     String apiUrl = '$baseUrl/surgery-department-count/';
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -120,6 +142,28 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
 
   void _getUniqueSurgeryCount() async {
     String apiUrl = '$baseUrl/unique-department-surgery-count/';
+
+    String fromDate ='';
+    String toDate = '';
+    if (selectedFromDate != null && selectedToDate != null) {
+      // Format the dates to include only the date part (yyyy-MM-dd)
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?start_date=$fromDate&end_date=$toDate';
+    }
+    // Check if only fromDate is selected
+    else if (selectedFromDate != DateTime(1947)) {
+      fromDate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+      apiUrl += '?start_date=$fromDate';
+    }
+    // Check if only toDate is selected
+    else if (selectedToDate != DateTime(2015)) {
+      // Format the date to include only the date part (yyyy-MM-dd)
+      toDate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+      apiUrl += '?end_date=$toDate';
+    }
+
+    print(apiUrl);
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -182,6 +226,7 @@ class _DepartmentDashboardState extends State<DepartmentDashboard> {
         isTransposed: true, // Change X and Y axis data
         backgroundColor: Colors.grey[200],
         primaryXAxis: CategoryAxis(
+          //labelRotation: -45,
           title: AxisTitle(
               text: xAxisTitle,
               textStyle: TextStyle(fontWeight: FontWeight.bold)),
