@@ -223,7 +223,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       isTransposed: true, // Change X and Y axis data
       backgroundColor: Colors.grey[200],
       primaryXAxis: CategoryAxis(
-        //labelRotation: -45,
+        labelRotation: 270,
         title: AxisTitle(
           text: xAxisTitle,
           textStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -249,12 +249,13 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                   ? '${data.doctorName.substring(0, 10)}'
                   : data.doctorName;
               return truncatedName;
-              //return truncatedName;
+              //return data.doctorName;
             } else if (data is AverageSurgeryDuration) {
               String truncatedName = data.doctorName.length > 10
-                  ? '${data.doctorName.substring(0, 10)}\n${data.doctorName.substring(10)}'
+                  ? '${data.doctorName.substring(0, 10)}'
                   : data.doctorName;
               return truncatedName;
+              //return data.doctorName;
             }
             return ''; // Default case
           },
