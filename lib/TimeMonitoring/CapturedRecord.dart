@@ -57,9 +57,9 @@ class _CapturedRecordState extends State<CapturedRecord> {
   String inductionStartTime = '';
   String paintAndDrapStartTime = '';
   String incisionStartTime = '';
-  String preOPEndTime = '';
-  String prophylaxisEndTime = '';
-  String wheelInEndTime = '';
+  //String preOPEndTime = '';
+  //String prophylaxisEndTime = '';
+  //String wheelInEndTime = '';
   String inductionEndTime = '';
   String paintAndDrapEndTime = '';
   String incisionEndTime = '';
@@ -80,10 +80,14 @@ class _CapturedRecordState extends State<CapturedRecord> {
   bool extubationStartEnabled = false;
   bool wheeledOutToTimeEnabled = false;
   bool wheeledOutFromTimeEnabled = false;
+  bool submitButtonEnabled = true;
 
   String baseUrl = 'http://127.0.0.1:8000/api';
 
-  //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
+  @override
+  void initState() {
+    _isSurgeryDone(widget.surgeryId);
+  } //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
 
   String getCurrentTime() {
     // Get current time using DateTime class
@@ -179,7 +183,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                                         true;
                                                   });
                                                 },
-                                          child: Text('Start',
+                                          child: const Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15))),
@@ -268,8 +272,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    wheelInStartEnabled =
-                                                        false;
+                                                    wheelInStartEnabled = false;
                                                     inductionStartEnabled =
                                                         true;
                                                   });
@@ -335,8 +338,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    inductionEndEnabled =
-                                                        false;
+                                                    inductionEndEnabled = false;
                                                     paintAndDrapStartEnabled =
                                                         true;
                                                   });
@@ -652,9 +654,11 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(2)))),
-                              onPressed: () {
-                                _submitForm(); // Call method to send POST request
-                              },
+                              onPressed: submitButtonEnabled
+                                  ? () {
+                                      _submitForm(); // Call method to send POST request
+                                    }
+                                  : null,
                               child: Text(
                                 'Submit',
                                 style: TextStyle(
@@ -741,7 +745,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
                     child: const Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      //Navigator.of(context).pop('${widget.surgeryId} is done');
+                      print(widget.surgeryId);
+                      Navigator.of(context).pop('${widget.surgeryId} is done');
                     },
                   ),
                 ],
@@ -776,5 +781,66 @@ class _CapturedRecordState extends State<CapturedRecord> {
       // Handle any exceptions or errors
       print('Error sending POST request: $e');
     }
+  }
+
+  void _isSurgeryDone(int surgery_id) async {
+    try {
+      Uri url = Uri.parse('$baseUrl/monitor/');
+      final headers = {'Content-Type': 'application/json'};
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Handle successful response
+        print('GET request successful');
+        //print(response.body);
+        print(jsonDecode(response.body).runtimeType);
+        List<dynamic> completedSurgeryList = jsonDecode(response.body);
+        List<dynamic> currentSurgery = completedSurgeryList
+            .where((object) => object['scheduled_surgery_id'] == surgery_id)
+            .toList();
+        print(completedSurgeryList
+            .where((object) => object['scheduled_surgery_id'] == surgery_id)
+            .toList());
+        //for(int i =0;i<completedSurgeryList.length;i++){
+        //  completedSurgeryList.where((object) => object['scheduled_surgery_id']==surgery_id).toList());
+        //}
+
+        if (currentSurgery.isNotEmpty) {
+          setState(() {
+            preOPStartDisabled = true;
+            submitButtonEnabled = false;
+            print(currentSurgery[0]['patient_received_in_pre_op_time']);
+            preOPStartTime =
+                currentSurgery[0]['patient_received_in_pre_op_time'];
+            prophylaxisStartTime =
+                currentSurgery[0]['antibiotic_prophylaxis_time'];
+            wheelInOT = currentSurgery[0]['patient_wheel_in_OT'];
+            inductionStartTime = currentSurgery[0]['induction_start_time'];
+            inductionEndTime = currentSurgery[0]['induction_end_time'];
+            paintAndDrapStartTime =
+                currentSurgery[0]['painting_and_draping_start_time'];
+            paintAndDrapEndTime =
+                currentSurgery[0]['painting_and_draping_end_time'];
+            incisionStartTime = currentSurgery[0]['incision_in_time'];
+            incisionEndTime = currentSurgery[0]['incision_close_time'];
+            extubationStartTime = currentSurgery[0]['extubation_time_in_OT'];
+            wheeledOutToTime =
+                currentSurgery[0]['wheeled_out_time_to_Post_op_ICU'];
+            wheeledOutFromTime = currentSurgery[0]['wheeled_out_from_Post_OP'];
+          });
+        }
+      } else {
+        // Handle other status codes if needed
+        print('GET request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle any exceptions or errors
+      print('Error sending GET request: $e');
+    }
+
+    //return false;
   }
 }
