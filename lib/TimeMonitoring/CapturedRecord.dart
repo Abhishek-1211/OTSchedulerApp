@@ -69,17 +69,17 @@ class _CapturedRecordState extends State<CapturedRecord> {
 
   //button disable once pressed
   bool preOPStartDisabled = false;
-  bool prophylaxisStartDisabled = false;
-  bool wheelInStartDisabled = false;
-  bool inductionStartDisabled = false;
-  bool inductionEndDisabled = false;
-  bool paintAndDrapStartDisabled = false;
-  bool paintAndDrapEndDisabled = false;
-  bool incisionStartDisabled = false;
-  bool incisionEndDisabled = false;
-  bool extubationStartDisabled = false;
-  bool wheeledOutToTimeDisabled = false;
-  bool wheeledOutFromTimeDisabled = false;
+  bool prophylaxisStartEnabled = false;
+  bool wheelInStartEnabled = false;
+  bool inductionStartEnabled = false;
+  bool inductionEndEnabled = false;
+  bool paintAndDrapStartEnabled = false;
+  bool paintAndDrapEndEnabled = false;
+  bool incisionStartEnabled = false;
+  bool incisionEndEnabled = false;
+  bool extubationStartEnabled = false;
+  bool wheeledOutToTimeEnabled = false;
+  bool wheeledOutFromTimeEnabled = false;
 
   String baseUrl = 'http://127.0.0.1:8000/api';
 
@@ -175,6 +175,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                                       getCurrentTime();
                                                   setState(() {
                                                     preOPStartDisabled = true;
+                                                    prophylaxisStartEnabled =
+                                                        true;
                                                   });
                                                 },
                                           child: Text('Start',
@@ -212,18 +214,19 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                     children: [
                                       //SizedBox(width:200),
                                       ElevatedButton(
-                                          onPressed: prophylaxisStartDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: prophylaxisStartEnabled
+                                              ? () {
                                                   prophylaxisStartTime =
                                                       getCurrentTime();
                                                   setState(() {
-                                                    prophylaxisStartDisabled =
-                                                        true;
+                                                    prophylaxisStartEnabled =
+                                                        false;
+                                                    wheelInStartEnabled = true;
                                                   });
                                                   print(
                                                       'Time - ${getCurrentTime()}');
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -259,16 +262,19 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                     children: [
                                       //SizedBox(width: 150),
                                       ElevatedButton(
-                                          onPressed: wheelInStartDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: wheelInStartEnabled
+                                              ? () {
                                                   wheelInOT = getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    wheelInStartDisabled = true;
+                                                    wheelInStartEnabled =
+                                                        false;
+                                                    inductionStartEnabled =
+                                                        true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -301,49 +307,52 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16)),
-                                      SizedBox(width:200),
+                                      SizedBox(width: 200),
                                       ElevatedButton(
-                                          onPressed: inductionStartDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: inductionStartEnabled
+                                              ? () {
                                                   inductionStartTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    inductionStartDisabled =
-                                                        true;
+                                                    inductionStartEnabled =
+                                                        false;
+                                                    inductionEndEnabled = true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15))),
                                       SizedBox(width: 30),
                                       ElevatedButton(
-                                          onPressed: inductionEndDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: inductionEndEnabled
+                                              ? () {
                                                   inductionEndTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    inductionEndDisabled = true;
+                                                    inductionEndEnabled =
+                                                        false;
+                                                    paintAndDrapStartEnabled =
+                                                        true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('End',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15))),
-                                      SizedBox(width:200),
+                                      SizedBox(width: 200),
                                       Text('End Time:$inductionEndTime',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16))
                                     ],
                                   ),
-
                                 ],
                               )),
                           SizedBox(height: 20),
@@ -370,38 +379,41 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16)),
-                                      SizedBox(width:200),
+                                      SizedBox(width: 200),
                                       ElevatedButton(
-                                          onPressed: paintAndDrapStartDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: paintAndDrapStartEnabled
+                                              ? () {
                                                   paintAndDrapStartTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    paintAndDrapStartDisabled =
+                                                    paintAndDrapStartEnabled =
+                                                        false;
+                                                    paintAndDrapEndEnabled =
                                                         true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15))),
                                       SizedBox(width: 30),
                                       ElevatedButton(
-                                          onPressed: paintAndDrapEndDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: paintAndDrapEndEnabled
+                                              ? () {
                                                   paintAndDrapEndTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    paintAndDrapEndDisabled =
-                                                        true;
+                                                    paintAndDrapEndEnabled =
+                                                        false;
+                                                    incisionStartEnabled = true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('End',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -438,37 +450,40 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16)),
-                                      SizedBox(width:200),
+                                      SizedBox(width: 200),
                                       ElevatedButton(
-                                          onPressed: incisionStartDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: incisionStartEnabled
+                                              ? () {
                                                   incisionStartTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    incisionStartDisabled =
-                                                        true;
+                                                    incisionStartEnabled =
+                                                        false;
+                                                    incisionEndEnabled = true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15))),
                                       SizedBox(width: 30),
                                       ElevatedButton(
-                                          onPressed: incisionEndDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: incisionEndEnabled
+                                              ? () {
                                                   incisionEndTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    incisionEndDisabled = true;
+                                                    incisionEndEnabled = false;
+                                                    extubationStartEnabled =
+                                                        true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('End',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -507,18 +522,20 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
-                                          onPressed: extubationStartDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: extubationStartEnabled
+                                              ? () {
                                                   extubationStartTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    extubationStartDisabled =
+                                                    extubationStartEnabled =
+                                                        false;
+                                                    wheeledOutToTimeEnabled =
                                                         true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -552,18 +569,20 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
-                                          onPressed: wheeledOutToTimeDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: wheeledOutToTimeEnabled
+                                              ? () {
                                                   wheeledOutToTime =
                                                       getCurrentTime();
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    wheeledOutToTimeDisabled =
+                                                    wheeledOutToTimeEnabled =
+                                                        false;
+                                                    wheeledOutFromTimeEnabled =
                                                         true;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -598,9 +617,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
-                                          onPressed: wheeledOutFromTimeDisabled
-                                              ? null
-                                              : () {
+                                          onPressed: wheeledOutFromTimeEnabled
+                                              ? () {
                                                   wheeledOutFromTime =
                                                       getCurrentTime();
                                                   print(
@@ -608,10 +626,11 @@ class _CapturedRecordState extends State<CapturedRecord> {
                                                   print(
                                                       'Time - ${getCurrentTime()}');
                                                   setState(() {
-                                                    wheeledOutFromTimeDisabled =
-                                                        true;
+                                                    wheeledOutFromTimeEnabled =
+                                                        false;
                                                   });
-                                                },
+                                                }
+                                              : null,
                                           child: Text('Start',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -627,19 +646,23 @@ class _CapturedRecordState extends State<CapturedRecord> {
                           Container(
                             height: 50,
                             width: 150,
-                          child:ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.lightBlueAccent,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(2)))),
-                            onPressed: () {
-                              _submitForm(); // Call method to send POST request
-                            },
-                            child: Text('Submit',style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18),),
-                          ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.lightBlueAccent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(2)))),
+                              onPressed: () {
+                                _submitForm(); // Call method to send POST request
+                              },
+                              child: Text(
+                                'Submit',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -718,6 +741,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
                     child: const Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
+                      //Navigator.of(context).pop('${widget.surgeryId} is done');
                     },
                   ),
                 ],
@@ -727,21 +751,26 @@ class _CapturedRecordState extends State<CapturedRecord> {
       } else {
         // Handle other status codes if needed
         print('POST request failed with status: ${response.statusCode}');
-        // showDialog(context: context, builder: (BuildContext context) {
-        //   return AlertDialog(
-        //     title: const Text('OOPS !!!.\nYour inputs have not been recorded.\nPlease check again'),
-        //     //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-        //     actions: <Widget>[TextButton(
-        //       style: TextButton.styleFrom(
-        //         textStyle: Theme.of(context).textTheme.labelLarge,
-        //       ),
-        //       child: const Text('Disable'),
-        //       onPressed: () {
-        //         Navigator.of(context).pop();
-        //       },
-        //     ),],
-        //   );
-        // });
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                    'OOPS !!!.\nYour inputs have not been recorded.\nPlease check again'),
+                //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+                actions: <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text('Disable'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
       }
     } catch (e) {
       // Handle any exceptions or errors
