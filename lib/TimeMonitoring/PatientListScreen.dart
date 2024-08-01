@@ -15,6 +15,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
   List<String> patientList = [];
   List<String> doctorList = [];
   List<String> procedureList = [];
+  List<String> departmentList = [];
   List<String> techniciansList = [];
   List<String> nursesList = [];
   List<String> specialEquipmentList = [];
@@ -146,6 +147,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                                     // Pass DateTime value
                                                     doctorName:
                                                         doctorList[index],
+                                                    department:
+                                                        departmentList[index],
                                                     procedureName:
                                                         procedureList[index],
                                                     technician:
@@ -170,7 +173,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        '${ot_numbers[index]}',
+                                        'OT ${ot_numbers[index]}',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
@@ -308,6 +311,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   'surgery_date': DateFormat('MM/dd/yyyy')
                       .parse(e['surgery_date'] as String),
                   'doctor_name': e['doctor_name'] as String,
+                  'department' : e['department'] as String,
                   'procedure_name': e['procedure_name'] as String,
                   'technician': e['technician_tl'] as String,
                   'nurse': e['nurse_tl'] as String,
@@ -356,6 +360,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
               .toList(); // Store as DateTime
           doctorList =
               patients.map<String>((e) => e['doctor_name'] as String).toList();
+          departmentList =
+              patients.map<String>((e) => e['department'] as String).toList();
           procedureList = patients
               .map<String>((e) => e['procedure_name'] as String)
               .toList();
@@ -370,15 +376,15 @@ class _PatientListScreenState extends State<PatientListScreen> {
         });
 
         // Check if any surgery is done
-        for (int id in surgery_id) {
-          bool isDone = await _isSurgeryDone(id);
-          if (isDone) {
-            print('Surgery $id is done');
-            // Handle the case when surgery is done
-          } else {
-            print('Surgery $id is not done');
-          }
-        }
+        // for (int id in surgery_id) {
+        //   bool isDone = await _isSurgeryDone(id);
+        //   if (isDone) {
+        //     print('Surgery $id is done');
+        //     // Handle the case when surgery is done
+        //   } else {
+        //     print('Surgery $id is not done');
+        //   }
+        // }
       } else {
         throw Exception('Failed to load patient list');
       }

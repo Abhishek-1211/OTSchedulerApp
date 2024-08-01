@@ -19,13 +19,110 @@ class OTScheduleListScreen extends StatefulWidget {
 class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
   late List<MapEntry<String, dynamic>> sortedOTEntries;
 
+  // Controllers for editable fields
+  late List<TextEditingController> otNumberControllers;
+  late List<TextEditingController> surgeonControllers;
+  late List<TextEditingController> surgeryControllers;
+  late List<TextEditingController> startTimeControllers;
+  late List<TextEditingController> endTimeControllers;
+  late List<TextEditingController> dateControllers;
+  late List<TextEditingController> patientNameControllers;
+  late List<TextEditingController> specialEquipmentControllers;
+  late List<TextEditingController> departmentControllers;
+  late List<TextEditingController> ageSexControllers;
+  late List<TextEditingController> technicalLeadsControllers;
+  late List<TextEditingController> nursingLeadsControllers;
+
   @override
   void initState() {
     super.initState();
+
     // Initialize sortedOTEntries when the widget initializes
-    sortedOTEntries =
-        widget.scheduleData['OT'].entries.toList();
+    sortedOTEntries = widget.scheduleData['OT'].entries.toList();
     sortedOTEntries.sort((a, b) => a.value.compareTo(b.value));
+
+    // Initialize controllers for each field
+    otNumberControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: sortedOTEntries[index].value.toString())
+    );
+    surgeonControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Surgeon'][sortedOTEntries[index].key])
+    );
+    surgeryControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['surgery'][sortedOTEntries[index].key])
+    );
+    startTimeControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Start_time'][sortedOTEntries[index].key])
+    );
+    endTimeControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['End_time'][sortedOTEntries[index].key])
+    );
+    dateControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Date of Surgery'][sortedOTEntries[index].key])
+    );
+    patientNameControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Name of the Patient'][sortedOTEntries[index].key])
+    );
+    specialEquipmentControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Special Equipment'][sortedOTEntries[index].key])
+    );
+    departmentControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Department'][sortedOTEntries[index].key])
+    );
+    ageSexControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Age/Sex'][sortedOTEntries[index].key])
+    );
+    technicalLeadsControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Technicial T/L'][sortedOTEntries[index].key])
+    );
+    nursingLeadsControllers = List.generate(sortedOTEntries.length, (index) =>
+        TextEditingController(text: widget.scheduleData['Nursing T/L'][sortedOTEntries[index].key])
+    );
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers to free up resources
+    otNumberControllers.forEach((controller) => controller.dispose());
+    surgeonControllers.forEach((controller) => controller.dispose());
+    surgeryControllers.forEach((controller) => controller.dispose());
+    startTimeControllers.forEach((controller) => controller.dispose());
+    endTimeControllers.forEach((controller) => controller.dispose());
+    dateControllers.forEach((controller) => controller.dispose());
+    patientNameControllers.forEach((controller) => controller.dispose());
+    specialEquipmentControllers.forEach((controller) => controller.dispose());
+    departmentControllers.forEach((controller) => controller.dispose());
+    ageSexControllers.forEach((controller) => controller.dispose());
+    technicalLeadsControllers.forEach((controller) => controller.dispose());
+    nursingLeadsControllers.forEach((controller) => controller.dispose());
+    super.dispose();
+  }
+
+  void _saveChanges() {
+    // Update scheduleData with new values from controllers
+    for (int i = 0; i < sortedOTEntries.length; i++) {
+      final newOTNumber = int.tryParse(otNumberControllers[i].text) ?? sortedOTEntries[i].value;
+      widget.scheduleData['OT'].remove(sortedOTEntries[i].key); // Remove old key
+      widget.scheduleData['OT']['OT $newOTNumber'] = sortedOTEntries[i].key; // Add new key
+      sortedOTEntries[i] = MapEntry(sortedOTEntries[i].key, newOTNumber); // Update sortedOTEntries
+
+      widget.scheduleData['Surgeon'][sortedOTEntries[i].key] = surgeonControllers[i].text;
+      widget.scheduleData['surgery'][sortedOTEntries[i].key] = surgeryControllers[i].text;
+      widget.scheduleData['Start_time'][sortedOTEntries[i].key] = startTimeControllers[i].text;
+      widget.scheduleData['End_time'][sortedOTEntries[i].key] = endTimeControllers[i].text;
+      widget.scheduleData['Date of Surgery'][sortedOTEntries[i].key] = dateControllers[i].text;
+      widget.scheduleData['Name of the Patient'][sortedOTEntries[i].key] = patientNameControllers[i].text;
+      widget.scheduleData['Special Equipment'][sortedOTEntries[i].key] = specialEquipmentControllers[i].text;
+      widget.scheduleData['Department'][sortedOTEntries[i].key] = departmentControllers[i].text;
+      widget.scheduleData['Age/Sex'][sortedOTEntries[i].key] = ageSexControllers[i].text;
+      widget.scheduleData['Technicial T/L'][sortedOTEntries[i].key] = technicalLeadsControllers[i].text;
+      widget.scheduleData['Nursing T/L'][sortedOTEntries[i].key] = nursingLeadsControllers[i].text;
+    }
+
+    // Save to backend or local storage here if needed
+    // Example:
+    // _saveToLocalStorage();
+    // _saveToBackend();
   }
 
   Future<void> _exportDataToCsv() async {
@@ -49,26 +146,19 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
       rows.add(headers);
 
       // Add data rows
-      List<MapEntry<String, dynamic>> sortedOTEntries =
-      widget.scheduleData['OT'].entries.toList();
-      sortedOTEntries.sort((a, b) => a.value.compareTo(b.value));
       sortedOTEntries.forEach((entry) {
         final otNumber = entry.value.toString();
-        final String surgeon = widget.scheduleData['Surgeon'][entry.key];
-        final String surgery = widget.scheduleData['surgery'][entry.key];
-        final String startTime = widget.scheduleData['Start_time'][entry.key];
-        final String endTime = widget.scheduleData['End_time'][entry.key];
-        final String date = widget.scheduleData['Date of Surgery'][entry.key];
-        final String patientName =
-        widget.scheduleData['Name of the Patient'][entry.key];
-        final String specialEquipment =
-        widget.scheduleData['Special Equipment'][entry.key];
-        final String department =
-        widget.scheduleData['Department'][entry.key];
-        final String ageSex = widget.scheduleData['Age/Sex'][entry.key];
-        final String nusringTL = widget.scheduleData['Nursing T/L'][entry.key];
-        final String technicianTL = widget.scheduleData['Technicial T/L'][entry.key];
-        //final String mrdNumber = widget.scheduleData['MRD'][entry.key];
+        final String surgeon = surgeonControllers[sortedOTEntries.indexOf(entry)].text;
+        final String surgery = surgeryControllers[sortedOTEntries.indexOf(entry)].text;
+        final String startTime = startTimeControllers[sortedOTEntries.indexOf(entry)].text;
+        final String endTime = endTimeControllers[sortedOTEntries.indexOf(entry)].text;
+        final String date = dateControllers[sortedOTEntries.indexOf(entry)].text;
+        final String patientName = patientNameControllers[sortedOTEntries.indexOf(entry)].text;
+        final String specialEquipment = specialEquipmentControllers[sortedOTEntries.indexOf(entry)].text;
+        final String department = departmentControllers[sortedOTEntries.indexOf(entry)].text;
+        final String ageSex = ageSexControllers[sortedOTEntries.indexOf(entry)].text;
+        final String nusringTL = nursingLeadsControllers[sortedOTEntries.indexOf(entry)].text;
+        final String technicianTL = technicalLeadsControllers[sortedOTEntries.indexOf(entry)].text;
 
         rows.add([
           date,
@@ -115,6 +205,7 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
       print('Error exporting data to CSV: $e');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     // Define table columns
@@ -136,7 +227,7 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
       DataColumn(
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          color: Colors.greenAccent,
+          color: Colors.blueAccent,
           child: Text('Surgeon', style: TextStyle(color: Colors.white)),
         ),
       ),
@@ -176,14 +267,6 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           child: Text('Name of Patient', style: TextStyle(color: Colors.white)),
         ),
       ),
-      // DataColumn(
-      //   label: Container(
-      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      //     color: Colors.blueAccent,
-      //     child:
-      //     Text('MRD Number', style: TextStyle(color: Colors.white)),
-      //   ),
-      // ),
       DataColumn(
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -203,60 +286,113 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           color: Colors.blueAccent,
-          child:
-          Text('Technical T/L', style: TextStyle(color: Colors.white)),
+          child: Text('Technical T/L', style: TextStyle(color: Colors.white)),
         ),
       ),
       DataColumn(
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           color: Colors.blueAccent,
-          child:
-          Text('Nursing T/L', style: TextStyle(color: Colors.white)),
+          child: Text('Nursing T/L', style: TextStyle(color: Colors.white)),
         ),
       ),
     ];
 
     // Define table rows
     final rows = sortedOTEntries.map<DataRow>((entry) {
-      final otNumber = entry.value.toString();
-      final String surgeon = widget.scheduleData['Surgeon'][entry.key];
-      final String surgery = widget.scheduleData['surgery'][entry.key];
-      final String startTime = widget.scheduleData['Start_time'][entry.key];
-      final String endTime = widget.scheduleData['End_time'][entry.key];
-      final String date = widget.scheduleData['Date of Surgery'][entry.key];
-      final String patientName =
-      widget.scheduleData['Name of the Patient'][entry.key];
-      final String specialEquipment =
-      widget.scheduleData['Special Equipment'][entry.key];
-      final String department = widget.scheduleData['Department'][entry.key];
-      final String ageSex = widget.scheduleData['Age/Sex'][entry.key];
-      final String technicalLeads = widget.scheduleData['Technicial T/L'][entry.key];
-      final String nursingLeads = widget.scheduleData['Nursing T/L'][entry.key];
-      //final String mrdNumber = widget.scheduleData['MRD'][entry.key];
-
+      final index = sortedOTEntries.indexOf(entry);
       return DataRow(
         color: MaterialStateColor.resolveWith((states) {
           // Alternate row color
-          return sortedOTEntries.indexOf(entry) % 2 == 0
-              ? Colors.grey[200]!
-              : Colors.white;
+          return index % 2 == 0 ? Colors.grey[200]! : Colors.white;
         }),
         cells: [
-          DataCell(Text(date)),
-          DataCell(Text('OT $otNumber')),
-          DataCell(Text(surgeon.contains('/')? '${surgeon.split('/')[0]}...':surgeon)),
-          DataCell(Text(department)),
-          DataCell(Text(surgery.length>20?'${surgery.substring(0, 20)}...':surgery)),
-          DataCell(Text(startTime)),
-          DataCell(Text(endTime)),
-
-          DataCell(Text(patientName)),
-          //DataCell(Text(mrdNumber)),
-          DataCell(Text(ageSex)),
-          DataCell(Text(specialEquipment)),
-          DataCell(Text(technicalLeads)),
-          DataCell(Text(nursingLeads)),
+          DataCell(TextField(
+            controller: dateControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Date of Surgery'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: otNumberControllers[index],
+            onChanged: (value) {
+              // Update OT number and scheduleData on change
+              setState(() {
+                sortedOTEntries[index] = MapEntry(entry.key, int.tryParse(value) ?? entry.value);
+              });
+            },
+          )),
+          DataCell(TextField(
+            controller: surgeonControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Surgeon'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: departmentControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Department'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: surgeryControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['surgery'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: startTimeControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Start_time'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: endTimeControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['End_time'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: patientNameControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Name of the Patient'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: ageSexControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Age/Sex'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: specialEquipmentControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Special Equipment'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: technicalLeadsControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Technicial T/L'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: nursingLeadsControllers[index],
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Nursing T/L'][entry.key] = value;
+            },
+          )),
         ],
       );
     }).toList();
@@ -271,9 +407,15 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
           child:
           Divider(color: Colors.grey), // Divider below the app bar title
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _saveChanges,
+            tooltip: 'Save Changes',
+          ),
+        ],
       ),
       body: Column(
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -285,38 +427,26 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
             ),
           ),
           Expanded(
-            child: Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  child: DataTable(
-                    columns: columns,
-                    rows: rows,
-                    dividerThickness: 2.0,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                    ),
+                child: DataTable(
+                  columns: columns,
+                  rows: rows,
+                  dividerThickness: 2.0,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
                   ),
                 ),
               ),
             ),
           ),
-
-          TextButton(
-            onPressed: () {
-              _exportDataToCsv();
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlueAccent),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-              ),
-            ),
-            child: Text('Download'),
-          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _exportDataToCsv,
+        tooltip: 'Export CSV',
+        child: Icon(Icons.file_download),
       ),
     );
   }
