@@ -1,117 +1,17 @@
-import 'dart:convert';
+import 'dart:core';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
+class Constants {
 
-class CapturedRecord extends StatefulWidget {
-  // int mrd;
-  String patientName;
-  String doctorName;
-  String department;
-  String procedureName;
-  int surgeryId;
-  String otNumber;
-  String technician;
-  String nurse;
-  String specialEquipment;
-  DateTime surgeryDate;
+  static const List<String> anesthesiaTypes = ['General Anesthesia',
+  'Spinal Anesthesia',
+  'Epidural Anesthesia',
+  'Combined Spinal Epidural Anesthesia',
+  'Local Anesthesia',
+  'Regional blocks',
+  'Dissociative Anesthesia',
+  'Total Intravenous Anesthesia'];
 
-  // String dob;
-  // String otType;
-  // String surgeryName;
-  // String doctorName;
-  // String deptName;
-
-  // CapturedRecord({required this.mrd, required this.patientName, required this.doctorName, required this.surgeryName, required this.otType, required this.deptName});
-  CapturedRecord(
-      {required this.patientName,
-      required this.surgeryId,
-      required this.otNumber,
-      required this.surgeryDate,
-      required this.doctorName,
-        required this.department,
-      required this.procedureName,
-      required this.technician,
-      required this.nurse,
-      required this.specialEquipment});
-
-  CapturedRecord.emergency(
-      {required this.patientName,
-      required this.otNumber,
-      required this.surgeryDate,
-      required this.doctorName,
-      required this.procedureName,
-      required this.surgeryId})
-      : nurse = '',
-        specialEquipment = '',
-        department = '',
-        technician = '';
-
-  @override
-  State<CapturedRecord> createState() => _CapturedRecordState();
-}
-
-class _CapturedRecordState extends State<CapturedRecord> {
-  String preOPStartTime = '';
-  String prophylaxisStartTime = '';
-  String wheelInOT = '';
-  String inductionStartTime = '';
-  String paintAndDrapStartTime = '';
-  String incisionStartTime = '';
-
-  String inductionEndTime = '';
-  String paintAndDrapEndTime = '';
-  String incisionEndTime = '';
-  String extubationStartTime = '';
-  String wheeledOutToTime = '';
-  String wheeledOutFromTime = '';
-
-  //button disable once pressed
-  bool preOPStartDisabled = false;
-  bool prophylaxisStartEnabled = false;
-  bool wheelInStartEnabled = false;
-  bool inductionStartEnabled = false;
-  bool inductionEndEnabled = false;
-  bool paintAndDrapStartEnabled = false;
-  bool paintAndDrapEndEnabled = false;
-  bool incisionStartEnabled = false;
-  bool incisionEndEnabled = false;
-  bool extubationStartEnabled = false;
-  bool wheeledOutToTimeEnabled = false;
-  bool wheeledOutFromTimeEnabled = false;
-  bool submitButtonEnabled = true;
-
-  String baseUrl = 'http://127.0.0.1:8000/api';
-
-  // Initial Selected Value
-  String selectedAnesthesiaType  = 'General Anesthesia';
-  late TextEditingController patientController;
-  late TextEditingController mrdController;
-  late TextEditingController doctorController;
-  late TextEditingController nurseController;
-  late TextEditingController technicianController;
-  final TextEditingController menuController_anesthesia = TextEditingController();
-  late TextEditingController otNumberController;
-  // List of items in our dropdown menu
-  var items = [
-    'General Anesthesia',
-    'Spinal Anesthesia',
-    'Epidural Anesthesia',
-    'Combined Spinal Epidural Anesthesia',
-    'Local Anesthesia',
-    'Regional blocks',
-    'Dissociative Anesthesia',
-    'Total Intravenous Anesthesia',
-  ];
-
-  String selectedDepartment  = 'Gastrointestinal Surgery';
-  TextEditingController menuController_department = TextEditingController();
-  var departmentList = [
-    'Gastrointestinal Surgery',
+  static const List<String> departmentList = ['Gastrointestinal Surgery',
     'General Surgery',
     'Cardiology -Angiography',
     'Cardiology -Angioplasty',
@@ -147,167 +47,163 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'Heart Transplant - Package',
     'Liver Transplant - Package',
     'Kidney Transplant - Package',
-    'Urology',
+    'Urology'];
+
+  static const List<String> gastroIntestinalSurgery =[
+    'BABA00001	Lap. Sleeve Gastrectomy',
+    'BABA00002	Gastric Mini Bypass',
+    'GAGA00003	Peroral Endoscopic Myotomy',
+    'GAGI00150	Kasai Portoenterostomy - Paed',
+    'GAGI00004 Anteriorresc with Total Mesorectal Exc Tme - Open',
+    'GAGI00005 Cholecystomy with Choledochoduodenostomy',
+    'GAGI00006 Colonic Interposition',
+    'GAGI00007 Colostomy Closure',
+    'GAGI00008 Cytoreductive Surgery and HIPAC',
+    'GAGI00009 Delormes Procedure',
+    'GAGI00010 Distal Pancreatectomy and Pancreatico - Jejunostomy',
+    'GAGI00011 Endostem Implantation',
+    'GAGI00012 Enucleation of Pancreatic Tumour',
+    'GAGI00013 Esophagocoloplasty',
+    'GAGI00014 Excision Laparotmy+Lig of MLTPL Hemangioma In Sml Bowel+Ileostomy',
+    'GAGI00015 Excision of Cholangiocarcinoma - Local',
+    'GAGI00016 Excision of Cholangiocarcinoma with Hepatectomy',
+    'GAGI00017 Excision of Choledochal Cyst and Hepatico - Jejunostomy',
+    'GAGI00018 Excision of MLTPL Cysts',
+    'GAGI00019 Exploratory Laporotomy with Ioop Endoscopy Ileostomy',
+    'GAGI00020 Feeding Jejunostomy',
+    'GAGI00021 Frey\'s Procedure',
+    'GAGI00022 Gastro - Jejunostomy without Vagotomy',
+    'GAGI00023 Gastrostomy',
+    'GAGI00024 Hepatectomy Complex',
+    'GAGI00025 Hepatico Porto - Enterostomy Kasais Operation',
+    'GAGI00026 Hepatico - Jejunostomy Open',
+    'GAGI00027 Hydatid Cyst Drainage',
+    'GAGI00028 Hydatid Cyst Pericystectomy',
+    'GAGI00029 Ileostomy',
+    'GAGI00030 Ileostomy Closure',
+    'GAGI00031 Ilio - Inguinal Approach - Three Windows',
+    'GAGI00032 Ilio - Inguinal Approach - Two Windows',
+    'GAGI00033 Incision & Drainage of Large Abscess',
+    'GAGI00035 Inguinal Lymph Node Resection',
+    'GAGI00036 Ischorectal Abscess Drainage',
+    'GAGI00037 Ivorlewis Oesophagectomy',
+    'GAGI00038 Jejunal Interposition',
+    'GAGI00039 Lap Enucleation of Leiomyoma of Oesophageal',
+    'GAGI00040 Lap Omentectomy',
+    'GAGI00041 Lap. Ultra Low Anterior Resection',
+    'GAGI00042 Lap/Open Transabdominal Resection Rectopexy',
+    'GAGI00043 Laparoscopic Adjustable Gastric Banding',
+    'GAGI00044 Laparoscopic Anterior Resc with Total Mesorectal Excisional TME',
+    'GAGI00045 Laparoscopic Assisted Abdominoperineal Resc - APR',
+    'GAGI00046 Laparoscopic Assisted Segmental Colectomy',
+    'GAGI00047 Laparoscopic Bilio - Pancreatic Diversion',
+    'GAGI00048 Laparoscopic Cholecystectomy',
+    'GAGI00049 Laparoscopic Cholecystom&Choledocholithotomy CBD Exploration',
+    'GAGI00050 Laparoscopic Closure of Intestinal Perforation',
+    'GAGI00051 Laparoscopic Closure of Perforation Peptic Ulcer',
+    'GAGI00052 Laparoscopic Cysto - Gastrostomy',
+    'GAGI00053 Laparoscopic Cysto - Jejunostomy',
+    'GAGI00054 Laparoscopic Deroofing of Non - Hydatid Liver Cyst',
+    'GAGI00055 Laparoscopic Distal Pancreatectomy',
+    'GAGI00056 Laparoscopic Drainage of Intra Abdominal Collection',
+    'GAGI00057 Laparoscopic Drainage of Liver Abscess Drainage',
+    'GAGI00058 Laparoscopic Drainage of Pseudopancreatic Cyst',
+    'GAGI00059 Laparoscopic Excision of Choledochal Cyst and Hepatico - Jejunostomy',
+    'GAGI00060 Laparoscopic Fundoplication Nissen',
+    'GAGI00061 Laparoscopic Fundoplication - Partial',
+    'GAGI00062 Laparoscopic Gastrectomy',
+    'GAGI00063 Laparoscopic Gastric Band Removal',
+    'GAGI00064 Laparoscopic Gastro - Jejunostomy',
+    'GAGI00065 Laparoscopic Gastrostomy',
+    'GAGI00066 Laparoscopic Hepatico - Jejunostomy',
+    'GAGI00067 Laparoscopic Meckels Diverticulectomy',
+    'GAGI00068 Laparoscopic Proctocolectomy',
+    'GAGI00069 Laparoscopic Pull Through Forhirschprungs Disease',
+    'GAGI00070 Laparoscopic Removal of Infected Mesh',
+    'BAGI00071 Laparoscopic Roux - En - Y Gastric Bypass',
+    'GAGI00072 Laparoscopic Sigmoidectomy',
+    'GAGI00073 Laparoscopic Small Bowel Resc',
+    'GAGI00074 Laparoscopic Splenectomy',
+    'GAGI00075 Laparoscopic Truncal Vegotomy & Gastro Jejunostomy',
+    'GAGI00076 Laparoscopic Whipples Operation',
+    'GAGI00077 Laparoscopic/Open Oesophageal Cardiomyotomy',
+    'GAGI00078 Laproscopy Sleeve Gastrectomy',
+    'GAGI00079 Laprotomy & Closure of Intestinal Perforation',
+    'GAGI00080 Laprotomy and Drainage of Pseudopancreatic Cyst',
+    'GAGI00081 Lateral Pancreatico - Jejunostomy',
+    'GAGI00082 Lateral Sphincterotomy or Fissurectomy',
+    'GAGI00083 Left Hepatectomy',
+    'GAGI00084 LIV Abscess Drainage - Open',
+    'GAGI00085 Liver Embolization',
+    'GAGI00086 Mc - Keown Oesophagectomy',
+    'GAGI00087 Mesentric Cyst Excision',
+    'BAGI00088 Mini - Gastric Bypass',
+    'GAGI00089 MLTPL Intestinal Resc and Anastomosis',
+    'GAGI00090 Necrosectomy and Drainage of Pancreatic Abscess',
+    'GAGI00091 Oesophageal Stricturoplasty',
+    'GAGI00092 Oesophagostomy',
+    'GAGI00093 Omentectomy',
+    'GAGI00094 Open Abdominoperineal Resc APR',
+    'GAGI00095 Open Cholecystomy with Choledocholithotomy',
+    'GAGI00096 Open DeroofingorExcision On Non - Hydatid Liv Cyst',
+    'GAGI00097 Open Distal Pancreatectomy',
+    'GAGI00098 Open Enucleation of Leiomyoma of Oesophageal Transthoracic',
+    'GAGI00099 Open Fundoplication',
+    'GAGI00100 Open Metastatectomy/Laparoscopic Metastatectomy',
+    'GAGI00101 Pack Removal/Change',
+    'GAGI00102 Pancrease Presening Duodenal Resec with DJ with FJ',
+    'GAGI00103 Partial Hepatectomy',
+    'GAGI00104 Partial Liv Resc Lateral Segmentectomy',
+    'GAGI00105 Partial or Subtotal Gastrectomy',
+    'GAGI00106 Peustows Operation',
+    'GAGI00107 Primary Rep of Common Hepatic Orbile Duct',
+    'GAGI00108 Proctocolectomy Open',
+    'GAGI00109 Pyloromotomy For Pyloric Stenosis/Pyloroplasty',
+    'GAGI00110 Radical Cholecystomy - Without Bile Duct Excision',
+    'GAGI00111 Radical Cholecystomy with Bile Duct Excision',
+    'GAGI00112 Radical Gastrectomy',
+    'GAGI00113 Rectal Polyp Exc',
+    'GAGI00114 Redo Fundoplication',
+    'GAGI00115 Restorative Proctocolectomy',
+    'GAGI00116 Retroperitoneal Drainage of Abscess',
+    'GAGI00117 Retroperitoneal Tumour Exc',
+    'GAGI00118 Reversal of Fundoplication',
+    'GAGI00119 Revision Bariatric Surgery',
+    'GAGI00120 Right Hepatectomy',
+    'GAGI00121 Right Hepatic Trisegmentectomy',
+    'GAGI00122 Roux - En - Y Cystojejunostomy Open',
+    'GAGI00123 Secondary Wound Closure Suturing',
+    'GAGI00124 Segmental Colectomy Open',
+    'GAGI00125 Sigmoid/Transverse Colostomy',
+    'GAGI00126 Sigmoidordescending Colectomy Open',
+    'GAGI00127 Single Intestinal Resc and Anastomosis',
+    'GAGI00128 Spleeno Renal Shunt',
+    'GAGI00129 Splenectomy Open',
+    'GAGI00130 Staging Thoracoscopy',
+    'GAGI00131 Stapled Transanal Rectal Resection',
+    'GAGI00132 Stitch Sinus/Granulation',
+    'GAGI00133 Subtotal Colectomy Open',
+    'GAGI00134 Total Colectomy',
+    'GAGI00135 Total Gasterctomy',
+    'GAGI00136 Trans Anal Rectal Biopsy',
+    'GAGI00137 Transabdominal Rectopexy Open/Lap',
+    'GAGI00138 Transaction of Oesophagus and Eea Stapling',
+    'GAGI00139 Trans - Anal Pull Through Forhirschprungs Disease',
+    'GAGI00140 Transhiatal Oesophagectomy',
+    'GAGI00141 Truncal Vegotomy & Gestro - Jejunostomy',
+    'GAGI00142 Truncal Vegotomy and Pyloroplasty',
+    'GAGI00143 Tube Caecostomy',
+    'GAGI00144 Umbilectomy',
+    'GAGI00145 VATS Esophagectomy',
+    'GAGI00146 Video Assisted Anal Fistula Treatment',
+    'GAGI00147 Whipples Procedure',
+    'GAGI00148 Endo Vacuum Upper GI',
+    'GAGI00149 Endo Vacuum Lower GI',
+    'GAGI00151 Robotic Charges - 1-3 Instruments - GI/General Surgery',
+    'GAGI00152 Robotic Charges - 4-5 Instruments - GI/General Surgery',
   ];
 
-  TextEditingController menuController_surgery = TextEditingController();
-  String selectedSurgery = '';
-  Map<String, List<String>> surgeryMap = {};
-
-  List<String> dropdownItemsSurgery = [];
-  var gastroIntestinalSurgery =['BABA00001	Lap. Sleeve Gastrectomy',
-  'BABA00002	Gastric Mini Bypass',
-  'GAGA00003	Peroral Endoscopic Myotomy',
-  'GAGI00150	Kasai Portoenterostomy - Paed',
-  'GAGI00004 Anteriorresc with Total Mesorectal Exc Tme - Open',
-  'GAGI00005 Cholecystomy with Choledochoduodenostomy',
-  'GAGI00006 Colonic Interposition',
-  'GAGI00007 Colostomy Closure',
-  'GAGI00008 Cytoreductive Surgery and HIPAC',
-  'GAGI00009 Delormes Procedure',
-  'GAGI00010 Distal Pancreatectomy and Pancreatico - Jejunostomy',
-  'GAGI00011 Endostem Implantation',
-  'GAGI00012 Enucleation of Pancreatic Tumour',
-  'GAGI00013 Esophagocoloplasty',
-  'GAGI00014 Excision Laparotmy+Lig of MLTPL Hemangioma In Sml Bowel+Ileostomy',
-  'GAGI00015 Excision of Cholangiocarcinoma - Local',
-  'GAGI00016 Excision of Cholangiocarcinoma with Hepatectomy',
-  'GAGI00017 Excision of Choledochal Cyst and Hepatico - Jejunostomy',
-  'GAGI00018 Excision of MLTPL Cysts',
-  'GAGI00019 Exploratory Laporotomy with Ioop Endoscopy Ileostomy',
-  'GAGI00020 Feeding Jejunostomy',
-  'GAGI00021 Frey\'s Procedure',
-  'GAGI00022 Gastro - Jejunostomy without Vagotomy',
-  'GAGI00023 Gastrostomy',
-  'GAGI00024 Hepatectomy Complex',
-  'GAGI00025 Hepatico Porto - Enterostomy Kasais Operation',
-  'GAGI00026 Hepatico - Jejunostomy Open',
-  'GAGI00027 Hydatid Cyst Drainage',
-  'GAGI00028 Hydatid Cyst Pericystectomy',
-  'GAGI00029 Ileostomy',
-  'GAGI00030 Ileostomy Closure',
-  'GAGI00031 Ilio - Inguinal Approach - Three Windows',
-  'GAGI00032 Ilio - Inguinal Approach - Two Windows',
-  'GAGI00033 Incision & Drainage of Large Abscess',
-  'GAGI00035 Inguinal Lymph Node Resection',
-  'GAGI00036 Ischorectal Abscess Drainage',
-  'GAGI00037 Ivorlewis Oesophagectomy',
-  'GAGI00038 Jejunal Interposition',
-  'GAGI00039 Lap Enucleation of Leiomyoma of Oesophageal',
-  'GAGI00040 Lap Omentectomy',
-  'GAGI00041 Lap. Ultra Low Anterior Resection',
-  'GAGI00042 Lap/Open Transabdominal Resection Rectopexy',
-  'GAGI00043 Laparoscopic Adjustable Gastric Banding',
-  'GAGI00044 Laparoscopic Anterior Resc with Total Mesorectal Excisional TME',
-  'GAGI00045 Laparoscopic Assisted Abdominoperineal Resc - APR',
-  'GAGI00046 Laparoscopic Assisted Segmental Colectomy',
-  'GAGI00047 Laparoscopic Bilio - Pancreatic Diversion',
-  'GAGI00048 Laparoscopic Cholecystectomy',
-  'GAGI00049 Laparoscopic Cholecystom&Choledocholithotomy CBD Exploration',
-  'GAGI00050 Laparoscopic Closure of Intestinal Perforation',
-  'GAGI00051 Laparoscopic Closure of Perforation Peptic Ulcer',
-  'GAGI00052 Laparoscopic Cysto - Gastrostomy',
-  'GAGI00053 Laparoscopic Cysto - Jejunostomy',
-  'GAGI00054 Laparoscopic Deroofing of Non - Hydatid Liver Cyst',
-  'GAGI00055 Laparoscopic Distal Pancreatectomy',
-  'GAGI00056 Laparoscopic Drainage of Intra Abdominal Collection',
-  'GAGI00057 Laparoscopic Drainage of Liver Abscess Drainage',
-  'GAGI00058 Laparoscopic Drainage of Pseudopancreatic Cyst',
-  'GAGI00059 Laparoscopic Excision of Choledochal Cyst and Hepatico - Jejunostomy',
-  'GAGI00060 Laparoscopic Fundoplication Nissen',
-  'GAGI00061 Laparoscopic Fundoplication - Partial',
-  'GAGI00062 Laparoscopic Gastrectomy',
-  'GAGI00063 Laparoscopic Gastric Band Removal',
-  'GAGI00064 Laparoscopic Gastro - Jejunostomy',
-  'GAGI00065 Laparoscopic Gastrostomy',
-  'GAGI00066 Laparoscopic Hepatico - Jejunostomy',
-  'GAGI00067 Laparoscopic Meckels Diverticulectomy',
-  'GAGI00068 Laparoscopic Proctocolectomy',
-  'GAGI00069 Laparoscopic Pull Through Forhirschprungs Disease',
-  'GAGI00070 Laparoscopic Removal of Infected Mesh',
-  'BAGI00071 Laparoscopic Roux - En - Y Gastric Bypass',
-  'GAGI00072 Laparoscopic Sigmoidectomy',
-  'GAGI00073 Laparoscopic Small Bowel Resc',
-  'GAGI00074 Laparoscopic Splenectomy',
-  'GAGI00075 Laparoscopic Truncal Vegotomy & Gastro Jejunostomy',
-  'GAGI00076 Laparoscopic Whipples Operation',
-  'GAGI00077 Laparoscopic/Open Oesophageal Cardiomyotomy',
-  'GAGI00078 Laproscopy Sleeve Gastrectomy',
-  'GAGI00079 Laprotomy & Closure of Intestinal Perforation',
-  'GAGI00080 Laprotomy and Drainage of Pseudopancreatic Cyst',
-  'GAGI00081 Lateral Pancreatico - Jejunostomy',
-  'GAGI00082 Lateral Sphincterotomy or Fissurectomy',
-  'GAGI00083 Left Hepatectomy',
-  'GAGI00084 LIV Abscess Drainage - Open',
-  'GAGI00085 Liver Embolization',
-  'GAGI00086 Mc - Keown Oesophagectomy',
-  'GAGI00087 Mesentric Cyst Excision',
-  'BAGI00088 Mini - Gastric Bypass',
-  'GAGI00089 MLTPL Intestinal Resc and Anastomosis',
-  'GAGI00090 Necrosectomy and Drainage of Pancreatic Abscess',
-  'GAGI00091 Oesophageal Stricturoplasty',
-  'GAGI00092 Oesophagostomy',
-  'GAGI00093 Omentectomy',
-  'GAGI00094 Open Abdominoperineal Resc APR',
-  'GAGI00095 Open Cholecystomy with Choledocholithotomy',
-  'GAGI00096 Open DeroofingorExcision On Non - Hydatid Liv Cyst',
-  'GAGI00097 Open Distal Pancreatectomy',
-  'GAGI00098 Open Enucleation of Leiomyoma of Oesophageal Transthoracic',
-  'GAGI00099 Open Fundoplication',
-  'GAGI00100 Open Metastatectomy/Laparoscopic Metastatectomy',
-  'GAGI00101 Pack Removal/Change',
-  'GAGI00102 Pancrease Presening Duodenal Resec with DJ with FJ',
-  'GAGI00103 Partial Hepatectomy',
-  'GAGI00104 Partial Liv Resc Lateral Segmentectomy',
-  'GAGI00105 Partial or Subtotal Gastrectomy',
-  'GAGI00106 Peustows Operation',
-  'GAGI00107 Primary Rep of Common Hepatic Orbile Duct',
-  'GAGI00108 Proctocolectomy Open',
-  'GAGI00109 Pyloromotomy For Pyloric Stenosis/Pyloroplasty',
-  'GAGI00110 Radical Cholecystomy - Without Bile Duct Excision',
-  'GAGI00111 Radical Cholecystomy with Bile Duct Excision',
-  'GAGI00112 Radical Gastrectomy',
-  'GAGI00113 Rectal Polyp Exc',
-  'GAGI00114 Redo Fundoplication',
-  'GAGI00115 Restorative Proctocolectomy',
-  'GAGI00116 Retroperitoneal Drainage of Abscess',
-  'GAGI00117 Retroperitoneal Tumour Exc',
-  'GAGI00118 Reversal of Fundoplication',
-  'GAGI00119 Revision Bariatric Surgery',
-  'GAGI00120 Right Hepatectomy',
-  'GAGI00121 Right Hepatic Trisegmentectomy',
-  'GAGI00122 Roux - En - Y Cystojejunostomy Open',
-  'GAGI00123 Secondary Wound Closure Suturing',
-  'GAGI00124 Segmental Colectomy Open',
-  'GAGI00125 Sigmoid/Transverse Colostomy',
-  'GAGI00126 Sigmoidordescending Colectomy Open',
-  'GAGI00127 Single Intestinal Resc and Anastomosis',
-  'GAGI00128 Spleeno Renal Shunt',
-  'GAGI00129 Splenectomy Open',
-  'GAGI00130 Staging Thoracoscopy',
-  'GAGI00131 Stapled Transanal Rectal Resection',
-  'GAGI00132 Stitch Sinus/Granulation',
-  'GAGI00133 Subtotal Colectomy Open',
-  'GAGI00134 Total Colectomy',
-  'GAGI00135 Total Gasterctomy',
-  'GAGI00136 Trans Anal Rectal Biopsy',
-  'GAGI00137 Transabdominal Rectopexy Open/Lap',
-  'GAGI00138 Transaction of Oesophagus and Eea Stapling',
-  'GAGI00139 Trans - Anal Pull Through Forhirschprungs Disease',
-  'GAGI00140 Transhiatal Oesophagectomy',
-  'GAGI00141 Truncal Vegotomy & Gestro - Jejunostomy',
-  'GAGI00142 Truncal Vegotomy and Pyloroplasty',
-  'GAGI00143 Tube Caecostomy',
-  'GAGI00144 Umbilectomy',
-  'GAGI00145 VATS Esophagectomy',
-  'GAGI00146 Video Assisted Anal Fistula Treatment',
-  'GAGI00147 Whipples Procedure',
-  'GAGI00148 Endo Vacuum Upper GI',
-  'GAGI00149 Endo Vacuum Lower GI',
-  'GAGI00151 Robotic Charges - 1-3 Instruments - GI/General Surgery',
-  'GAGI00152 Robotic Charges - 4-5 Instruments - GI/General Surgery',
-  ];
-  var generalSurgery = [  'GEGS00001 Anal Sphincter Repair',
+  static const List<String> generalSurgery = [  'GEGS00001 Anal Sphincter Repair',
     'GEGS00002 Anoplasty',
     'GEGS00003 Appendicectomy',
     'GEGS00004 Appendicular Abscess Drainage',
@@ -379,7 +275,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'GEGS00071 Fiber Charges',
     'GEGS00072 Re-Exploration within 48hrs',
     'GEGS00074 EVLA for Varicose vein (Single Limb) in OT',];
-  var cardiologyAngioplastyProcedures = [
+
+  static const List<String> cardiologyAngioplastyProcedures = [
     'CAIC00009 - Angioplasty - Coronary PTCA /Ballooning',
     'CAIC00010 - Angioplasty - Carotid',
     'CAIC00011 - Angioplasty - Peripheral',
@@ -391,7 +288,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CAIC00017 - Angioplasty PTCA with OCT',
     'CAIC00023 - PTCA + OCT',
   ];
-  var cardiologyAngiography = ['CAIC00001 - Angiography - Coronary CAG',
+
+  static const List<String> cardiologyAngiography = ['CAIC00001 - Angiography - Coronary CAG',
     'CAIC00002 - Angiography - Carotid',
     'CAIC00003 - Angiography - Check',
     'CAIC00004 - Angiography - Peripheral',
@@ -404,7 +302,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CAIC00020 - CAG + IVUS',
     'CAIC00021 - CAG + Renal Angio',
     'CAIC00022 - CAG + PAG',];
-  var cardiologyEPSLabProcedures = [
+  static const List<String> cardiologyEPSLabProcedures = [
     'CAEP00017 - EPS Study',
     'CAEP00018 - EPS and RFA',
     'CAEP00019 - EPS and RF Ablation - Complex',
@@ -415,7 +313,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CAEP00058 - CRT D Implant Advanced',
     'CAEP00059 - CRTP Advanced',
   ];
-  var cardiologyICDAndPacemaker = [
+  static const List<String> cardiologyICDAndPacemaker = [
     'CAEP00025 - PPI SC - Permanent Pacemaker Implantation',
     'CAEP00026 - PPI DC - Permanent Pacemaker Implantation',
     'CAEP00027 - AICD Implantation - SC',
@@ -451,14 +349,14 @@ class _CapturedRecordState extends State<CapturedRecord> {
   //var otherCardiologyProcedures = [
 
   //];
-  var cardiologyValveProcedures = [
+  static const List<String> cardiologyValveProcedures = [
     'CAIC00056 - Percutaneous Aortic Valve Replacement - Core Valve',
     'CAIC00057 - Percutaneous Aortic Valve Replacement - TAVR',
     'CAIC00058 - Percutaneous MitraClip Implantation',
     'CAIC00059 - Percutaneous Mitra Valve Replacement - TMVR',
     'CAIC00060 - Percutaneous Tricuspid Valve Replacement',
   ];
-  var cardiologyOtherCarthProcedures = [
+  static const List<String> cardiologyOtherCarthProcedures = [
     'CAIC00061 - Alcohol Septal Ablation - ASA',
     'CAIC00062 - Aortic Stent Grafting',
     'CAIC00064 - Bone Marrow Concentrate Therapy for Heart Failure',
@@ -478,7 +376,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CAIC00098 - ECHO CD Report',
     'CAIC00099 - Cath Charges - upto 15 Minutes',
   ];
-  var cardiologyPediatricProcedures = [
+  static const List<String> cardiologyPediatricProcedures = [
     'CAPC00080 - Balloon Atrial Septostomy',
     'CAPC00083 - Balloon Valvotomy',
     'CAPC00084 - Coiling of MAPCA',
@@ -489,7 +387,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CAPC00096 - Pericardial Drainage',
   ];
 
-  var cardiacSurgeryAdult = [
+  static const List<String> cardiacSurgeryAdult = [
     'CTCA00001 - Aneurysm Repair',
     'CTCA00002 - Angiography with Bone Marrow Aspiration',
     'CTCA00003 - Aorta Replacement/Repair',
@@ -679,7 +577,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CTCA00188 - Triple Valve Replacement/Repair with Aorta Replacement/Repair',
     'CTCA00189 - Vagus Nerve Stimulator Implant Surgery',
   ];
-  var cardiacSurgeryRobotic = [
+  static const List<String> cardiacSurgeryRobotic = [
     'CTCA00190 - Ablation For Atrialfibrillation - Robotic Surgery',
     'CTCA00191 - ASD - Robotic Surgery',
     'CTCA00192 - Mediastinal Tumors/Mass - Robotic Surgery',
@@ -688,7 +586,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CTCA00195 - Single Vessel Tecab - Robotic Surgery',
     'CTCA00196 - Valve Repair/Replacement - Robotic Surgery',
   ];
-  var cardiacSurgeryPediatric = [
+  static const List<String> cardiacSurgeryPediatric = [
     'CTCA00197 - ALCAPA Paed',
     'CTCA00198 - Aorta Repair Paed',
     'CTCA00199 - Arterial Switch Paed',
@@ -767,7 +665,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CTCA00272 - VSD/ASD Closure with Other Open Heart Surgery Paed',
     'CTCA00273 - VATS Pleurodesis',
   ];
-  var thoracicSurgery = [
+  static const List<String> thoracicSurgery = [
     'CTTH00273 - Allied Assistance - Major',
     'CTTH00274 - Allied Assistance - Minor',
     'CTTH00275 - Anterior Mediastinotomy',
@@ -1062,7 +960,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CTTH00570 - VATS Diaphragmatic Hernia Repair Simple',
     'CTTH00571 - Video Mediastinoscopy'
   ];
-  var vascularEndovascularProcedures = ['CTVA00572 - Doppler Guided Endovenous Intimal Coagulation Therapy For Venous Hypertension B/L',
+  static const List<String> vascularEndovascularProcedures = ['CTVA00572 - Doppler Guided Endovenous Intimal Coagulation Therapy For Venous Hypertension B/L',
     'CTVA00573 - Doppler Guided Endovenous Intimal Coagulation Therapy For Venous Hypertension U/L',
     'CTVA00574 - Venous Thermal Ablation - Bilateral',
     'CTVA00575 - Venous Thermal Ablation - Unilateral',
@@ -1098,7 +996,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'CTVA00605 - Vein Mapping',
     'CTVA00606 - Wound Healing Therapy Charges Per Hour'
   ];
-  var vascularEndovascularSurgery = ['CTVA00607 - Other Arterial Bypass Surgery Using Synthetic Graft',
+  static const List<String> vascularEndovascularSurgery = ['CTVA00607 - Other Arterial Bypass Surgery Using Synthetic Graft',
     'CTVA00608 - A.V.Fistula',
     'CTVA00609 - Abdominal Arotic Aneurysm Repair - EVAR',
     'CTVA00610 - Above Knee Amputation',
@@ -1214,9 +1112,9 @@ class _CapturedRecordState extends State<CapturedRecord> {
   ];
   // var ENTSurgeryPackage = [
   // ];
-  var entSurgeries = ['ENES00330 - Cochlear Implantation - Unilateral [Package]',
+  static const List<String> entSurgeries = ['ENES00330 - Cochlear Implantation - Unilateral [Package]',
     'ENES00332 - Cochlear Implantation - Bilateral [Package]'
-    'ENEP00001 - AVT',
+        'ENEP00001 - AVT',
     'ENEP00002 - 90 Degree Telescopy',
     'ENEP00003 - ASSR',
     'ENEP00004 - Aural Polypectomy',
@@ -1548,97 +1446,97 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'ENES00341 - Submucosal Diathermy of Inferior Turbinate - Bilateral',
     'ENES00342 - Submucosal Diathermy of Inferior Turbinate - Unilateral'
   ];
-  var headAndNeckSurgery = ['HEHN00001-Minor Salivary Gland Biopsy',
-        'HEHN00002 90 Degree Laryngoscopy',
-        'HEHN00003 Abscess Drainage of Superficial Neck',
-        'HEHN00004 Abscess Drainage of Peritonsillar',
-        'HEHN00005 Biopsy Head and Neck',
-        'HEHN00006 Biopsy Head and Neck Endoscopic/Microscopic',
-        'HEHN00007 Bone Graft To Facial Bones',
-        'HEHN00008 Cervico Facial Resection - Small',
-        'HEHN00009 Cervico Facial Resection - Large',
-        'HEHN00010 Cervico - Facial Resc Medium',
-        'HEHN00011 Cervico - Facial Resection of Vascular Mass - Complex',
-        'HEHN00012 Cervico - Facial Resection of Vascular Mass - Simple',
-        'HEHN00014 Closure of Tracheostomy',
-        'HEHN00015 Complex Facial Repair - Large',
-        'HEHN00016 Complex Facial Repair - Small',
-        'HEHN00017 Control of Hemorrhage - Complex',
-        'HEHN00018 Control of Hemorrhage - Simple',
-        'HEHN00019 Dacrocystorhinostomy - During Open Surgery',
-        'HEHN00020 Debridement - Head & Neck',
-        'HEHN00021 Decanulation of Tracheostomy',
-        'HEHN00022 Dental Extraction and Socket Closure',
-        'HEHN00023 Dental Extraction and Socket Closure - Multiple',
-        'HEHN00024 Diverticulectomy Cervical - Endoscopic',
-        'HEHN00025 Diverticulectomy Cervical - Open',
-        'HEHN00026 Drainage of Cervicofacial Abscess - Small',
-        'HEHN00027 Drainage of Cervicofacial Abscess - Large',
-        'HEHN00028 Drainage of Deep Neck Space Abscess',
-        'HEHN00029 Esophageal Resection Cervical - Complex',
-        'HEHN00030 Esophageal Resection Cervical - Simple',
-        'HEHN00031 Esophagoscopy/Hypopharyng Rigid Diagnostic',
-        'HEHN00032 Esophagoscopy/Hypopharyng Rigid Therapy',
-        'HEHN00033 Extended Thyroidectomy',
-        'HEHN00034 Extensive Oropharyngeal Resection',
-        'HEHN00035 External Auditory Canalplasty/Resection',
-        'HEHN00036 Facial Nerve Paralysis - Nerve Repair',
-        'HEHN00037 Fibreoptic Laryngoscopy - Diagnostic',
-        'HEHN00038 Fibreoptic Laryngoscopy - Therapeutic',
-        'HEHN00039 Flap Delay',
-        'HEHN00040 Flap Inset To H & N',
-        'HEHN00041 Flap Local To Head & Neck Region - Small',
-        'HEHN00042 Flap Sectioning',
-        'HEHN00043 Flap, Local To Head & Neck Region - Large',
-        'HEHN00044 Flap, Not Specified, To Head and Neck Site - Large',
-        'HEHN00045 Flap, Not Specified, To Head and Neck Site - Small',
-        'HEHN00046 Flap, Pedicled To Head & Neck Region - Large',
-        'HEHN00047 Flap, Pedicled To Head & Neck Region - Small',
-        'HEHN00048 FNAC Cervico Facial Region',
-        'HEHN00049 Glossectomy Extending Beyond Anterior Tongue',
-        'HEHN00050 Glossectomy - Partial',
-        'HEHN00051 Glossectomy - Subtotal or Total',
-        'HEHN00052 Hemi Thyroidectomy',
-        'HEHN00054 Infratemporal Fossa Resection',
-        'HEHN00055 Interdental Wiring',
-        'HEHN00056 Laryngectomy Partial',
-        'HEHN00057 Laryngectomy with Partial Pharyngectomy',
-        'HEHN00058 Laryngectomy - Total',
-        'HEHN00059 Laryngopharyngectomy - Extended',
-        'HEHN00060 Laryngoscopy Direct Diagnostic',
-        'HEHN00061 Laryngoscopy Direct Therapeutic',
-        'HEHN00062 Laryngo - tracheal Reconstruction',
-        'HEHN00063 Laryngotracheoplasty - Complex',
-        'HEHN00064 Laryngotracheoplasty - Simple',
-        'HEHN00065 Laser Oropharyngeal Resection - Large',
-        'HEHN00066 Laser Resection Larynx more than one Subsite',
-        'HEHN00067 Laser Resection Larynx - One Subsite',
-        'HEHN00068 Laser Resection, Oral Cavity - Large',
-        'HEHN00069 Laser Resection, Oral Cavity - Small',
-        'HEHN00070 Limited Oropharyngeal Resection',
-        'HEHN00071 Lip Excision, Complex Excluding Repair',
-        'HEHN00072 Lip Excision - Simple',
-        'HEHN00073 Lobectomy Thyroidectomy',
-        'HEHN00074 Lymph Node Excision Biopsy Neck Single',
-        'HEHN00075 Mandibular Lesion Removal - Large',
-        'HEHN00076 Mandibulectomy - Marginal',
-        'HEHN00077 Mandibulectomy - Segmental',
-        'HEHN00078 Mandibulotomy Approach',
-        'HEHN00079 Maxillectomy - Extended',
-        'HEHN00080 Maxillectomy - Partial',
-        'HEHN00081 Maxillectomy - Total',
-        'HEHN00082 Medial Canthopexy',
-        'HEHN00083 Microlaryngoscopy - Diagnostic/Biopsy',
-        'HEHN00084 Microlaryngoscopy - Excision of Mass - Complex',
-        'HEHN00085 Microlaryngoscopy - Excision of Mass - Simple',
-        'HEHN00086 Nasal Endoscopy Diagnostic',
-        'HEHN00087 Neck Dissection - Bilateral',
-        'HEHN00088 Neck Dissection - Extended',
-        'HEHN00089 Neck Dissection - Modified/Radical',
-        'HEHN00090 Neck Dissection - Paratracheal/Ccnd',
-        'HEHN00091 Neck Dissection - Selective',
-        'HEHN00092 Neck Dissection - Superior Mediastinal Via Neck',
-        'HEHN00093 Neck Exploration - Complex'
+  static const List<String> headAndNeckSurgery = ['HEHN00001-Minor Salivary Gland Biopsy',
+    'HEHN00002 90 Degree Laryngoscopy',
+    'HEHN00003 Abscess Drainage of Superficial Neck',
+    'HEHN00004 Abscess Drainage of Peritonsillar',
+    'HEHN00005 Biopsy Head and Neck',
+    'HEHN00006 Biopsy Head and Neck Endoscopic/Microscopic',
+    'HEHN00007 Bone Graft To Facial Bones',
+    'HEHN00008 Cervico Facial Resection - Small',
+    'HEHN00009 Cervico Facial Resection - Large',
+    'HEHN00010 Cervico - Facial Resc Medium',
+    'HEHN00011 Cervico - Facial Resection of Vascular Mass - Complex',
+    'HEHN00012 Cervico - Facial Resection of Vascular Mass - Simple',
+    'HEHN00014 Closure of Tracheostomy',
+    'HEHN00015 Complex Facial Repair - Large',
+    'HEHN00016 Complex Facial Repair - Small',
+    'HEHN00017 Control of Hemorrhage - Complex',
+    'HEHN00018 Control of Hemorrhage - Simple',
+    'HEHN00019 Dacrocystorhinostomy - During Open Surgery',
+    'HEHN00020 Debridement - Head & Neck',
+    'HEHN00021 Decanulation of Tracheostomy',
+    'HEHN00022 Dental Extraction and Socket Closure',
+    'HEHN00023 Dental Extraction and Socket Closure - Multiple',
+    'HEHN00024 Diverticulectomy Cervical - Endoscopic',
+    'HEHN00025 Diverticulectomy Cervical - Open',
+    'HEHN00026 Drainage of Cervicofacial Abscess - Small',
+    'HEHN00027 Drainage of Cervicofacial Abscess - Large',
+    'HEHN00028 Drainage of Deep Neck Space Abscess',
+    'HEHN00029 Esophageal Resection Cervical - Complex',
+    'HEHN00030 Esophageal Resection Cervical - Simple',
+    'HEHN00031 Esophagoscopy/Hypopharyng Rigid Diagnostic',
+    'HEHN00032 Esophagoscopy/Hypopharyng Rigid Therapy',
+    'HEHN00033 Extended Thyroidectomy',
+    'HEHN00034 Extensive Oropharyngeal Resection',
+    'HEHN00035 External Auditory Canalplasty/Resection',
+    'HEHN00036 Facial Nerve Paralysis - Nerve Repair',
+    'HEHN00037 Fibreoptic Laryngoscopy - Diagnostic',
+    'HEHN00038 Fibreoptic Laryngoscopy - Therapeutic',
+    'HEHN00039 Flap Delay',
+    'HEHN00040 Flap Inset To H & N',
+    'HEHN00041 Flap Local To Head & Neck Region - Small',
+    'HEHN00042 Flap Sectioning',
+    'HEHN00043 Flap, Local To Head & Neck Region - Large',
+    'HEHN00044 Flap, Not Specified, To Head and Neck Site - Large',
+    'HEHN00045 Flap, Not Specified, To Head and Neck Site - Small',
+    'HEHN00046 Flap, Pedicled To Head & Neck Region - Large',
+    'HEHN00047 Flap, Pedicled To Head & Neck Region - Small',
+    'HEHN00048 FNAC Cervico Facial Region',
+    'HEHN00049 Glossectomy Extending Beyond Anterior Tongue',
+    'HEHN00050 Glossectomy - Partial',
+    'HEHN00051 Glossectomy - Subtotal or Total',
+    'HEHN00052 Hemi Thyroidectomy',
+    'HEHN00054 Infratemporal Fossa Resection',
+    'HEHN00055 Interdental Wiring',
+    'HEHN00056 Laryngectomy Partial',
+    'HEHN00057 Laryngectomy with Partial Pharyngectomy',
+    'HEHN00058 Laryngectomy - Total',
+    'HEHN00059 Laryngopharyngectomy - Extended',
+    'HEHN00060 Laryngoscopy Direct Diagnostic',
+    'HEHN00061 Laryngoscopy Direct Therapeutic',
+    'HEHN00062 Laryngo - tracheal Reconstruction',
+    'HEHN00063 Laryngotracheoplasty - Complex',
+    'HEHN00064 Laryngotracheoplasty - Simple',
+    'HEHN00065 Laser Oropharyngeal Resection - Large',
+    'HEHN00066 Laser Resection Larynx more than one Subsite',
+    'HEHN00067 Laser Resection Larynx - One Subsite',
+    'HEHN00068 Laser Resection, Oral Cavity - Large',
+    'HEHN00069 Laser Resection, Oral Cavity - Small',
+    'HEHN00070 Limited Oropharyngeal Resection',
+    'HEHN00071 Lip Excision, Complex Excluding Repair',
+    'HEHN00072 Lip Excision - Simple',
+    'HEHN00073 Lobectomy Thyroidectomy',
+    'HEHN00074 Lymph Node Excision Biopsy Neck Single',
+    'HEHN00075 Mandibular Lesion Removal - Large',
+    'HEHN00076 Mandibulectomy - Marginal',
+    'HEHN00077 Mandibulectomy - Segmental',
+    'HEHN00078 Mandibulotomy Approach',
+    'HEHN00079 Maxillectomy - Extended',
+    'HEHN00080 Maxillectomy - Partial',
+    'HEHN00081 Maxillectomy - Total',
+    'HEHN00082 Medial Canthopexy',
+    'HEHN00083 Microlaryngoscopy - Diagnostic/Biopsy',
+    'HEHN00084 Microlaryngoscopy - Excision of Mass - Complex',
+    'HEHN00085 Microlaryngoscopy - Excision of Mass - Simple',
+    'HEHN00086 Nasal Endoscopy Diagnostic',
+    'HEHN00087 Neck Dissection - Bilateral',
+    'HEHN00088 Neck Dissection - Extended',
+    'HEHN00089 Neck Dissection - Modified/Radical',
+    'HEHN00090 Neck Dissection - Paratracheal/Ccnd',
+    'HEHN00091 Neck Dissection - Selective',
+    'HEHN00092 Neck Dissection - Superior Mediastinal Via Neck',
+    'HEHN00093 Neck Exploration - Complex'
         'HEHN00094 Neck Exploration - Simple'
         'HEHN00095 Neck Mass Biopsy'
         'HEHN00096 Neck Mass Excision - Complex'
@@ -1705,141 +1603,141 @@ class _CapturedRecordState extends State<CapturedRecord> {
         'HEHN00160 VFSS (Videofluroscopic Swallowing Study) under Deglutology'
         'HEHN00161 Robotic Charges - Head & Neck/Gynae/Onco Gynae'
   ];
-  var interventionalRadiology = ['INIR00001 Angiography - IR Vascular',
-      'INIR00002 Angioplasty & Stenting - IR Vascular',
-      'INIR00003 Angioplasty IR Vascular',
-      'INIR00004 Balloon Occluded Retrograde Transvenous Obliter of Varices',
-      'INIR00005 Biliary Drainage More Than Three System - Ptbd More Than Three System',
-      'INIR00006 Biliary Drainage Single System - PTBD Single System',
-      'INIR00007 Biliary Drainage Three System - PTBD Three System',
-      'INIR00008 Biliary Drainage Two System - PTBD Two System',
-      'INIR00009 Biliary Hilar Reconstruction',
-      'INIR00010 Catheter Internalization >3 System',
-      'INIR00011 Catheter Internalization - Single System',
-      'INIR00012 Catheter Internalization - Three System',
-      'INIR00013 Catheter Internalization - Two System',
-      'INIR00014 Celiac Ganglion Block Ultrasound Guidance',
-      'INIR00015 Cholecystostomy - IR',
-      'INIR00016 CT Guided Aspiration',
-      'INIR00017 CT Guided Biopsy',
-      'INIR00018 CT Guided Bone Biopsy',
-      'INIR00019 CT Guided Celiac Ganglion Block',
-      'INIR00020 CT Guided Chest Biopsy',
-      'INIR00021 CT Guided Drainage',
-      'INIR00022 CT Guided Drainage Multiple',
-      'INIR00023 CT Guided Fiducial Placement',
-      'INIR00024 CT Guided FNAC',
-      'INIR00025 CT Guided Nerve Ablation - Chemical',
-      'INIR00026 CT Guided Nerve Ablation - Thermal',
-      'INIR00027 CT Guided Nerve Block - Chemical',
-      'INIR00028 CT Guided Trans Gastric Drainage',
-      'INIR00029 CT Guided Tumor Ablation Chemical',
-      'INIR00030 CT Guided Tumour Ablation Thermal',
-      'INIR00031 Cyst Ablation',
-      'INIR00032 Duodenal/Colonic Stenting',
-      'INIR00033 Embolization For Bleeding',
-      'INIR00034 Embolization For Varicocele',
-      'INIR00035 Esophageal Stenting',
-      'INIR00036 Fallopian Tube Recanalization',
-      'INIR00037 Fluoroscopic Nephrostomy - Bilateral',
-      'INIR00038 Fluoroscopic Nephrostomy - Unilateral',
-      'INIR00039 Fluoroscopy Guided Bone Biopsy',
-      'INIR00040 Image Guided Line Insertion',
-      'INIR00041 Internalization & Stenting More Than Three System',
-      'INIR00042 Internalization & Stenting Single System',
-      'INIR00043 Internalization & Stenting Three System',
-      'INIR00044 Internalization & Stenting Two System',
-      'INIR00045 Interventional Radiology Procedure - Advance',
-      'INIR00046 Interventional Radiology Procedure - Basic',
-      'INIR00047 Interventional Radiology Procedure - Complex',
-      'INIR00048 Interventional Radiology Procedure - Intermediate',
-      'INIR00049 Interventional Radiology Procedure - Scope Assisted',
-      'INIR00050 Interventional Radiology Review',
-      'INIR00051 Intra Distal Tumor Ablation',
-      'INIR00052 Intraductal Biopsy',
-      'INIR00053 Intraductal Cytology',
-      'INIR00054 Intraluminal Ablation',
-      'INIR00055 Invasive Liquid Sampling Vascular',
-      'INIR00056 Invasive Pressure Gradiant Measurement',
-      'INIR00057 IR Limited Evaluation',
-      'INIR00058 Mob Cholecystostomy',
-      'INIR00059 Mob Nephrostomy - Bilateral',
-      'INIR00060 Mob Nephrostomy - Unilateral',
-      'INIR00061 Mobile Therapeutic Aspiration Ultrasound Guidance',
-      'INIR00062 Nephrostomy - Bilateral',
-      'INIR00063 Nephrostomy - Unilateral',
-      'INIR00064 Partial Splenic Embolization',
-      'INIR00065 Percutaneous Bilio - Enteric Anastomosis',
-      'INIR00066 Percutaneous Cystogastrostomy',
-      'INIR00067 Percutaneous Embolisation',
-      'INIR00068 Percutaneous Feeding Jejunostomy',
-      'INIR00069 Percutaneous Fistulo - Gastrostomy',
-      'INIR00070 Percutaneous Gastrostomy',
-      'INIR00071 Percutaneous Hemostasis',
-      'INIR00072 Percutaneous Plug Biopsy',
-      'INIR00073 Percutaneous Sclerotherapy',
-      'INIR00074 Percutaneous Veno Venous Shunt',
-      'INIR00075 Perfint Maxio Charges For Biopsy',
-      'INIR00076 Portal Vein Embolization',
-      'INIR00077 Portal Vein Stenting',
-      'INIR00078 Radioembolization, Coiling and Shunt Evaluation',
-      'INIR00079 Reverse Cystogastrostomy',
-      'INIR00080 RF Ablation of Varicose Veins',
-      'INIR00081 Suprapubic Cystostomy - IR',
-      'INIR00082 Tace Trans Arterial Chemo Embolization',
-      'INIR00083 Therapeutic Aspiration Ultrasound Guidance',
-      'INIR00084 Thrombolysis',
-      'INIR00085 TIPS with Embolization',
-      'INIR00086 Transjugular Biopsy',
-      'INIR00087 Transjugular Intrahepatic Portosystemic Shunt - TIPS',
-      'INIR00088 Treatment Planning & Evaluation',
-      'INIR00089 TRUS/TVS Guided Drainage',
-      'INIR00090 TRUS/TVS Guided Fiducial Placement',
-      'INIR00091 Tube Change Multiple',
-      'INIR00092 Tube Change/Tube Upsizing/Tube Repositioning',
-      'INIR00093 Tumor Embolization',
-      'INIR00094 TVS or TRUS Guided Sampling',
-      'INIR00095 Ultrasound Guided Aspiration',
-      'INIR00096 Ultrasound Guided Aspiration - Mobile',
-      'INIR00097 Ultrasound Guided Biopsy',
-      'INIR00098 Ultrasound Guided Biopsy - Mobile',
-      'INIR00099 Ultrasound Guided Biopsy Multiple',
-      'INIR00100 Ultrasound Guided Chest Biopsy',
-      'INIR00101 Ultrasound Guided Drainage',
-      'INIR00102 Ultrasound Guided Drainage - Mobile',
-      'INIR00103 Ultrasound Guided Drainage Multiple',
-      'INIR00104 Ultrasound Guided Drainage Multiple - Mobile',
-      'INIR00105 Ultrasound Guided Fiducial Placement',
-      'INIR00106 Ultrasound Guided FNAC',
-      'INIR00107 Ultrasound Guided FNAC - Mobile',
-      'INIR00108 Ultrasound Guided FNAC Multiple',
-      'INIR00109 Ultrasound Guided FNAC Multiple - Mobile',
-      'INIR00110 Ultrasound Guided Nerve Ablation - Chemical',
-      'INIR00111 Ultrasound Guided Nerve Ablation - Thermal',
-      'INIR00112 Ultrasound Guided Nerve Block Chemical',
-      'INIR00113 Ultrasound Guided Renal Biopsy',
-      'INIR00114 Ultrasound Guided Renal Biopsy - Mobile',
-      'INIR00115 Ultrasound Guided Trans Gastric Drainage',
-      'INIR00116 Ultrasound Guided Tumor Ablation Chemical',
-      'INIR00117 Ultrasound Guided Tumour Ablation Thermal',
-      'INIR00118 Ureteral Stenting - Bilateral',
-      'INIR00119 Ureteral Stenting - Multiple',
-      'INIR00120 Ureteral Stenting - Unilateral',
-      'INIR00121 Vertebroplasty - Multi Level',
-      'INIR00122 Yttrium 90 Therapy Infusion',
-      'INIR00123 Chemoport Insertion in Cath Lab',
-      'INIR00124 Microwave Ablation Charges',
-      'INIR00125 DJ Stenting/Stent Insertion Unilateral in Cath Lab',
-      'INIR00126 Chemoport Removal in Cath Lab',
-      'INIR00127 EVLA for Varicose vein (Single Limb)',
-      'INIR00128 EVLA for Varicose Vein (Both Limb)',
-      'INIR00129 DJ Stenting/Stent Insertion Bilateral in Cath Lab',
+  static const List<String> interventionalRadiology = ['INIR00001 Angiography - IR Vascular',
+    'INIR00002 Angioplasty & Stenting - IR Vascular',
+    'INIR00003 Angioplasty IR Vascular',
+    'INIR00004 Balloon Occluded Retrograde Transvenous Obliter of Varices',
+    'INIR00005 Biliary Drainage More Than Three System - Ptbd More Than Three System',
+    'INIR00006 Biliary Drainage Single System - PTBD Single System',
+    'INIR00007 Biliary Drainage Three System - PTBD Three System',
+    'INIR00008 Biliary Drainage Two System - PTBD Two System',
+    'INIR00009 Biliary Hilar Reconstruction',
+    'INIR00010 Catheter Internalization >3 System',
+    'INIR00011 Catheter Internalization - Single System',
+    'INIR00012 Catheter Internalization - Three System',
+    'INIR00013 Catheter Internalization - Two System',
+    'INIR00014 Celiac Ganglion Block Ultrasound Guidance',
+    'INIR00015 Cholecystostomy - IR',
+    'INIR00016 CT Guided Aspiration',
+    'INIR00017 CT Guided Biopsy',
+    'INIR00018 CT Guided Bone Biopsy',
+    'INIR00019 CT Guided Celiac Ganglion Block',
+    'INIR00020 CT Guided Chest Biopsy',
+    'INIR00021 CT Guided Drainage',
+    'INIR00022 CT Guided Drainage Multiple',
+    'INIR00023 CT Guided Fiducial Placement',
+    'INIR00024 CT Guided FNAC',
+    'INIR00025 CT Guided Nerve Ablation - Chemical',
+    'INIR00026 CT Guided Nerve Ablation - Thermal',
+    'INIR00027 CT Guided Nerve Block - Chemical',
+    'INIR00028 CT Guided Trans Gastric Drainage',
+    'INIR00029 CT Guided Tumor Ablation Chemical',
+    'INIR00030 CT Guided Tumour Ablation Thermal',
+    'INIR00031 Cyst Ablation',
+    'INIR00032 Duodenal/Colonic Stenting',
+    'INIR00033 Embolization For Bleeding',
+    'INIR00034 Embolization For Varicocele',
+    'INIR00035 Esophageal Stenting',
+    'INIR00036 Fallopian Tube Recanalization',
+    'INIR00037 Fluoroscopic Nephrostomy - Bilateral',
+    'INIR00038 Fluoroscopic Nephrostomy - Unilateral',
+    'INIR00039 Fluoroscopy Guided Bone Biopsy',
+    'INIR00040 Image Guided Line Insertion',
+    'INIR00041 Internalization & Stenting More Than Three System',
+    'INIR00042 Internalization & Stenting Single System',
+    'INIR00043 Internalization & Stenting Three System',
+    'INIR00044 Internalization & Stenting Two System',
+    'INIR00045 Interventional Radiology Procedure - Advance',
+    'INIR00046 Interventional Radiology Procedure - Basic',
+    'INIR00047 Interventional Radiology Procedure - Complex',
+    'INIR00048 Interventional Radiology Procedure - Intermediate',
+    'INIR00049 Interventional Radiology Procedure - Scope Assisted',
+    'INIR00050 Interventional Radiology Review',
+    'INIR00051 Intra Distal Tumor Ablation',
+    'INIR00052 Intraductal Biopsy',
+    'INIR00053 Intraductal Cytology',
+    'INIR00054 Intraluminal Ablation',
+    'INIR00055 Invasive Liquid Sampling Vascular',
+    'INIR00056 Invasive Pressure Gradiant Measurement',
+    'INIR00057 IR Limited Evaluation',
+    'INIR00058 Mob Cholecystostomy',
+    'INIR00059 Mob Nephrostomy - Bilateral',
+    'INIR00060 Mob Nephrostomy - Unilateral',
+    'INIR00061 Mobile Therapeutic Aspiration Ultrasound Guidance',
+    'INIR00062 Nephrostomy - Bilateral',
+    'INIR00063 Nephrostomy - Unilateral',
+    'INIR00064 Partial Splenic Embolization',
+    'INIR00065 Percutaneous Bilio - Enteric Anastomosis',
+    'INIR00066 Percutaneous Cystogastrostomy',
+    'INIR00067 Percutaneous Embolisation',
+    'INIR00068 Percutaneous Feeding Jejunostomy',
+    'INIR00069 Percutaneous Fistulo - Gastrostomy',
+    'INIR00070 Percutaneous Gastrostomy',
+    'INIR00071 Percutaneous Hemostasis',
+    'INIR00072 Percutaneous Plug Biopsy',
+    'INIR00073 Percutaneous Sclerotherapy',
+    'INIR00074 Percutaneous Veno Venous Shunt',
+    'INIR00075 Perfint Maxio Charges For Biopsy',
+    'INIR00076 Portal Vein Embolization',
+    'INIR00077 Portal Vein Stenting',
+    'INIR00078 Radioembolization, Coiling and Shunt Evaluation',
+    'INIR00079 Reverse Cystogastrostomy',
+    'INIR00080 RF Ablation of Varicose Veins',
+    'INIR00081 Suprapubic Cystostomy - IR',
+    'INIR00082 Tace Trans Arterial Chemo Embolization',
+    'INIR00083 Therapeutic Aspiration Ultrasound Guidance',
+    'INIR00084 Thrombolysis',
+    'INIR00085 TIPS with Embolization',
+    'INIR00086 Transjugular Biopsy',
+    'INIR00087 Transjugular Intrahepatic Portosystemic Shunt - TIPS',
+    'INIR00088 Treatment Planning & Evaluation',
+    'INIR00089 TRUS/TVS Guided Drainage',
+    'INIR00090 TRUS/TVS Guided Fiducial Placement',
+    'INIR00091 Tube Change Multiple',
+    'INIR00092 Tube Change/Tube Upsizing/Tube Repositioning',
+    'INIR00093 Tumor Embolization',
+    'INIR00094 TVS or TRUS Guided Sampling',
+    'INIR00095 Ultrasound Guided Aspiration',
+    'INIR00096 Ultrasound Guided Aspiration - Mobile',
+    'INIR00097 Ultrasound Guided Biopsy',
+    'INIR00098 Ultrasound Guided Biopsy - Mobile',
+    'INIR00099 Ultrasound Guided Biopsy Multiple',
+    'INIR00100 Ultrasound Guided Chest Biopsy',
+    'INIR00101 Ultrasound Guided Drainage',
+    'INIR00102 Ultrasound Guided Drainage - Mobile',
+    'INIR00103 Ultrasound Guided Drainage Multiple',
+    'INIR00104 Ultrasound Guided Drainage Multiple - Mobile',
+    'INIR00105 Ultrasound Guided Fiducial Placement',
+    'INIR00106 Ultrasound Guided FNAC',
+    'INIR00107 Ultrasound Guided FNAC - Mobile',
+    'INIR00108 Ultrasound Guided FNAC Multiple',
+    'INIR00109 Ultrasound Guided FNAC Multiple - Mobile',
+    'INIR00110 Ultrasound Guided Nerve Ablation - Chemical',
+    'INIR00111 Ultrasound Guided Nerve Ablation - Thermal',
+    'INIR00112 Ultrasound Guided Nerve Block Chemical',
+    'INIR00113 Ultrasound Guided Renal Biopsy',
+    'INIR00114 Ultrasound Guided Renal Biopsy - Mobile',
+    'INIR00115 Ultrasound Guided Trans Gastric Drainage',
+    'INIR00116 Ultrasound Guided Tumor Ablation Chemical',
+    'INIR00117 Ultrasound Guided Tumour Ablation Thermal',
+    'INIR00118 Ureteral Stenting - Bilateral',
+    'INIR00119 Ureteral Stenting - Multiple',
+    'INIR00120 Ureteral Stenting - Unilateral',
+    'INIR00121 Vertebroplasty - Multi Level',
+    'INIR00122 Yttrium 90 Therapy Infusion',
+    'INIR00123 Chemoport Insertion in Cath Lab',
+    'INIR00124 Microwave Ablation Charges',
+    'INIR00125 DJ Stenting/Stent Insertion Unilateral in Cath Lab',
+    'INIR00126 Chemoport Removal in Cath Lab',
+    'INIR00127 EVLA for Varicose vein (Single Limb)',
+    'INIR00128 EVLA for Varicose Vein (Both Limb)',
+    'INIR00129 DJ Stenting/Stent Insertion Bilateral in Cath Lab',
   ];
-  var neuroSurgeryDsalab = ['INNS00001-Check Angiogram',
-  'INNS00002-DSA Cerebral',
-  'INNS00003-Spinal Angiography',
+  static const List<String> neuroSurgeryDsalab = ['INNS00001-Check Angiogram',
+    'INNS00002-DSA Cerebral',
+    'INNS00003-Spinal Angiography',
   ];
-  var neuroSurgery = ['NENS00004-Aneurysm Complex/Multiple',
+  static const List<String> neuroSurgery = ['NENS00004-Aneurysm Complex/Multiple',
     'NENS00005-Aneurysm Simple',
     'NENS00006-Artero Venous Malformation Complex',
     'NENS00007-Artero Venous Malformation/Fistula Simple',
@@ -1931,7 +1829,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'NENS00107-Removal of Shunt',
     'NENS00129-Traumatic Bone Defect Cranioplasty',
   ];
-  var divisionOfSpine = ['NENL00100-Epidural Block - Cervical',
+  static const List<String> divisionOfSpine = ['NENL00100-Epidural Block - Cervical',
     'NENL00101-Selective Nerve Root Block (Package)',
     'NENL00102-Facet Block - Single - Cervical',
     'NENL00103-Facet Block - Single - Lumbar',
@@ -2070,7 +1968,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'NSDS00029-Cervical Disc Replacement - Multiple Level',
     'NSDS00030-Ultrasonic Bone Scalpel Procedure',
   ];
-  var obstetricsAndGynaecology = ['OBOS00001-Caesarian Section LSCS',
+  static const List<String> obstetricsAndGynaecology = ['OBOS00001-Caesarian Section LSCS',
     'OBOS00002-D & C',
     'OBOS00003-Delivery Forcep',
     'OBOS00004-Timed LSCS',
@@ -2268,7 +2166,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'OBOS00198-Postnatal Counselling per Session',
     'OBOS00205-Labour Epidural'
   ];
-  var breastOncology = ['SUBS00001-Aspiration of Breast Abscess',
+  static const List<String> breastOncology = ['SUBS00001-Aspiration of Breast Abscess',
     'SUBS00002-Axillary Clearance',
     'SUBS00003-Axillary Lymph Node Excision',
     'SUBS00004-Bilateral Breast Reduction - Small',
@@ -2299,7 +2197,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'SUBS00030-Skin Sparing Mastectomy',
     'SUBS00031-Wide Local Excision'
   ];
-  var gynecologicOncology = ['GYON00001-Biopsy - Cervical or Vaginal or Vulval Growth',
+  static const List<String> gynecologicOncology = ['GYON00001-Biopsy - Cervical or Vaginal or Vulval Growth',
     'GYON00002-Excisional Biopsy (Gynae Oncology)',
     'GYON00003-Incisional Biopsy (Gynae Oncology)',
     'GYON00004-Lymph Node Biopsy (Gynae Oncology)',
@@ -2353,12 +2251,12 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'GYON00052-Peritoneal Biopsy',
     'GYON00053-Biopsy - Cervical or Vaginal or Vulval Growth in OT'
   ];
-  var ophthalmology = ['OPPH00238-Ptosis Surgery with Aurosling - Unilateral',
+  static const List<String> ophthalmology = ['OPPH00238-Ptosis Surgery with Aurosling - Unilateral',
     'OPPH00324-Ptosis Frontalis Sling Surgery - Bilateral',
     'OPPH00426-Ptosis surgery with Aurosling - Bilateral',
     'OPPH00480-Ptosis Frontalis Sling Surgery - Unilateral'
   ];
-  var orthopaedicProcedures = ['ORGE00001-ACL - Unilateral',
+  static const List<String> orthopaedicProcedures = ['ORGE00001-ACL - Unilateral',
     'ORGE00002-ACL - Bilateral',
     'ORGE00003-ACL - Rev',
     'ORGE00004-Anterolateral Ligament Reconstruction',
@@ -2406,12 +2304,12 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'ORGE00046-Ultrasound Guided Injection',
     'ORGE00047-PRP Injection'
   ];
-  var orthopaedicRobotic = ['ORJO00046-U/L THR Robotic Charges',
+  static const List<String> orthopaedicRobotic = ['ORJO00046-U/L THR Robotic Charges',
     'ORJO00047-U/L TKR Robotic Charges',
     'ORJO00048-B/L THR Robotic Charges',
     'ORJO00049-B/L TKR Robotic Charges'
   ];
-  var orthopaedicSurgery = ['ORGE00050 A - C Joint Anatomic Reconstruction',
+  static const List<String> orthopaedicSurgery = ['ORGE00050 A - C Joint Anatomic Reconstruction',
     'ORGE00051 A - C Joint Grade III Reconstruction with Plate',
     'ORGE00052 A - C Joint Grade IV - VI Reconstruction with Plate',
     'ORGE00053 A - C Joint Reconstruction - Weaver - Dunn',
@@ -2790,7 +2688,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'ORJO00487 Open/Arthroscopic PSOAS Release',
     'ORJO00488 Finger Ligament Repair',
   ];
-  var paediatricSurgery = ['PAPS00004 Skin Prick - Eight Allergent Milk with Egg with Gluten with Peanut with Wheat with Fish with Baker Yeast with Chana Dal',
+  static const List<String> paediatricSurgery = ['PAPS00004 Skin Prick - Eight Allergent Milk with Egg with Gluten with Peanut with Wheat with Fish with Baker Yeast with Chana Dal',
     'PAPS00005 Skin Prick - Five Allergens Milk with Egg with Gluten with Peanut with Wheat',
     'PAPS00006 Skin Prick - One Allergen Milk/Wheat/Gluten',
     'PAPS00007 1St Stage Hypospadias Repair - Staged Paed',
@@ -3063,7 +2961,7 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'PAPS00276 Duplication Cyst Excision Major -Paed',
     'PAPS00277 Mitrofanoff procedure -Paed',
   ];
-  var plasticAndReconstructiveSurgery = ['PLPS00326 Alopecia Correction - Grade 1',
+  static const List<String> plasticAndReconstructiveSurgery = ['PLPS00326 Alopecia Correction - Grade 1',
     'PLPS00327 Alopecia Correction - Grade 2',
     'PLPS00328 Alopecia Correction - Grade 3',
     'PLPS00001 Debridement Minor - Plastic',
@@ -3478,8 +3376,8 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'SOOR00014 Partial Face Transplant',
     'SOOR00015 Penile Transplant',
   ];
-  var heartTransplant = ['SOHE00001	Heart Transplant'];
-  var liverTransplant = ['SOLI00004 Cadaveric Liver Transplant',
+  static const List<String> heartTransplant = ['SOHE00001	Heart Transplant'];
+  static const List<String> liverTransplant = ['SOLI00004 Cadaveric Liver Transplant',
     'SOLI00005 Fulminant Liver Failure Recipient',
     'SOLI00006 Liver Transplant Donor',
     'SOLI00007 Liver Transplant High Risk Recipient Paed.',
@@ -3489,12 +3387,11 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'SOLI00011 Liver Transplant Recipient High Risk - Adult',
     'SOLI00018 Robotic Charges - Liver Transplant',
   ];
-  var kidneyTransplant = ['SORE00023	Kidney Transplant Recipient - Related',
+  static const List<String> kidneyTransplant = ['SORE00023	Kidney Transplant Recipient - Related',
     'SORE00022	Kidney Transplant Recipient - Unrelated',
     'SORE00016	Cadaver Kidney Transplant Recipient',
     'SORE00017	Kidney Transplant Donor - Semi Private',];
-
-  var urology = ['URUR00001 Prostate Fusion Biopsy',
+  static const List<String> urology = ['URUR00001 Prostate Fusion Biopsy',
     'URUR00002 TRUS Guided Biopsy - Prostate',
     'URUR00003 Adrenalectomy - Laparoscopic',
     'URUR00004 Adrenalectomy - Open',
@@ -3694,1093 +3591,46 @@ class _CapturedRecordState extends State<CapturedRecord> {
     'URUR00198 Robotic Charges with Vessel Sealer - Urology',
   ];
 
-  @override
-  void initState() {
-    _isSurgeryDone(widget.surgeryId);
-    //selectedSurgery = surgeryMap[selectedDepartment]!.first;
-    otNumberController = TextEditingController(text: '${widget.otNumber}');
-    menuController_department = TextEditingController(text: '${widget.department}');
-    menuController_surgery = TextEditingController(text: '${widget.procedureName}');
-    patientController = TextEditingController(text: widget.patientName);
-    mrdController = TextEditingController(text: "");
-    doctorController = TextEditingController(text: widget.doctorName);
-    nurseController = TextEditingController(text: widget.nurse);
-    technicianController = TextEditingController(text: widget.technician);
-
-    surgeryMap = {
-      'Gastrointestinal Surgery' : gastroIntestinalSurgery,
-      'General Surgery' : generalSurgery,
-      'Cardiology -Angiography' : cardiologyAngiography,
-      'Cardiology -Angioplasty' : cardiologyAngioplastyProcedures,
-      'Cardiology -EPS Lab': cardiologyEPSLabProcedures,
-      'Cardiology -Pacemaker and ICD' : cardiologyICDAndPacemaker,
-      //'Cardiology Procedure -Pacemaker and ICD' : otherCardiologyProcedures,
-      'Cardiology - Valve Replacement/Implantation' : cardiologyValveProcedures,
-      'Cardiology - Other Cath Procedure' : cardiologyOtherCarthProcedures,
-      'Cardiology - Paediatric' : cardiologyPediatricProcedures,
-      //'Cardiology - Other Cath Procedure' : cardiologyOtherCathProcedures,
-      'Cardiac Surgery - Adult' : cardiacSurgeryAdult,
-      'Cardiac Surgery - Robotic Surgery' : cardiacSurgeryRobotic,
-      'Cardiac Surgery - Paediatric' : cardiacSurgeryPediatric,
-      'Thoracic Surgery' : thoracicSurgery,
-      'Vascular & Endovascular' : vascularEndovascularProcedures,
-      'Vascular & Endovascular Surgery': vascularEndovascularSurgery,
-      'ENT Surgery' : entSurgeries,
-      'Head and Neck Surgery' : headAndNeckSurgery,
-      'Interventional Radiology': interventionalRadiology,
-      'Neurosurgery- DSA Lab':neuroSurgeryDsalab,
-      'Neurosurgery' : neuroSurgery,
-      'Division of Spine' : divisionOfSpine,
-      //'Division of Spine - Packages' : [],
-      //'Obstetrics & Gynaecology' : obstetricsAndGynaecology,
-      'Obstetrics & Gynaecology -Surgery' : obstetricsAndGynaecology,
-      'BREAST Oncology' : breastOncology,
-      'Gynecologic Oncology' : gynecologicOncology,
-      'Ophthalmology - Package' : ophthalmology,
-      //'Orthopaedic- Packages' :[],
-      'Orthopaedic- Procedure Charges' : orthopaedicProcedures,
-      'Orthopaedic- Robotic Charges' : orthopaedicRobotic,
-      'Orthopaedic - Surgery' : orthopaedicSurgery,
-      'Paediatric- Surgery' : paediatricSurgery,
-      //'Plastic & Reconstructive Surgery - Packages' :[],
-      'Plastic & Reconstructive Surgery' : plasticAndReconstructiveSurgery,
-      'Heart Transplant - Package' : heartTransplant,
-      'Liver Transplant - Package' : liverTransplant,
-      'Kidney Transplant - Package' : kidneyTransplant,
-      'Urology' : urology,
-    };
-
-  } //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
-
-  String getCurrentTime() {
-    // Get current time using DateTime class
-    DateTime now = DateTime.now();
-    // Format the time as desired
-    String formattedTime =
-        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
-    return formattedTime;
-  }
-
-  Color getBoxColor(int index) {
-    return index % 2 == 0
-        ? Colors.blue[100]!
-        : Colors.white; // Alternate colors
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Record Monitoring'),
-          centerTitle: true,
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(1.0),
-            // Set the height of the divider
-            child: Divider(
-                color: Colors.grey), // Divider below the app bar title
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-          child: Column(
-            children: [
-              // Text('MRD - ${widget.patientName}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Container(
-                margin:const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(2),
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey, width: 2)),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Text('MRD -  ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                // SizedBox(width: 100, child: TextField(controller: mrdController, decoration: InputDecoration(isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8)), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Name -  ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                IntrinsicWidth(child: TextField(controller: patientController,
-                                    decoration: InputDecoration(isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Surgeon -  ', style:TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                IntrinsicWidth(child: TextField(controller: doctorController,
-                                    decoration: InputDecoration(isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Nurse -  ', style:TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                IntrinsicWidth(child: TextField(controller: nurseController, decoration: InputDecoration(isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8)), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Technician -  ', style:TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                IntrinsicWidth(child: TextField(controller: technicianController, decoration: InputDecoration(isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8)), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Text('Surgery - ',
-                            //     style:
-                            //     TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            // Text('Surgery ID - ${widget.surgeryId}',
-                            //     style:
-                            //     TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Row(
-                              children: [
-                                const Text('OT Number - ',style:
-                                TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                SizedBox(
-                                  width: 60, // Set width according to your design
-                                  child: TextField(
-                                    controller: otNumberController,
-                                    // decoration: InputDecoration(
-                                    //   border: OutlineInputBorder(),
-                                    //   labelText: 'OT Number',
-                                    // ),
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Department -  ',
-                                    style:
-                                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                DropdownMenu<String>(
-                                    controller: menuController_department,
-                                    hintText: "Select Department",
-                                    requestFocusOnTap: true,
-                                    enableFilter: true,
-                                    label: const Text('Select Department'),
-                                    onSelected: (String? department) {
-                                      setState(() {
-                                        selectedDepartment = department!;
-                                        //selectedSurgery = surgeryMap[selectedDepartment]!.first;
-                                        _updateSurgeryDropdown(department);
-                                        menuController_surgery.clear();
-                                      });
-                                    },
-                                    dropdownMenuEntries: departmentList.map((department) {
-                                      return DropdownMenuEntry(
-                                          value: department,
-                                          label: department);
-                                    }).toList()
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Surgery - ',
-                                    style:
-                                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                const SizedBox(width: 35),
-                                DropdownMenu<String>(
-                                  controller: menuController_surgery,
-                                  hintText: "Select Surgery",
-                                  requestFocusOnTap: true,
-                                  enableFilter: true,
-                                  dropdownMenuEntries: dropdownItemsSurgery.isNotEmpty ?
-                                  dropdownItemsSurgery.map((surgery) {
-                                    return DropdownMenuEntry(
-                                        value: surgery,
-                                        label: surgery);
-                                  }).toList() :
-                                  [const DropdownMenuEntry(value: '', label: 'No surgeries available')],
-                                  label: const Text('Select Surgery'),
-                                  onSelected: (String? surgery) {
-                                    setState(() {
-                                      selectedSurgery = surgery!;
-                                      //menuController_surgery.clear();
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Text('Anaesthesia Type - ',
-                                    style:
-                                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                DropdownMenu<String>(
-                                    controller: menuController_anesthesia,
-                                    hintText: "Select Anesthesia Type",
-                                    requestFocusOnTap: true,
-                                    enableFilter: true,
-                                    label: const Text('Select Anesthesia'),
-                                    onSelected: (String? anesthesia) {
-                                      setState(() {
-                                        selectedAnesthesiaType = anesthesia!;
-                                      });
-                                    },
-                                    dropdownMenuEntries: items.map((anesthesia) {
-                                      return DropdownMenuEntry(
-                                          value: anesthesia,
-                                          label: anesthesia);
-                                    }).toList()
-                                ),
-                                // Container(
-                                //   // width: 80,
-                                //   decoration: BoxDecoration(
-                                //       border: Border.all(width: 1),
-                                //       shape: BoxShape.rectangle,
-                                //       borderRadius: const BorderRadius.all(Radius.circular(4))),
-                                //   child: DropdownButton(
-                                //     isDense: true,
-                                //     value: dropdownvalue,
-                                //     items: items.map((String item) {
-                                //       return DropdownMenuItem(
-                                //           value: item,
-                                //           child: Text(item)
-                                //       );
-                                //     }).toList(),
-                                //     underline: Container(),
-                                //     onChanged: (String? newValue){
-                                //       setState(() {
-                                //         dropdownvalue = newValue!;
-                                //       });
-                                //     },
-                                //   ),
-                                // ),
-                              ],
-                            ),
-
-                            // Container(
-                            //   margin: EdgeInsets.symmetric(vertical: 16),
-                            //   width: double.infinity,
-                            //   child: ElevatedButton(
-                            //     onPressed: _showConfirmationDialog,
-                            //     child: Text('Save Changes'),
-                            //     style: ElevatedButton.styleFrom(
-                            //       minimumSize: Size(double.infinity, 50), // Make button larger
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.lightBlueAccent,
-                            textStyle: const TextStyle(color: Colors.white),
-                            elevation: 4.0,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(2)))),
-                        onPressed: () {
-                          /// Do Something
-                        },
-                        child: const Text('Update',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18),),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              // Text('Department - ${widget.patientName}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-
-              const SizedBox(height: 10),
-              const Divider(thickness: 0.5, color: Colors.black87),
-              const SizedBox(height: 10),
-
-              /** Action Items */
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2),
-                              color: getBoxColor(0)),
-                          child: Column(
-                            children: [
-                              const Text('Pre-OP',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text('Start Time:$preOPStartTime',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  //SizedBox(width: 200),
-                                  ElevatedButton(
-                                      onPressed: preOPStartDisabled
-                                          ? null
-                                          : () {
-                                              preOPStartTime =
-                                                  getCurrentTime();
-                                              setState(() {
-                                                preOPStartDisabled = true;
-                                                prophylaxisStartEnabled =
-                                                    true;
-                                              });
-                                            },
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                ],
-                              ),
-                              //Text('$preOPStartTime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.amber)),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2)),
-                          child: Column(
-                            children: [
-                              const Text('Prophylaxis',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text('Start Time:$prophylaxisStartTime',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  //SizedBox(width:200),
-                                  ElevatedButton(
-                                      onPressed: prophylaxisStartEnabled
-                                          ? () {
-                                              prophylaxisStartTime =
-                                                  getCurrentTime();
-                                              setState(() {
-                                                prophylaxisStartEnabled =
-                                                    false;
-                                                wheelInStartEnabled = true;
-                                              });
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2),
-                              color: getBoxColor(0)),
-                          child: Column(
-                            children: [
-                              const Text('Wheel-In',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text('Start Time:$wheelInOT',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  //SizedBox(width: 150),
-                                  ElevatedButton(
-                                      onPressed: wheelInStartEnabled
-                                          ? () {
-                                              wheelInOT = getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                wheelInStartEnabled = false;
-                                                inductionStartEnabled =
-                                                    true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  //SizedBox(width: 200),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2)),
-                          child: Column(
-                            children: [
-                              const Text('Induction',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Start Time: $inductionStartTime',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  const SizedBox(width: 200),
-                                  ElevatedButton(
-                                      onPressed: inductionStartEnabled
-                                          ? () {
-                                              inductionStartTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                inductionStartEnabled =
-                                                    false;
-                                                inductionEndEnabled = true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                  ElevatedButton(
-                                      onPressed: inductionEndEnabled
-                                          ? () {
-                                              inductionEndTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                inductionEndEnabled = false;
-                                                paintAndDrapStartEnabled =
-                                                    true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('End',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 200),
-                                  Text('End Time:$inductionEndTime',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16))
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2),
-                              color: getBoxColor(0)),
-                          child: Column(
-                            children: [
-                              const Text('Painting & Draping',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Start Time: $paintAndDrapStartTime',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  const SizedBox(width: 200),
-                                  ElevatedButton(
-                                      onPressed: paintAndDrapStartEnabled
-                                          ? () {
-                                              paintAndDrapStartTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                paintAndDrapStartEnabled =
-                                                    false;
-                                                paintAndDrapEndEnabled =
-                                                    true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                  ElevatedButton(
-                                      onPressed: paintAndDrapEndEnabled
-                                          ? () {
-                                              paintAndDrapEndTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                paintAndDrapEndEnabled =
-                                                    false;
-                                                incisionStartEnabled = true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('End',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 200),
-                                  Text('End Time: $paintAndDrapEndTime',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2)),
-                          child: Column(
-                            children: [
-                              const Text('Incision',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Start Time: $incisionStartTime',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  const SizedBox(width: 200),
-                                  ElevatedButton(
-                                      onPressed: incisionStartEnabled
-                                          ? () {
-                                              incisionStartTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                incisionStartEnabled =
-                                                    false;
-                                                incisionEndEnabled = true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                  ElevatedButton(
-                                      onPressed: incisionEndEnabled
-                                          ? () {
-                                              incisionEndTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                incisionEndEnabled = false;
-                                                extubationStartEnabled =
-                                                    true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('End',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 200),
-                                  Text('End Time: $incisionEndTime',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2),
-                              color: getBoxColor(0)),
-                          child: Column(
-                            children: [
-                              const Text('Extubation Time',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text('Start Time:$extubationStartTime',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                      onPressed: extubationStartEnabled
-                                          ? () {
-                                              extubationStartTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                extubationStartEnabled =
-                                                    false;
-                                                wheeledOutToTimeEnabled =
-                                                    true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2)),
-                          child: Column(
-                            children: [
-                              const Text('Wheeled Out to Post-Op',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text('Start Time:$wheeledOutToTime',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                      onPressed: wheeledOutToTimeEnabled
-                                          ? () {
-                                              wheeledOutToTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                wheeledOutToTimeEnabled =
-                                                    false;
-                                                wheeledOutFromTimeEnabled =
-                                                    true;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.grey, width: 2),
-                              color: getBoxColor(0)),
-                          child: Column(
-                            children: [
-                              const Text('Wheeled Out From Post-Op',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text('Start Time:$wheeledOutFromTime',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                      onPressed: wheeledOutFromTimeEnabled
-                                          ? () {
-                                              wheeledOutFromTime =
-                                                  getCurrentTime();
-                                              print(
-                                                  'wheeledOutToTime $wheeledOutToTime');
-                                              print(
-                                                  'Time - ${getCurrentTime()}');
-                                              setState(() {
-                                                wheeledOutFromTimeEnabled =
-                                                    false;
-                                              });
-                                            }
-                                          : null,
-                                      child: const Text('Start',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15))),
-                                  const SizedBox(width: 30),
-                                ],
-                              ),
-                            ],
-                          )),
-                      const SizedBox(height: 20),
-
-                      // Submit Button
-                      Container(
-                        height: 50,
-                        width: 150,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlueAccent,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(2)))),
-                          onPressed: submitButtonEnabled
-                              ? () {
-                                  _submitForm(); // Call method to send POST request
-                                }
-                              : null,
-                          child: const Text(
-                            'Submit',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-    );
-  }
-
-  void _submitForm() async {
-    // Prepare your data for the POST request
-    //String formattedDate = widget.surgeryDate.toIso8601String().split('T')[0];
-
-    String formattedDate = DateFormat('MM/dd/yyyy').format(widget.surgeryDate);
-
-    print(widget.doctorName);
-    Map<String, dynamic> postData = {
-      'scheduled_surgery_id': widget.surgeryId == 0
-          ? null
-          : widget.surgeryId == 1
-              ? null
-              : widget.surgeryId,
-      'ot_number': widget.otNumber,
-      'patient_received_in_pre_op_time': preOPStartTime,
-      'antibiotic_prophylaxis_time': prophylaxisStartTime,
-      'patient_wheel_in_OT': wheelInOT,
-      'induction_start_time': inductionStartTime,
-      'induction_end_time': inductionEndTime,
-      'painting_and_draping_start_time': paintAndDrapStartTime,
-      'painting_and_draping_end_time': paintAndDrapEndTime,
-      'incision_in_time': incisionStartTime,
-      'incision_close_time': incisionEndTime,
-      'extubation_time_in_OT': extubationStartTime,
-      'wheeled_out_time_to_Post_op_ICU': wheeledOutToTime,
-      'wheeled_out_from_Post_OP': wheeledOutFromTime,
-      //'surgery_date': '08/22/2023'
-      'surgery_date': formattedDate,
-      'doctor_name': widget.doctorName,
-      'procedure_name': widget.procedureName,
-      'technician_tl': widget.technician,
-      'nurse_tl': widget.nurse,
-      'special_equipment': widget.specialEquipment,
-      'surgery_type': widget.surgeryId == 0
-          ? 'Emergency'
-          : widget.surgeryId == 1
-              ? 'Add-on'
-              : 'Pre-planned'
-    };
-
-    // Send POST request using http package
-    try {
-      Uri url = Uri.parse('$baseUrl/monitor/');
-      final headers = {'Content-Type': 'application/json'};
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: json.encode(postData),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Handle successful response
-        print('POST request successful');
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text(
-                    'Confirmation.\nYour inputs have been recorded successfully'),
-                //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-                actions: <Widget>[
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      print(widget.surgeryId);
-                      Navigator.of(context).pop('${widget.surgeryId} is done');
-                    },
-                  ),
-                ],
-              );
-            });
-        // Optionally, navigate to another screen or show a success message
-      } else {
-        // Handle other status codes if needed
-        print('POST request failed with status: ${response.statusCode}');
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text(
-                    'OOPS !!!.\nYour inputs have not been recorded.\nPlease check again'),
-                //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
-                actions: <Widget>[
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    child: const Text('Disable'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
-      }
-    } catch (e) {
-      // Handle any exceptions or errors
-      print('Error sending POST request: $e');
-    }
-  }
-
-  void _isSurgeryDone(int surgery_id) async {
-    try {
-      Uri url = Uri.parse('$baseUrl/monitor/');
-      final headers = {'Content-Type': 'application/json'};
-      final response = await http.get(
-        url,
-        headers: headers,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Handle successful response
-        print('GET request successful');
-        //print(response.body);
-        print(jsonDecode(response.body).runtimeType);
-        List<dynamic> completedSurgeryList = jsonDecode(response.body);
-        List<dynamic> currentSurgery = completedSurgeryList
-            .where((object) => object['scheduled_surgery_id'] == surgery_id)
-            .toList();
-        print(completedSurgeryList
-            .where((object) => object['scheduled_surgery_id'] == surgery_id)
-            .toList());
-        //for(int i =0;i<completedSurgeryList.length;i++){
-        //  completedSurgeryList.where((object) => object['scheduled_surgery_id']==surgery_id).toList());
-        //}
-
-        if (currentSurgery.isNotEmpty) {
-          setState(() {
-            preOPStartDisabled = true;
-            submitButtonEnabled = false;
-            print(currentSurgery[0]['patient_received_in_pre_op_time']);
-            preOPStartTime =
-                currentSurgery[0]['patient_received_in_pre_op_time'];
-            prophylaxisStartTime =
-                currentSurgery[0]['antibiotic_prophylaxis_time'];
-            wheelInOT = currentSurgery[0]['patient_wheel_in_OT'];
-            inductionStartTime = currentSurgery[0]['induction_start_time'];
-            inductionEndTime = currentSurgery[0]['induction_end_time'];
-            paintAndDrapStartTime =
-                currentSurgery[0]['painting_and_draping_start_time'];
-            paintAndDrapEndTime =
-                currentSurgery[0]['painting_and_draping_end_time'];
-            incisionStartTime = currentSurgery[0]['incision_in_time'];
-            incisionEndTime = currentSurgery[0]['incision_close_time'];
-            extubationStartTime = currentSurgery[0]['extubation_time_in_OT'];
-            wheeledOutToTime =
-                currentSurgery[0]['wheeled_out_time_to_Post_op_ICU'];
-            wheeledOutFromTime = currentSurgery[0]['wheeled_out_from_Post_OP'];
-          });
-        }
-      } else {
-        // Handle other status codes if needed
-        print('GET request failed with status: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Handle any exceptions or errors
-      print('Error sending GET request: $e');
-    }
-
-    //return false;
-  }
-
-  void _updateSurgeryDropdown(String department) {
-    setState(() {
-      dropdownItemsSurgery = surgeryMap[department]?? [];
-      print("dropdownItemsSurgery $dropdownItemsSurgery");
-      selectedSurgery = (dropdownItemsSurgery.isNotEmpty ? dropdownItemsSurgery.first : '')!;
-      print("selectedSurgery $selectedSurgery");
-      //menuController_surgery = selectedSurgery.toString() as TextEditingController;
-    });
-  }
-
-  Future<void> _showConfirmationDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button to close dialog
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Save'),
-          content: const Text('Are you sure you want to save the changes?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-                _saveChanges(); // Call save logic
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _saveChanges() async {
-    try {
-      // Implement your save logic here
-      String newOTNumber = otNumberController.text;
-      // For demonstration, we just print the new value
-      print('Saving OT Number: $newOTNumber');
-
-      // Replace this with your actual save logic, e.g., API call or local storage update
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Changes saved successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving changes: $e')),
-      );
-    }
-  }
+  static const Map<String, List<String>> surgeryMap = {
+  'Gastrointestinal Surgery' : gastroIntestinalSurgery,
+  'General Surgery' : generalSurgery,
+  'Cardiology -Angiography' : cardiologyAngiography,
+  'Cardiology -Angioplasty' : cardiologyAngioplastyProcedures,
+  'Cardiology -EPS Lab': cardiologyEPSLabProcedures,
+  'Cardiology -Pacemaker and ICD' : cardiologyICDAndPacemaker,
+  //'Cardiology Procedure -Pacemaker and ICD' : otherCardiologyProcedures,
+  'Cardiology - Valve Replacement/Implantation' : cardiologyValveProcedures,
+  'Cardiology - Other Cath Procedure'
+  'Cardiac Surgery - Paediatric' : cardiacSurgeryPediatric,
+  'Thoracic Surgery' : thoracicSurgery,
+  'Vascular & Endovascular' : vascularEndovascularProcedures,
+  'Vascular & Endovascular Surgery': vascularEndovascularSurgery,
+  'ENT Surgery' : entSurgeries,
+  'Head and Neck Surgery' : headAndNeckSurgery,
+  'Interventional Radiology': interventionalRadiology,
+  'Neurosurgery- DSA Lab':neuroSurgeryDsalab,
+  'Neurosurgery' : neuroSurgery,
+  'Division of Spine' : divisionOfSpine,
+  //'Division of Spine - Packages' : [], : cardiologyOtherCarthProcedures,
+    //   'Cardiology - Paediatric' : cardiologyPediatricProcedures,
+    //   //'Cardiology - Other Cath Procedure' : cardiologyOtherCathProcedures,
+    //   'Cardiac Surgery - Adult' : cardiacSurgeryAdult,
+    //   'Cardiac Surgery - Robotic Surgery' : cardiacSurgeryRobotic,
+  //'Obstetrics & Gynaecology' : obstetricsAndGynaecology,
+  'Obstetrics & Gynaecology -Surgery' : obstetricsAndGynaecology,
+  'BREAST Oncology' : breastOncology,
+  'Gynecologic Oncology' : gynecologicOncology,
+  'Ophthalmology - Package' : ophthalmology,
+  //'Orthopaedic- Packages' :[],
+  'Orthopaedic- Procedure Charges' : orthopaedicProcedures,
+  'Orthopaedic- Robotic Charges' : orthopaedicRobotic,
+  'Orthopaedic - Surgery' : orthopaedicSurgery,
+  'Paediatric- Surgery' : paediatricSurgery,
+  //'Plastic & Reconstructive Surgery - Packages' :[],
+  'Plastic & Reconstructive Surgery' : plasticAndReconstructiveSurgery,
+  'Heart Transplant - Package' : heartTransplant,
+  'Liver Transplant - Package' : liverTransplant,
+  'Kidney Transplant - Package' : kidneyTransplant,
+  'Urology' : urology,
+  };
 }
