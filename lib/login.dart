@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/MenuPage.dart';
+import 'package:my_flutter_app/OTSchedule/SchedulerInput.dart';
 import 'package:my_flutter_app/TimeMonitoring/PatientListScreen.dart';
 import 'package:my_flutter_app/OTSchedule/OTScheduleScreen.dart';
 import 'package:my_flutter_app/register.dart';
@@ -150,7 +151,8 @@ class _LoginState extends State<Login> {
                       // Navigate to PatientListScreen for other usernames
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MenuPage()),
+                        // MaterialPageRoute(builder: (context) => MenuPage()),
+                        MaterialPageRoute(builder: (context) => SchedulerInput()),
                       );
                     }
 
