@@ -9,6 +9,8 @@ import 'package:my_flutter_app/OTSchedule/OTScheduleScreen.dart';
 import 'package:my_flutter_app/register.dart';
 import 'package:http/http.dart' as http;
 
+import 'TimeMonitoring/PatientListScreen2.dart';
+
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -139,7 +141,7 @@ class _LoginState extends State<Login> {
                       // Navigate to OTScheduleScreen if the username matches
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PatientListScreen()),
+                        MaterialPageRoute(builder: (context) => PatientListScreen2()),
                       );
 
                     } else if (user_type == 'Scheduler' || user_type == 'Administration') {

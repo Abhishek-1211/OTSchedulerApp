@@ -1,25 +1,30 @@
+//import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_app/TimeMonitoring/TimeMonitoring.dart';
 import 'package:my_flutter_app/config/constants.dart';
+import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
+import 'package:my_flutter_app/config/customThemes/elevatedButtonTheme.dart';
+import 'package:my_flutter_app/main.dart';
 
 
 class DetailsConfirmation extends StatefulWidget {
   final String patientName;
-  final String gender;
-  final String surgeryId;
+  //final String gender;
   final String otNumber;
-  final String surgeryDate;
   final String doctorName;
   final String department;
   final String procedureName;
   final String technician;
   final String nurse;
   final String specialEquipment;
+  final DateTime surgeryDate;
+  final int surgeryId;
 
   DetailsConfirmation({
     required this.patientName,
-    required this.gender,
+    //required this.gender,
     required this.surgeryId,
     required this.otNumber,
     required this.surgeryDate,
@@ -31,14 +36,26 @@ class DetailsConfirmation extends StatefulWidget {
     required this.specialEquipment,
   }) ;
 
+  DetailsConfirmation.emergency(
+      {required this.patientName,
+        required this.otNumber,
+        required this.surgeryDate,
+        required this.doctorName,
+        required this.procedureName,
+        required this.surgeryId})
+      : nurse = '',
+        specialEquipment = '',
+        department = '',
+        technician = '';
+
   @override
   _DetailsConfirmationState createState() => _DetailsConfirmationState();
 }
 
 class _DetailsConfirmationState extends State<DetailsConfirmation> {
   late TextEditingController _nameController;
-  late TextEditingController _ageController;
-  late TextEditingController _mrnController;
+  //late TextEditingController _ageController;
+  late TextEditingController _mrdController;
   late TextEditingController _surgeryNameController;
   late TextEditingController _otNumberController;
   late TextEditingController _surgeonController;
@@ -46,6 +63,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
   late TextEditingController _departmentController;
   late TextEditingController _technicianController;
   late TextEditingController _genderController;
+
 
   String selectedAnesthesiaType = Constants.anesthesiaTypes[0];
 
@@ -55,13 +73,16 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
 
   List<String> dropdownItemsSurgery = [];
 
+  Color subtitle = Colors.blueGrey;
+  double subtitleFontSize = 16;
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.patientName);
-    _genderController = TextEditingController(text: widget.gender);
-    _ageController = TextEditingController(text: widget.surgeryId);
-    _mrnController = TextEditingController(text: widget.department);
+    //_genderController = TextEditingController(text: widget.gender);
+    //_ageController = TextEditingController(text: widget.surgeryId);
+    _mrdController = TextEditingController(text: '-N/A-');
     _surgeryNameController = TextEditingController(text: widget.procedureName);
     _otNumberController = TextEditingController(text: widget.otNumber);
     _surgeonController = TextEditingController(text: widget.doctorName);
@@ -74,8 +95,8 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
   @override
   void dispose() {
     _nameController.dispose();
-    _ageController.dispose();
-    _mrnController.dispose();
+    //_ageController.dispose();
+    _mrdController.dispose();
     _surgeryNameController.dispose();
     _otNumberController.dispose();
     _surgeonController.dispose();
@@ -91,24 +112,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
     bool showDropdown1 = false;
     bool showDropdown2 = false;
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 75,
-        title: const Text('Confirm Details',style: TextStyle(fontSize: 25, fontWeight: FontWeight.normal),),
-        //centerTitle: true,
-        actions: [
-          TextButton(onPressed: () {}, child: Text("Dashboard", style: TextStyle(fontSize: 16, color: Colors.black))),
-          TextButton(onPressed: () {}, child: Text("Patient List", style: TextStyle(fontSize: 16, color: Colors.black))),
-          TextButton(onPressed: () {}, child: Text("Surgery List", style: TextStyle(fontSize: 16, color: Colors.black))),
-          TextButton(onPressed: () {}, child: Text("Settings", style: TextStyle(fontSize: 16, color: Colors.black))),
-          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-        ],
-        bottom:  PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          // Set the height of the divider
-          child: Divider(
-              color: Colors.blue.shade50), // Divider below the app bar title
-        ),
-      ),
+      appBar: MyAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(120, 15, 20, 40),
         child: Column(
@@ -117,7 +121,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             _buildSection('Patient Details', [
               Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 150),
               SizedBox(height: 20,),
-              _buildDetailRow('Name', _nameController, false, 'MRD', _mrnController),
+              _buildDetailRow('Name', _nameController, false, 'MRD', _mrdController),
               //Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 150,),
               //_buildDetailRow('Sex', _genderController, 'MRD', _mrnController),
             ]),
@@ -142,16 +146,27 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
                       MaterialPageRoute(
                           builder: (context) =>
                               TimeMonitoring(otNumber: _otNumberController.text,
-                                  patientName: _nameController.text)));
+                                  patientName: _nameController.text,
+                                surgeryId:
+                                widget.surgeryId,
+                                surgeryDate:
+                                widget.surgeryDate,
+                                // Pass DateTime value
+                                doctorName:
+                                _surgeonController.text,
+                                department:
+                                _departmentController.text,
+                                procedureName:
+                                _surgeryNameController.text,
+                                technician:
+                                _technicianController.text,
+                                nurse: _nurseController.text,
+                                specialEquipment:
+                                widget.specialEquipment,
+                              )));
                 },
                 child: Text('Confirm', style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.cyan[600],
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(2))),
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                  textStyle: TextStyle(fontSize: 16),
-                ),
+                style: MyElevatedButtonTheme.elevatedButtonTheme1.style
               ),
             ),
           ],
@@ -181,7 +196,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //SizedBox(height: 10,),
-              Text(label1, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(label1, style: TextStyle(fontSize: subtitleFontSize, fontWeight: FontWeight.bold,color: subtitle)),
               //SizedBox(height: 2,),
               showDropdown ?
               DropdownMenu(
@@ -240,7 +255,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label2, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(label2, style: TextStyle(fontSize: subtitleFontSize, fontWeight: FontWeight.bold,color: subtitle)),
               TextFormField(controller: controller2, style: TextStyle(fontSize: 16),
                 decoration: InputDecoration(border: InputBorder.none, ),),
             ],
@@ -259,7 +274,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //SizedBox(height: 10,),
-              Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(label, style: TextStyle(fontSize: subtitleFontSize, fontWeight: FontWeight.bold,color: subtitle)),
               DropdownMenu(
                   //label: const Text('Select Anesthesia'),
                   hintText: 'Select Anesthesia',

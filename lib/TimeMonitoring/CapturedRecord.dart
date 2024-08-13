@@ -13,12 +13,12 @@ class CapturedRecord extends StatefulWidget {
   String doctorName;
   String department;
   String procedureName;
-  int surgeryId;
   String otNumber;
   String technician;
   String nurse;
   String specialEquipment;
   DateTime surgeryDate;
+  int surgeryId;
 
   // String dob;
   // String otType;
@@ -4737,33 +4737,33 @@ class _CapturedRecordState extends State<CapturedRecord> {
     });
   }
 
-  Future<void> _showConfirmationDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button to close dialog
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Save'),
-          content: const Text('Are you sure you want to save the changes?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-                _saveChanges(); // Call save logic
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _showConfirmationDialog() async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false, // User must tap button to close dialog
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Confirm Save'),
+  //         content: const Text('Are you sure you want to save the changes?'),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: const Text('Cancel'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Dismiss the dialog
+  //             },
+  //           ),
+  //           TextButton(
+  //             child: const Text('Save'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Dismiss the dialog
+  //               _saveChanges(); // Call save logic
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<void> _saveChanges() async {
     try {
