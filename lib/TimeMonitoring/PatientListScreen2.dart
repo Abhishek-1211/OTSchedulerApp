@@ -57,7 +57,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
           children: [
             Text('Surgery List', style: TextStyle (fontSize: 25, fontWeight: FontWeight.bold),),
             Text(displayMessage, style: Theme.of(context).textTheme.subtitle1),
-            Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500),
+            Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500,),
             SizedBox(height: 20),
             Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w400),),
             SizedBox(height: 4),

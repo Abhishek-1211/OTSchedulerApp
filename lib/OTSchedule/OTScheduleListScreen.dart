@@ -3,6 +3,7 @@ import 'dart:html' as html;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
+import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -398,23 +399,7 @@ class _OTScheduleListScreenState extends State<OTScheduleListScreen> {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('OT Schedule'),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize:
-          Size.fromHeight(1.0), // Set the height of the divider
-          child:
-          Divider(color: Colors.grey), // Divider below the app bar title
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _saveChanges,
-            tooltip: 'Save Changes',
-          ),
-        ],
-      ),
+      appBar: MyAppBar(),
       body: Column(
         children: [
           Padding(

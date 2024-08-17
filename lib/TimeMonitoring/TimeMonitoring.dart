@@ -492,6 +492,7 @@ class _TimeMonitoringState extends State<TimeMonitoring> {
                       Navigator.of(context).pop();
                       print(widget.surgeryId);
                       Navigator.of(context).pop('${widget.surgeryId} is done');
+                      Navigator.of(context).pop();
                     },
                   ),
                 ],
