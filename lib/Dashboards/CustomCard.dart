@@ -9,11 +9,13 @@ class CustomCard extends StatelessWidget {
   final double elevation;
   final double borderRadius;
   final Color shadowColor;
+  final VoidCallback onPressed;
 
   CustomCard({
     required this.data,
     required this.title,
     required this.imagePath,
+    required this.onPressed,
     this.imageOpacity = 0.4,
     this.elevation = 3.0,
     this.borderRadius = 10.0,
@@ -86,9 +88,7 @@ class CustomCard extends StatelessWidget {
                 //   ),
                 // ),
                 child: ElevatedButton(
-                  onPressed: () {
-
-                  },
+                  onPressed: onPressed,
                     style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
                     child: Text('View Details',style: TextStyle(color: Colors.white),),),
               ),

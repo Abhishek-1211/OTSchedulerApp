@@ -16,6 +16,7 @@ import 'package:my_flutter_app/Dashboards/OTStaffDashboard.dart';
 import 'package:my_flutter_app/Dashboards/ProcedureDashboard.dart';
 import 'package:my_flutter_app/Dashboards/PatientDashboard.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
+import 'package:my_flutter_app/config/customThemes/elevatedButtonTheme.dart';
 
 class Dashboard2 extends StatefulWidget {
   int otCount;
@@ -56,7 +57,7 @@ class _DashboardState extends State<Dashboard2> {
   //new code
   static const double leftMargin = 220;
   static const double rightMargin = 120;
-  static const double gap = 15;
+  static const double gap_for_calender = 15;
   String displayText1 = 'Operations Dashboard';
   String displayText2 = 'Select the  dates to view customised data';
   String calenderHintText = 'Select the Date';
@@ -86,7 +87,49 @@ class _DashboardState extends State<Dashboard2> {
   }
 
   Widget _buildInfoCard(String title, String data, String imagePath) {
-    return CustomCard(data: data, title: title, imagePath: imagePath);
+    return CustomCard(
+        data: data,
+        title: title,
+        imagePath: imagePath,
+        onPressed: () {
+          if (title == 'OT') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => OTDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+          }
+          else if (title == 'Doctors') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DoctorDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+          }
+          else if (title == 'Departments') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DepartmentDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+          }
+          else if (title == 'Procedures') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProcedureDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+          }
+          else if (title == 'Patients') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PatientDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+          }
+          else if (title == 'OT Staff') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => OTStaffDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+          }
+        },
+    );
   }
 
   @override
@@ -121,7 +164,7 @@ class _DashboardState extends State<Dashboard2> {
                   'From Date',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.blueGrey),
                 ),
-                SizedBox(width: 15),
+                SizedBox(width: gap_for_calender),
                 SizedBox(
                   width: 180,
                   height: 40,
@@ -140,12 +183,24 @@ class _DashboardState extends State<Dashboard2> {
                     ),
                   ),
                 ),
-                SizedBox(width: 400),
+                SizedBox(width: gap_for_calender),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, // Circular shape
+                    color: Colors.blueGrey, // Lavender background color
+                  ),
+                  child: IconButton(
+                    onPressed: () => _selectFromDate(context),
+                    icon: Icon(Icons.calendar_month_outlined),
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 265),
                 Text(
                   'To Date',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.blueGrey),
                 ),
-                SizedBox(width: 15),
+                SizedBox(width: gap_for_calender),
                 SizedBox(
                   width: 180,
                   height: 40,
@@ -162,6 +217,41 @@ class _DashboardState extends State<Dashboard2> {
                       //constraints: BoxConstraints.tightFor(),
                       fillColor: Colors.grey[50],
                     ),
+                  ),
+                ),
+                SizedBox(width: gap_for_calender),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, // Circular shape
+                    color: Colors.blueGrey, // Lavender background color
+                  ),
+                  child: IconButton(
+                    onPressed: () => _selectToDate(context),
+                    icon: Icon(Icons.calendar_month_outlined),
+                    color: Colors.white,
+                  ),
+                ),
+
+                SizedBox(width: 30),
+                Container(
+                  width: 150,
+                  child: ElevatedButton(
+                      style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
+                      child: const Text('Apply',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20),),
+                      onPressed: (){
+                        _getOTCount(selectedFromDate, selectedToDate);
+                        _getDoctorCount(selectedFromDate,selectedToDate);
+                        _getDepartmentCount(selectedFromDate,selectedToDate);
+                        _getProcedureCount(selectedFromDate,selectedToDate);
+                        _getPatientCount(selectedFromDate,selectedToDate);
+                        _getOTStaffCount(selectedFromDate,selectedToDate);
+
+                      }
+
                   ),
                 ),
               ],
@@ -185,8 +275,8 @@ class _DashboardState extends State<Dashboard2> {
                           runSpacing: 30,
                           alignment: WrapAlignment.center,
                           children: [
-                            _buildInfoCard('OT', otCount.toString(),'assets/images/Dashboard_background-light.png'),
-                            _buildInfoCard('Doctors', doctorsCount.toString(),'assets/images/Dashboard_background-light-02.png'),
+                            _buildInfoCard('OT', otCount.toString(),'assets/images/Dashboard_background-light-09.png'),
+                            _buildInfoCard('Doctors', doctorsCount.toString(),'assets/images/Dashboard_background-light-08.png'),
                             _buildInfoCard('Departments', departmentCount.toString(),'assets/images/Dashboard_background-light-04.png'),
                             // _buildInfoCard('Procedures','24', 'assets/images/Dashboard_background-light-07.png'),
                             // _buildInfoCard('Patients', '17','assets/images/Dashboard_background-light-06.png'),
@@ -208,8 +298,8 @@ class _DashboardState extends State<Dashboard2> {
                           children: [
                 
                             _buildInfoCard('Procedures',procedureCount.toString(), 'assets/images/Dashboard_background-light-07.png'),
-                            _buildInfoCard('Patients', patientCount.toString(),'assets/images/Dashboard_background-light-06.png'),
-                            _buildInfoCard('OT Staff', otStaffCount.toString(),'assets/images/Dashboard_background-light-05.png'),
+                            _buildInfoCard('Patients', patientCount.toString(),'assets/images/Dashboard_background-light-02.png'),
+                            _buildInfoCard('OT Staff', otStaffCount.toString(),'assets/images/Dashboard_background-light-06.png'),
                           ],
                         ),
                       ],
@@ -226,51 +316,51 @@ class _DashboardState extends State<Dashboard2> {
     );
   }
 
-  // Future<void> _selectFromDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.parse(widget.dateRangeMap['earliest date']!),
-  //     firstDate: DateTime.parse(widget.dateRangeMap['earliest date']!), // Adjust the first and last date according to your needs1
-  //     lastDate: DateTime.now(),
-  //   );
-  //
-  //   if (picked != null && picked != selectedFromDate) {
-  //     setState(() {
-  //       selectedFromDate = picked;
-  //       String date = "${selectedFromDate.toLocal()}".split(' ')[0];
-  //       fromDateController?.text = date;
-  //     });
-  //   }else if (picked == null) {
-  //     setState(() {
-  //       selectedFromDate = DateTime.parse(widget.dateRangeMap['earliest date']!); // Set selectedFromDate to an initial value
-  //       fromDateController?.text = '${widget.dateRangeMap['earliest date']}'; // Set the text field to empty
-  //     });
-  //   }
-  // }
-  //
-  // Future<void> _selectToDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: DateTime.parse(widget.dateRangeMap['earliest date']!),
-  //     lastDate: DateTime.now(),
-  //   );
-  //
-  //   if (picked != null && picked != selectedToDate) {
-  //     setState(() {
-  //       selectedToDate = picked;
-  //       String date = "${selectedToDate.toLocal()}".split(' ')[0];
-  //       toDateController?.text = date;
-  //     });
-  //   }else if (picked == null) {
-  //     setState(() {
-  //       selectedToDate = DateTime.parse(widget.dateRangeMap['latest date']!);
-  //       toDateController?.text = '${widget.dateRangeMap['latest date']}';
-  //     });
-  //   }
-  //
-  //   //_setValues(context);
-  // }
+  Future<void> _selectFromDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.parse(widget.dateRangeMap['earliest date']!),
+      firstDate: DateTime.parse(widget.dateRangeMap['earliest date']!), // Adjust the first and last date according to your needs1
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null && picked != selectedFromDate) {
+      setState(() {
+        selectedFromDate = picked;
+        String date = "${selectedFromDate.toLocal()}".split(' ')[0];
+        fromDateController?.text = date;
+      });
+    }else if (picked == null) {
+      setState(() {
+        selectedFromDate = DateTime.parse(widget.dateRangeMap['earliest date']!); // Set selectedFromDate to an initial value
+        fromDateController?.text = '${widget.dateRangeMap['earliest date']}'; // Set the text field to empty
+      });
+    }
+  }
+
+  Future<void> _selectToDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.parse(widget.dateRangeMap['earliest date']!),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null && picked != selectedToDate) {
+      setState(() {
+        selectedToDate = picked;
+        String date = "${selectedToDate.toLocal()}".split(' ')[0];
+        toDateController?.text = date;
+      });
+    }else if (picked == null) {
+      setState(() {
+        selectedToDate = DateTime.parse(widget.dateRangeMap['latest date']!);
+        toDateController?.text = '${widget.dateRangeMap['latest date']}';
+      });
+    }
+
+    //_setValues(context);
+  }
 
   void _getOTCount(DateTime selectedFromDate, DateTime selectedToDate) async {
     String apiUrl = '$baseUrl/ot-count/';
