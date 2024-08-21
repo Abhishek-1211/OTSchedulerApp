@@ -18,6 +18,8 @@ import 'package:my_flutter_app/Dashboards/PatientDashboard.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:my_flutter_app/config/customThemes/elevatedButtonTheme.dart';
 
+import 'OTDashboard2.dart';
+
 class Dashboard2 extends StatefulWidget {
   int otCount;
   int doctorsCount;
@@ -96,7 +98,7 @@ class _DashboardState extends State<Dashboard2> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => OTDashboard(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
+                    builder: (context) => OTDashboard2(selectedFromDate :selectedFromDate, selectedToDate:selectedToDate)));
           }
           else if (title == 'Doctors') {
             Navigator.push(

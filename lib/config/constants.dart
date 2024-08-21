@@ -3633,4 +3633,16 @@ class Constants {
   'Kidney Transplant - Package' : kidneyTransplant,
   'Urology' : urology,
   };
+
+  static const List<String> otList=['1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11'];
 }

@@ -11,12 +11,16 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: const Text('OT Tracker',style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),),
       //centerTitle: true,
       actions: [
+        IconButton(icon: Icon(Icons.dashboard), onPressed: () {}),
         TextButton(onPressed: () {}, child: Text("Dashboard", style: TextStyle(fontSize: 16, color: Colors.black))),
+        IconButton(icon: Icon(Icons.list), onPressed: () {}),
         TextButton(onPressed: () {}, child: Text("Patient List", style: TextStyle(fontSize: 16, color: Colors.black))),
+        IconButton(icon: Icon(Icons.schedule_outlined), onPressed: () {}),
         TextButton(onPressed: () {}, child: Text("Scheuler", style: TextStyle(fontSize: 16, color: Colors.black))),
-        TextButton(onPressed: () {}, child: Text("Settings", style: TextStyle(fontSize: 16, color: Colors.black))),
         IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-        IconButton(icon: Icon(Icons.info_outline), onPressed: () {}),
+        TextButton(onPressed: () {}, child: Text("Settings", style: TextStyle(fontSize: 16, color: Colors.black))),
+
+        //IconButton(icon: Icon(Icons.info_outline), onPressed: () {}),
       ],
       bottom:  PreferredSize(
         preferredSize: Size.fromHeight(1.0),
