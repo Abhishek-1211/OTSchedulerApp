@@ -17,8 +17,8 @@ class _RegisterState extends State<Register> {
   List<String> dropdownItems = [
     'Nurse',
     'Technician',
-    'Scheduler',
-    'Administration'
+    'Management',
+    'OT Administration'
   ];
   late String selectedDropdownItem;
 

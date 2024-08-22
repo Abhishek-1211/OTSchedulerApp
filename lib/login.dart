@@ -166,7 +166,7 @@ class _LoginState extends State<Login> {
                         MaterialPageRoute(builder: (context) => PatientListScreen2()),
                       );
 
-                    } else if (user_type == 'Scheduler') {
+                    } else if (user_type == 'OT Administration') {
                       nameController.clear();
                       passwordController.clear();
                       // Navigate to PatientListScreen for other usernames
@@ -178,7 +178,7 @@ class _LoginState extends State<Login> {
                       );
                     }
 
-                    else if (user_type == 'Administration') {
+                    else if (user_type == 'Management') {
                       nameController.clear();
                       passwordController.clear();
                       // Navigate to PatientListScreen for other usernames
