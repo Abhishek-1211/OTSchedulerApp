@@ -3,10 +3,13 @@ import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:my_flutter_app/Dashboards/Dashboard2.dart';
 import 'package:my_flutter_app/OTSchedule/OTScheduleScreen.dart';
 import 'package:my_flutter_app/Dashboards/Dashboard.dart';
 //import 'package:my_flutter_app/TimeMonitoringScreen.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_flutter_app/OTSchedule/SchedulerInput.dart';
+import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key}) : super(key: key);
@@ -44,16 +47,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Menu Page'),
-        centerTitle: true,
-        //
-        //(#FFA500, #FFFFFF, #138808),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0), // Set the height of the divider
-          child: Divider(color: Colors.grey), // Divider below the app bar title
-        ),
-      ),
+      appBar: MyAppBar(),
       //backgroundColor: Colors.lightBlueAccent,
       body: Center(
         child: Column(
@@ -84,7 +78,8 @@ class _MenuPageState extends State<MenuPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => OTScheduleScreen()));
+                              //builder: (context) => OTScheduleScreen()));
+                              builder: (context) => SchedulerInput()));
                     },
                   ),
                   SizedBox(height: 20),
@@ -100,17 +95,20 @@ class _MenuPageState extends State<MenuPage> {
                     title: 'Dashboard',
                     myColor: '#7AA2E3',
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Dashboard(
-                                  otCount: otCount,
-                                  doctorsCount: doctorsCount,
-                                  departmentCount: departmentCount,
-                                  procedureCount: procedureCount,
-                                  patientCount: patientCount,
-                                  otStaffCount: otstaffCount,
-                                  dateRangeMap: dateRangeMap)));
+                      //Navigator.push(
+                          //context,
+                          // MaterialPageRoute(
+                          //     builder: (context) => Dashboard(
+                          //         otCount: otCount,
+                          //         doctorsCount: doctorsCount,
+                          //         departmentCount: departmentCount,
+                          //         procedureCount: procedureCount,
+                          //         patientCount: patientCount,
+                          //         otStaffCount: otstaffCount,
+                          //         dateRangeMap: dateRangeMap))
+                                  
+                      //MaterialPageRoute(builder: (context)=> Dashboard2())
+                      //);
                     },
                   ),
                 ],

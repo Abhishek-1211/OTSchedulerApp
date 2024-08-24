@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../config/constants.dart';
 
 class OTDashboard extends StatefulWidget {
   DateTime? selectedFromDate;
@@ -29,19 +32,7 @@ class _OTDashboardState extends State<OTDashboard> {
   late DateTime selectedToDate;
   // String selectedSpeciality = 'Ophthalmology';
   String selectedOT = '1';
-  List<String> otList = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11'
-  ];
+  List<String> otList = Constants.otList;
   List<Map<String, String>> otSpecificData = [];
 
   String baseUrl = 'http://127.0.0.1:8000/api';
@@ -562,14 +553,7 @@ class _OTDashboardState extends State<OTDashboard> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('OT Dashboard'),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0), // Set the height of the divider
-          child: Divider(color: Colors.grey), // Divider below the app bar title
-        ),
-      ),
+      appBar: MyAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         child: SingleChildScrollView(

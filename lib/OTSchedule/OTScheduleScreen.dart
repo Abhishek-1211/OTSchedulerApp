@@ -289,7 +289,7 @@ class _OTScheduleScreenState extends State<OTScheduleScreen> {
           sendScheduledOT(otData[key].toString(), department[key]);
           //print('${otData[key]} : ${depart[key]} | ');
         }
-        print(scheduledOTList);
+        //print(scheduledOTList);
 
         //API for Doctor
         for (var key in doctor.keys) {
