@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:my_flutter_app/OTSchedule/OTScheduleListScreen.dart';
+import 'package:my_flutter_app/OTSchedule/SchedulerOutput.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:my_flutter_app/config/customThemes/elevatedButtonTheme.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -42,7 +43,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
     return Scaffold(
       appBar: MyAppBar(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: leftMargin, right: rightMargin, top: 2,bottom: 10),
+        padding: const EdgeInsets.only(left: leftMargin, right: rightMargin, top: 10,bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -308,12 +309,12 @@ class _SchedulerInputState extends State<SchedulerInput> {
 
 
       // Check if entries exist for the _uploadedDate
-      bool entriesExist = await _checkEntriesExist(_uploadedDate);
-      if (entriesExist) {
-        // Delete existing entries
-        await _deleteEntriesFromSchedule(_uploadedDate);
-        await _deleteEntriesFromPatients(_uploadedDate);
-      }
+      // bool entriesExist = await _checkEntriesExist(_uploadedDate);
+      // if (entriesExist) {
+      //   // Delete existing entries
+      //   await _deleteEntriesFromSchedule(_uploadedDate);
+      //   await _deleteEntriesFromPatients(_uploadedDate);
+      // }
 
 
       String apiUrl =
@@ -360,7 +361,8 @@ class _SchedulerInputState extends State<SchedulerInput> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                OTScheduleListScreen(scheduleData: jsonResponse),
+                //OTScheduleListScreen(scheduleData: jsonResponse),
+            SchedulerOutput(scheduleData: jsonResponse),
           ),
         );
 
@@ -385,82 +387,83 @@ class _SchedulerInputState extends State<SchedulerInput> {
         Map<String, dynamic> technicalLeads = jsonResponse['Technicial T/L'];
         Map<String, dynamic> nursingLeads = jsonResponse['Nursing T/L'];
         Map<String, dynamic> specialEquipment = jsonResponse['Special Equipment'];
-
+        print("Date:${date['0']}");
+        print("Date-runtimeType:${date['0'].runtimeType}");
         //print(mrdNumbers.values);
         //print('nursingLeads $nursingLeads');
 
-        for (var key in otData.keys) {
-          // scheduledOTList[otData[key].toString()] = department[key];
-          sendScheduledOT(otData[key].toString(), department[key]);
-          //print('${otData[key]} : ${depart[key]} | ');
-        }
+        // for (var key in otData.keys) {
+        //   // scheduledOTList[otData[key].toString()] = department[key];
+        //   sendScheduledOT(otData[key].toString(), department[key]);
+        //   //print('${otData[key]} : ${depart[key]} | ');
+        // }
         //print(scheduledOTList);
 
         //API for Doctor
-        for (var key in doctor.keys) {
-          await Future.delayed(Duration(milliseconds: 500));
-          sendDoctorList(doctor[key].toString(), department[key]);
-        }
+        // for (var key in doctor.keys) {
+        //   await Future.delayed(Duration(milliseconds: 500));
+        //   sendDoctorList(doctor[key].toString(), department[key]);
+        // }
 
         //API call for procedure_list
-        for (var key in procedure.keys) {
-          await Future.delayed(Duration(milliseconds: 600));
-
-          var duration = calculateDuration(end_time[key], start_time[key]);
-          //print('duration - $duration');
-          // duration = parseTime(end_time[key]).
-          sendProcedureList(
-              procedure[key].toString(), department[key].toString(), duration);
-        }
+        // for (var key in procedure.keys) {
+        //   await Future.delayed(Duration(milliseconds: 600));
+        //
+        //   var duration = calculateDuration(end_time[key], start_time[key]);
+        //   //print('duration - $duration');
+        //   // duration = parseTime(end_time[key]).
+        //   sendProcedureList(
+        //       procedure[key].toString(), department[key].toString(), duration);
+        // }
 
         //API for patient
-        for (var key in patient.keys) {
-          //print('age-${jsonResponse['Age/Sex'][key].toString().split('/')[0].split('Y')[0]}');
-          // Introduce a delay of 1000 milliseconds (1 second)
-          await Future.delayed(Duration(milliseconds: 500));
-          sendPatientList(patient[key].toString(), age[key].split('/')[0],
-              age[key].split('/')[1], mrdNumbers[key], date[key]);
-        }
+        // for (var key in patient.keys) {
+        //   //print('age-${jsonResponse['Age/Sex'][key].toString().split('/')[0].split('Y')[0]}');
+        //   // Introduce a delay of 1000 milliseconds (1 second)
+        //   await Future.delayed(Duration(milliseconds: 500));
+        //   sendPatientList(patient[key].toString(), age[key].split('/')[0],
+        //       age[key].split('/')[1], mrdNumbers[key], date[key]);
+        // }
 
         //API for OT staff
-        for (var key in nursingLeads.keys) {
-          await Future.delayed(Duration(milliseconds: 500));
-          sendOtStafffList(nursingLeads[key], department[key], 'Nursing T/L');
-        }
+        // for (var key in nursingLeads.keys) {
+        //   await Future.delayed(Duration(milliseconds: 500));
+        //   sendOtStafffList(nursingLeads[key], department[key], 'Nursing T/L');
+        // }
 
-        for (var key in technicalLeads.keys) {
-          await Future.delayed(Duration(milliseconds: 500));
-          sendOtStafffList(technicalLeads[key], department[key], 'Technical T/L');
-        }
+        // for (var key in technicalLeads.keys) {
+        //   await Future.delayed(Duration(milliseconds: 500));
+        //   sendOtStafffList(technicalLeads[key], department[key], 'Technical T/L');
+        // }
 
         //print(patient_id);
         //API for scheduled surgeries
         //DateFormat format = DateFormat('MM/dd/yy');
         //DateFormat inputFormat = DateFormat('dd/MM/yyyy');
 
-        for (var key in procedure.keys) {
-          //print('age-${jsonResponse['Age/Sex'][key].toString().split('/')[0].split('Y')[0]}');
-          // Introduce a delay of 1000 milliseconds (1 second)
-          // print('date: ${inputFormat.parse((date[key]))}');
-          // print('Data type of date[key]: ${inputFormat.parse(date[key])}');
-          await Future.delayed(Duration(milliseconds: 500));
-          //deleteEntries(date[key]);
-          sendScheduleSurgery(
-            procedure[key],
-            department[key],
-            doctor[key],
-            patient[key],
-            mrdNumbers[key].toString(),
-            date[key],
-            start_time[key],
-            end_time[key],
-            otData[key],
-            technicalLeads[key],
-            nursingLeads[key],
-            specialEquipment[key],
-
-          );
-        }
+        // for (var key in procedure.keys) {
+        //   //print('age-${jsonResponse['Age/Sex'][key].toString().split('/')[0].split('Y')[0]}');
+        //   // Introduce a delay of 1000 milliseconds (1 second)
+        //   // print('date: ${inputFormat.parse((date[key]))}');
+        //   // print('Data type of date[key]: ${inputFormat.parse(date[key])}');
+        //   await Future.delayed(Duration(milliseconds: 500));
+        //   //deleteEntries(date[key]);
+        //   sendScheduleSurgery(
+        //     procedure[key],
+        //     department[key],
+        //     doctor[key],
+        //     patient[key],
+        //     mrdNumbers[key].toString(),
+        //     date[key],
+        //     start_time[key],
+        //     end_time[key],
+        //     otData[key],
+        //     technicalLeads[key],
+        //     nursingLeads[key],
+        //     specialEquipment[key],
+        //
+        //   );
+        // }
       } else {
         setState(() {
           _notificationMessage =
