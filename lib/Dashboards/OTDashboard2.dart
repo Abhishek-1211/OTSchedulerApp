@@ -897,7 +897,7 @@ class _OTDashboardState extends State<OTDashboard2> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 75),
                   Container(
                     // width: 400,
                     // height: 50,
@@ -925,7 +925,7 @@ class _OTDashboardState extends State<OTDashboard2> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 75),
                   Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -955,7 +955,7 @@ class _OTDashboardState extends State<OTDashboard2> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 75),
                   Container(
                     // width: 400,
                     // height: 50,
@@ -986,7 +986,8 @@ class _OTDashboardState extends State<OTDashboard2> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'OT NUMBER',
+                                    'SELECT  OT',
+                                    //textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -994,13 +995,13 @@ class _OTDashboardState extends State<OTDashboard2> {
                                   ),
                                   SizedBox(width: 20),
                                   SizedBox(
-                                    width: 180,
-                                    height: 40,
+                                    width: 100,
+                                    height: 35,
                                     child: DropdownButtonFormField(
                                         items: dropdownItems,
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                          hintText: 'Select OT Number',
+                                          contentPadding: EdgeInsets.fromLTRB(35, 0, 15, 0),
+                                          //hintText: 'Select OT Number',
                                           //hintStyle: TextStyle(decorationStyle: text),
                                           border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(10)),
@@ -1017,7 +1018,7 @@ class _OTDashboardState extends State<OTDashboard2> {
                                           });
                                         }),
                                   ),
-                                  SizedBox(height: 25),
+                                  SizedBox(height: 30),
                                   // Container(
                                   //   width: 100,
                                   //   child: DropdownButtonFormField(
