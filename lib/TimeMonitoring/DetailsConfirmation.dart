@@ -139,7 +139,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             ]),
             Container(
               alignment: Alignment.centerRight,
-              padding: EdgeInsets.fromLTRB(0, 0, 150, 10),
+              padding: EdgeInsets.fromLTRB(0, 0, 350, 10),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(context,
