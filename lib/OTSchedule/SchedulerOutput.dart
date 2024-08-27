@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
+import 'package:my_flutter_app/config/customThemes/utilities/Utilities.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -821,15 +822,7 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
                   width: 260,
                   height: 45,
                   child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Filter by OT number',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
+                    decoration: Utilities.otSearchBoxDecoration,
                   ),
                 ),
 

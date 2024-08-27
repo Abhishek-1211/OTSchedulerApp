@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http; // Import the http package
 import 'package:my_flutter_app/TimeMonitoring/CapturedRecord.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
+import 'package:my_flutter_app/config/customThemes/utilities/Utilities.dart';
 
 import '../config/customThemes/elevatedButtonTheme.dart';
 import 'DetailsConfirmation.dart';
@@ -59,19 +60,21 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
             Text(displayMessage, style: Theme.of(context).textTheme.subtitle1),
             Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500,),
             SizedBox(height: 20),
-            Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w400),),
+            //Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w400),),
+            Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w800,color: Colors.blueGrey),),
             SizedBox(height: 4),
             SizedBox(
               width: 260,
-              height: 50,
+              height: 45,
               child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Filter by OT number',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                  filled: true,
-                  //constraints: BoxConstraints.tightFor(),
-                  fillColor: Colors.grey[50],
-                ),
+                decoration: Utilities.otSearchBoxDecoration,
+                // decoration: InputDecoration(
+                //   hintText: 'Filter by OT number',
+                //   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                //   filled: true,
+                //   //constraints: BoxConstraints.tightFor(),
+                //   fillColor: Colors.grey[50],
+                // ),
               ),
             ),
             SizedBox(height:25),
