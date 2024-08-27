@@ -19,6 +19,7 @@ class TimeMonitoring extends StatefulWidget {
   final String specialEquipment;
   final DateTime surgeryDate;
   final int surgeryId;
+  final String caller;
 
   TimeMonitoring({required this.otNumber,
     required this.patientName,
@@ -28,6 +29,7 @@ class TimeMonitoring extends StatefulWidget {
     required this.department,
     required this.procedureName,
     required this.technician,
+    required this.caller,
     required this.nurse,
     required this.specialEquipment}) ;
 
@@ -302,7 +304,8 @@ class _TimeMonitoringState extends State<TimeMonitoring> {
   bool isButtonEnabled(String step) {
     switch (step) {
       case 'Pre-OP':
-        return preOPStartEnabled;
+        return (preOPStartEnabled && !(widget.caller =="pastSurgeries"));
+        // extra condition added to disable all buttons for all except nurse/technician
       case 'Prophylaxis':
         return prophylaxisStartEnabled;
       case 'Wheel-In':

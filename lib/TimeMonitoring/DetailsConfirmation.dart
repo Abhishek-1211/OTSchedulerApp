@@ -163,6 +163,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
                                 nurse: _nurseController.text,
                                 specialEquipment:
                                 widget.specialEquipment,
+                                caller:"DetailsConfimation",
                               )));
                 },
                 child: Text('Confirm', style: TextStyle(color: Colors.white)),

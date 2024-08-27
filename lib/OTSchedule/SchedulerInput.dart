@@ -763,7 +763,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
         MaterialPageRoute(
           builder: (context) =>
           //OTScheduleListScreen(scheduleData: jsonResponse),
-          PastSurgeries(previousScheduledData)
+          PastSurgeries(previousScheduledData,selectedDate)
         ),
       );
     }

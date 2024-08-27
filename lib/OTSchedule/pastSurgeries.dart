@@ -10,14 +10,16 @@ import 'package:my_flutter_app/config/customThemes/utilities/Utilities.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import '../TimeMonitoring/TimeMonitoring.dart';
 import '../config/customThemes/elevatedButtonTheme.dart';
 
 class PastSurgeries extends StatefulWidget {
   //final Map<String, dynamic> scheduleData;
   List<dynamic> pastScheduledData;
+  DateTime surgeryDate;
 
 
-  PastSurgeries(this.pastScheduledData);
+  PastSurgeries(this.pastScheduledData,this.surgeryDate);
 
   @override
   _PastSurgeriesState createState() => _PastSurgeriesState();
@@ -34,6 +36,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
   static const InputDecoration rowDecoration = InputDecoration(border: InputBorder.none,);
   String baseUrl = 'http://127.0.0.1:8000/api';
   bool isDownloadEnabled = true;
+  int tapCount = 0;
 
   @override
   void initState() {
@@ -193,6 +196,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
       //   ),
       // ),
       DataColumn(
+
         label: Container(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           //color: Colors.blueAccent,
@@ -282,6 +286,19 @@ class _PastSurgeriesState extends State<PastSurgeries> {
     // Define table rows
     final rows = sortedData.map<DataRow>((surgery) {
       return DataRow(
+        //onLongPress: _onRowTap(surgery),
+        //selected: false,
+        onSelectChanged: (bool? selected) {
+          if (selected != null && selected) {
+            tapCount++;
+            // setState(() {
+            //   tapCount;
+            // });
+            Future.delayed(Duration(seconds: 1), () {
+              _onRowTap(surgery,tapCount); // Handle row tap after a delay
+            });// Handle row tap
+          }
+        },
         cells: [
           DataCell(Text(surgery['ot_number'])),
           DataCell(Text(surgery['doctor_name'])),
@@ -296,6 +313,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
         ],
       );
     }).toList();
+
 
     return Scaffold(
       appBar: MyAppBar(),
@@ -361,6 +379,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
                     // ],
                     rows: rows,
                     dividerThickness: 1.5,
+                    showCheckboxColumn: false,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.blueGrey),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -395,4 +414,42 @@ class _PastSurgeriesState extends State<PastSurgeries> {
       // ),
     );
   }
+
+  _onRowTap(surgery,tapCount) {
+    print("onRowTap(): $tapCount");
+    // if(tapCount>1){
+    //   print("onRowTap(): if");
+    //   tapCount = 0;
+    //   // setState(() {
+    //   //   tapCount;
+    //   // });
+    // }else {
+      print("onRowTap(): else");
+      Navigator.push(context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  TimeMonitoring(otNumber: surgery['ot_number'],
+                    patientName: surgery['patient_name'],
+                    surgeryId:
+                    surgery['scheduled_surgery_id'],
+                    surgeryDate:
+                    widget.surgeryDate,
+                    // Pass DateTime value
+                    doctorName:
+                    surgery['doctor_name'],
+                    department:
+                    surgery['department'],
+                    procedureName:
+                    surgery['procedure_name'],
+                    technician:
+                    surgery['technician_tl'],
+                    nurse: surgery['nurse_tl'],
+                    specialEquipment:
+                    surgery['special_equipment'],
+                    caller: 'pastSurgeries',
+                  )));
+    //}
+
+  }
+  
 }
