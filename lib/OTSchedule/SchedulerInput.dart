@@ -767,6 +767,31 @@ class _SchedulerInputState extends State<SchedulerInput> {
         ),
       );
     }
+    else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text(
+                  'No Surgeries Scheduled'),
+              //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
+              actions: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    textStyle: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    //print(widget.surgeryId);
+                    //Navigator.of(context).pop('${widget.surgeryId} is done');
+                    //Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
+    }
   }
 
 
