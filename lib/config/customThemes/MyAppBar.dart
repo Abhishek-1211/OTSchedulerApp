@@ -11,16 +11,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: const Text('OT Tracker',style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),),
       //centerTitle: true,
       actions: [
-        IconButton(icon: Icon(Icons.dashboard), onPressed: () {}),
-        TextButton(onPressed: () {}, child: Text("Dashboard", style: TextStyle(fontSize: 16, color: Colors.black))),
-        IconButton(icon: Icon(Icons.list), onPressed: () {}),
-        TextButton(onPressed: () {}, child: Text("Patient List", style: TextStyle(fontSize: 16, color: Colors.black))),
-        IconButton(icon: Icon(Icons.schedule_outlined), onPressed: () {}),
-        TextButton(onPressed: () {}, child: Text("Scheduler", style: TextStyle(fontSize: 16, color: Colors.black))),
-        IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-        TextButton(onPressed: () {}, child: Text("Settings", style: TextStyle(fontSize: 16, color: Colors.black))),
+        TextButton.icon(onPressed: () {}, icon: Icon(Icons.dashboard, color: Colors.blueGrey), label: Text("Dashboard", style: TextStyle(fontSize: 16, color: Colors.black))),
+        TextButton.icon(onPressed: () {}, icon: Icon(Icons.list, color: Colors.blueGrey), label: Text("Patient List", style: TextStyle(fontSize: 16, color: Colors.black))),
+        TextButton.icon(onPressed: () {}, icon: Icon(Icons.schedule_outlined, color: Colors.blueGrey), label: Text("Scheduler", style: TextStyle(fontSize: 16, color: Colors.black))),
+        TextButton.icon(onPressed: () {}, icon: Icon(Icons.settings, color: Colors.blueGrey), label: Text("Settings", style: TextStyle(fontSize: 16, color: Colors.black))),
 
-        //IconButton(icon: Icon(Icons.info_outline), onPressed: () {}),
       ],
       backgroundColor: Colors.grey[100],
       // bottom:  PreferredSize(

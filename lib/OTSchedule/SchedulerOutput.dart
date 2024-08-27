@@ -44,6 +44,7 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
   static const double headerTextSize = 16.0;
   static const InputDecoration rowDecoration = InputDecoration(border: InputBorder.none,);
   String baseUrl = 'http://127.0.0.1:8000/api';
+  bool isDownloadEnabled = false;
 
   @override
   void initState() {
@@ -561,6 +562,11 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
     } catch (e) {
       print('Error exporting data to CSV: $e');
     }
+
+    setState(() {
+      isDownloadEnabled = false;
+    });
+
   }
 
 
@@ -828,9 +834,9 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
                 ),
 
                 SizedBox(width: 900,),
-                ElevatedButton(
+                ElevatedButton (
                   style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
-                  onPressed:  _exportDataToCsv,
+                  onPressed: isDownloadEnabled ? _exportDataToCsv:null,
                   child: Text('Download',style: TextStyle(color: Colors.white),),
                 ),
               ],
@@ -868,6 +874,10 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
                 style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
                 onPressed: () {
                   _saveChanges();
+                  setState(() {
+                    isDownloadEnabled = true;
+                  });
+
                 },
                 child: Text('Update/Confirm',style: TextStyle(color: Colors.white),),
               ),
