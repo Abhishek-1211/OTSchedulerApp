@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:csv/csv.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:my_flutter_app/OTSchedule/OTScheduleListScreen.dart';
 import 'package:my_flutter_app/OTSchedule/SchedulerOutput.dart';
+import 'package:my_flutter_app/OTSchedule/pastSurgeries.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:my_flutter_app/config/customThemes/elevatedButtonTheme.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -37,6 +39,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
   String _notificationMessage = '';
   String _uploadedDate ='';
   String baseUrl = 'http://127.0.0.1:8000/api';
+  List<dynamic> previousScheduledData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -133,21 +136,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
     );
   }
 
-  Widget _buildUploadButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            // Handle file upload
-          },
-          //Colors.grey[200],
-          style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
-          child: Text('Upload', style: TextStyle(color: Colors.black)),
-        ),
-      ],
-    );
-  }
+
 
   Widget _buildFileDropArea() {
     return DottedBorder(
@@ -350,6 +339,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        print('jsonResponse: ${jsonResponse}');
 
         setState(() {
           //_notificationMessage = ' '; // Show processing message
@@ -528,6 +518,10 @@ class _SchedulerInputState extends State<SchedulerInput> {
 
     if(response.statusCode == 200){
       List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        previousScheduledData = data;
+      });
+      print('_checkEntriesExist():$data');
       return data.isNotEmpty;
     }
     else{
@@ -760,8 +754,19 @@ class _SchedulerInputState extends State<SchedulerInput> {
     //}
   }
 
-  _viewPastHistory() {
-
+  _viewPastHistory() async {
+    String parsedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    //DateFormat('MM/dd/yyyy').parse(date).toString().split(' ')[0]}'
+    if(await _checkEntriesExist(parsedDate)){
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+          //OTScheduleListScreen(scheduleData: jsonResponse),
+          PastSurgeries(previousScheduledData)
+        ),
+      );
+    }
   }
 
 
