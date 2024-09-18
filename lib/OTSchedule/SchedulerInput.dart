@@ -5,6 +5,7 @@ import 'package:csv/csv.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
   bool isDateSelected = true;
   static const double leftMargin = 180;
   static const double rightMargin = 180;
-  static const double gap = 15;
+  static const double gap = 20;
   String displayText1 = 'Schedule all operation';
   String displayText2 = 'Select a date and upload a Excel file to schedule the procedure.';
   String displayText3 = "Please upload a Excel file. The file should contain all the necessary information for the operation,"
@@ -50,12 +51,17 @@ class _SchedulerInputState extends State<SchedulerInput> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                Text(displayText2,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+                Divider(color: Colors.blueGrey[50], thickness: 2),
+              ],
+            )),
             //SizedBox(height: 1),
-            Text(displayText2,
-                style: TextStyle(fontSize: 16, color: Colors.grey[600])),
-            Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500),
-            SizedBox(height: 10),
+
+            SizedBox(height: 15),
             Center(
               child: Column(
                 children: [

@@ -38,6 +38,10 @@ class _PastSurgeriesState extends State<PastSurgeries> {
   bool isDownloadEnabled = true;
   int tapCount = 0;
 
+  String displayText1 = 'Scheduled Surgeries';
+  String displayText2 = 'View all scheduled surgeries across all operation theaters';
+
+
   @override
   void initState() {
     super.initState();
@@ -330,16 +334,15 @@ class _PastSurgeriesState extends State<PastSurgeries> {
             //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             //   ),
             // ),
-            Text(
-              'Scheduled Surgeries',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'View all scheduled surgeries across all operation theaters',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-            ),
-            Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500,),
+            IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                Text(displayText2,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+                Divider(color: Colors.blueGrey[50], thickness: 2),
+              ],
+            )),
+
             SizedBox(height: 20),
             Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w800,color: Colors.blueGrey),),
             SizedBox(height: 6),
