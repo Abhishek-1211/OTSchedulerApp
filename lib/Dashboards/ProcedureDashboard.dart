@@ -461,7 +461,7 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
                         ),
                       ),
               ),
-              Divider(
+              /*Divider(
                 color: Colors.black,
                 thickness: 2,
               ),
@@ -543,7 +543,8 @@ class _ProcedureDashboardState extends State<ProcedureDashboard> {
                 color: Colors.black,
                 thickness: 2,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 20),*/
+
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.center,
               //   children: [

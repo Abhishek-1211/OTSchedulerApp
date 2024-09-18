@@ -353,7 +353,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
                   ),
                 ),
 
-                SizedBox(width: 900,),
+                SizedBox(width: 500,),
                 ElevatedButton (
                   style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
                   onPressed: isDownloadEnabled ? _exportDataToCsv:null,

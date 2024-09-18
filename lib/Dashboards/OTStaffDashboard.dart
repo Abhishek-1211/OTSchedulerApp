@@ -381,7 +381,7 @@ class _OTStaffDashboardState extends State<OTStaffDashboard> {
                 ],
               ),
               SizedBox(height:20),
-              Divider(
+              /*Divider(
                 color: Colors.black,
                 thickness: 2,
               ),
@@ -410,7 +410,8 @@ class _OTStaffDashboardState extends State<OTStaffDashboard> {
               Divider(
                 color: Colors.black,
                 thickness: 2,
-              ),
+              ),*/
+
               //SizedBox(height: 20),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.center,

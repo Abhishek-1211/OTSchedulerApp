@@ -426,7 +426,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                   //SizedBox(width: 30)
                 ],
               ),
-              SizedBox(height:20),
+              /*SizedBox(height:20),
               Divider(
                 color: Colors.black,
                 thickness: 2,
@@ -451,7 +451,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                   child: _buildBarChart(avgSurgeryDurationData, 'Doctor',
                       'Average Surgery Time (Min)'),
                 ),
-              ]),
+              ]),*/
             ],
           )),
         ));

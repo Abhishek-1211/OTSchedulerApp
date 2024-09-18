@@ -826,7 +826,7 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
                   ),
                 ),
 
-                SizedBox(width: 900,),
+                SizedBox(width: 500), // Old - 900
                 ElevatedButton (
                   style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
                   onPressed: isDownloadEnabled ? _exportDataToCsv:null,

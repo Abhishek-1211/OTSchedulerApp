@@ -240,7 +240,7 @@ class _OTDashboardState extends State<OTDashboard2> {
         print(item['avg_time_difference'].runtimeType);
         avgTimeDifferenceData.add(AvgTimeDifferenceData(
             otNumber: item['ot_number'],
-            timeDifference: item['avg_time_difference']));
+            timeDifference: '${double.parse(item['avg_time_difference'])*3600}'));
       }
 
       // setState(() {
@@ -955,7 +955,7 @@ class _OTDashboardState extends State<OTDashboard2> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 75),
+                  /*SizedBox(height: 75),
                   Container(
                     // width: 400,
                     // height: 50,
@@ -1057,7 +1057,7 @@ class _OTDashboardState extends State<OTDashboard2> {
                         ),
                       ],
                     ),
-                  ),
+                  ),*/
                 ],
               ),
 
