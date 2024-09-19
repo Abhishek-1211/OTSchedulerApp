@@ -61,7 +61,7 @@ class _DashboardState extends State<Dashboard2> {
   static const double rightMargin = 120;
   static const double gap_for_calender = 15;
   String displayText1 = 'Operations Dashboard';
-  String displayText2 = 'Select the  dates to view customised data';
+  String displayText2 = 'Comprehensive Overview of Patient and Operational Metrics';
   String calenderHintText = 'Select the Date';
   bool _isHovered = false;
 
@@ -146,13 +146,14 @@ class _DashboardState extends State<Dashboard2> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-            Text(displayText1,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            //SizedBox(height: 1),
-            // Text(displayText2,
-            //     style: TextStyle(fontSize: 16, color: Colors.grey[600])),
-            Text('Comprehensive Overview of Patient and Operational Metrics', style: Theme.of(context).textTheme.subtitle1),
-            Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500,),
+            IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                Text(displayText2,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+                Divider(color: Colors.blueGrey[50], thickness: 2),
+              ],
+            )),
             SizedBox(
               height: 25,
             ),

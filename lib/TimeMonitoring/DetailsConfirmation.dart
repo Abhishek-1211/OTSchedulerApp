@@ -18,6 +18,7 @@ class DetailsConfirmation extends StatefulWidget {
   final String procedureName;
   final String technician;
   final String nurse;
+  final String mrd;
   final String specialEquipment;
   final DateTime surgeryDate;
   final int surgeryId;
@@ -33,6 +34,7 @@ class DetailsConfirmation extends StatefulWidget {
     required this.procedureName,
     required this.technician,
     required this.nurse,
+    required this.mrd,
     required this.specialEquipment,
   }) ;
 
@@ -41,6 +43,7 @@ class DetailsConfirmation extends StatefulWidget {
         required this.otNumber,
         required this.surgeryDate,
         required this.doctorName,
+        required this.mrd,
         required this.procedureName,
         required this.surgeryId})
       : nurse = '',
@@ -74,7 +77,12 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
   List<String> dropdownItemsSurgery = [];
 
   Color subtitle = Colors.blueGrey;
+
   double subtitleFontSize = 16;
+
+  static const double gap = 20;
+
+  static const double gap2 = 15;
 
   @override
   void initState() {
@@ -82,7 +90,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
     _nameController = TextEditingController(text: widget.patientName);
     //_genderController = TextEditingController(text: widget.gender);
     //_ageController = TextEditingController(text: widget.surgeryId);
-    _mrdController = TextEditingController(text: '-N/A-');
+    _mrdController = TextEditingController(text: widget.mrd);
     _surgeryNameController = TextEditingController(text: widget.procedureName);
     _otNumberController = TextEditingController(text: widget.otNumber);
     _surgeonController = TextEditingController(text: widget.doctorName);
@@ -114,13 +122,13 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
     return Scaffold(
       appBar: MyAppBar(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(120, 15, 20, 40),
+        padding: const EdgeInsets.fromLTRB(120, 20, 20, 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildSection('Patient Details', [
               Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 150),
-              SizedBox(height: 20,),
+              SizedBox(height: gap,),
               _buildDetailRow('Name', _nameController, false, 'MRD', _mrdController),
               //Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 150,),
               //_buildDetailRow('Sex', _genderController, 'MRD', _mrnController),
@@ -128,13 +136,16 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             SizedBox(height: 25),
             _buildSection('Surgery Details', [
               Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 150),
-              SizedBox(height: 15,),
+              SizedBox(height: gap2,),
               _buildDetailRow('Department', _departmentController, true, 'OT Number', _otNumberController),
-              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 150,),
+              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 400,),
+              SizedBox(height: gap2,),
               _buildDetailRow('Surgery Name', _surgeryNameController, true, 'Technician', _technicianController),
-              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 150,),
+              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 400,),
+              SizedBox(height: gap2,),
               _buildDetailRow('Surgeon', _surgeonController, false, 'Nurse', _nurseController),
-              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 150,),
+              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 400,),
+              SizedBox(height: gap2,),
               _buildLastRow('Anaesthesia Type', _surgeonController),
             ]),
             Container(

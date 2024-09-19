@@ -26,6 +26,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
   List<String> techniciansList = [];
   List<String> nursesList = [];
   List<String> specialEquipmentList = [];
+  List<String> mrdList = [];
   List<int> surgery_id = [];
   List<String> ot_numbers = [];
   List<DateTime> surgery_date = [];
@@ -34,10 +35,13 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
 
 
   static const double leftMargin = 180;
-  String displayMessage = 'View all scheduled surgeries across all operation theatres';
+  //String displayMessage =
 
   //String baseUrl = 'https://9c79-2409-40d0-b5-dafe-c4cf-904e-59b2-3fd4.ngrok-free.app/api';
   String baseUrl = 'http://127.0.0.1:8000/api';
+
+  String displayText1 = 'Surgery List';
+  String displayText2 = 'View all scheduled surgeries across all operation theatres';
 
 
   @override
@@ -56,9 +60,14 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
         child: Column (
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Surgery List', style: TextStyle (fontSize: 25, fontWeight: FontWeight.bold),),
-            Text(displayMessage, style: Theme.of(context).textTheme.subtitle1),
-            Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 500,),
+            IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                Text(displayText2,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+                Divider(color: Colors.blueGrey[50], thickness: 2),
+              ],
+            )),
             SizedBox(height: 20),
             //Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w400),),
             Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w800,color: Colors.blueGrey),),
@@ -134,6 +143,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                                       specialEquipment:
                                       specialEquipmentList[
                                       index],
+                                      mrd: mrdList[index],
                                     )));
                               },
                               style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
@@ -244,6 +254,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
           'technician': e['technician_tl'] as String,
           'nurse': e['nurse_tl'] as String,
           'specialEquipment': e['special_equipment'] as String,
+          'mrd':e['mrd'] as String,
         })
             .toList();
 
@@ -299,6 +310,10 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
               patients.map<String>((e) => e['nurse'] as String).toList();
           specialEquipmentList = patients
               .map<String>((e) => e['specialEquipment'] as String)
+              .toList();
+
+          mrdList = patients
+              .map<String>((e) => e['mrd'] as String)
               .toList();
           isSubmitted = true;
         });
@@ -360,7 +375,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
         context: context,
         builder: (BuildContext context) {
           var nameController = TextEditingController();
-          var mrdNumber = TextEditingController();
+          var mrdController = TextEditingController();
           var surgeonName = TextEditingController();
           var department = TextEditingController();
           var otNumber = TextEditingController();
@@ -384,7 +399,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                       ),
                     ),
                     TextFormField(
-                      controller: mrdNumber,
+                      controller: mrdController,
                       decoration: InputDecoration(
                         labelText: 'MRD Number',
                         //icon: Icon(Icons.account_box)
@@ -450,6 +465,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                             surgeryId: id,
                             doctorName: surgeonName.text,
                             procedureName: surgeryName.text,
+                        mrd: mrdController.text,
                           ) )
                     );
                   },
