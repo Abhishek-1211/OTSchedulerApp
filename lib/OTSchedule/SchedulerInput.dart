@@ -312,8 +312,9 @@ class _SchedulerInputState extends State<SchedulerInput> {
       // }
 
 
-      String apiUrl =
-          'https://us-central1-amrita-body-scan.cloudfunctions.net/OT_Scheduler';
+      // String apiUrl =
+      //     'https://us-central1-amrita-body-scan.cloudfunctions.net/OT_Scheduler';
+      String apiUrl = 'https://us-central1-amrita-body-scan.cloudfunctions.net/OTSchedulerv2';
       Map<String, dynamic> requestBody = {'doc': base64File};
       String requestBodyJson = jsonEncode(requestBody);
 
