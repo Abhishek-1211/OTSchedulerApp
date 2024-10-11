@@ -8,7 +8,6 @@ import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:my_flutter_app/config/customThemes/elevatedButtonTheme.dart';
 import 'package:my_flutter_app/main.dart';
 
-
 class DetailsConfirmation extends StatefulWidget {
   final String patientName;
   //final String gender;
@@ -36,16 +35,16 @@ class DetailsConfirmation extends StatefulWidget {
     required this.nurse,
     required this.mrd,
     required this.specialEquipment,
-  }) ;
+  });
 
   DetailsConfirmation.emergency(
       {required this.patientName,
-        required this.otNumber,
-        required this.surgeryDate,
-        required this.doctorName,
-        required this.mrd,
-        required this.procedureName,
-        required this.surgeryId})
+      required this.otNumber,
+      required this.surgeryDate,
+      required this.doctorName,
+      required this.mrd,
+      required this.procedureName,
+      required this.surgeryId})
       : nurse = '',
         specialEquipment = '',
         department = '',
@@ -66,7 +65,6 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
   late TextEditingController _departmentController;
   late TextEditingController _technicianController;
   late TextEditingController _genderController;
-
 
   String selectedAnesthesiaType = Constants.anesthesiaTypes[0];
 
@@ -97,7 +95,7 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
     _nurseController = TextEditingController(text: widget.nurse);
     _departmentController = TextEditingController(text: widget.department);
     _technicianController = TextEditingController(text: widget.technician);
-    selectedSurgery = Constants.surgeryMap[selectedDepartment]!.first ;
+    selectedSurgery = Constants.surgeryMap[selectedDepartment]!.first;
   }
 
   @override
@@ -116,7 +114,6 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
 
   @override
   Widget build(BuildContext context) {
-
     bool showDropdown1 = false;
     bool showDropdown2 = false;
     return Scaffold(
@@ -128,58 +125,77 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
           children: <Widget>[
             _buildSection('Patient Details', [
               Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 150),
-              SizedBox(height: gap,),
-              _buildDetailRow('Name', _nameController, false, 'MRD', _mrdController),
+              SizedBox(
+                height: gap,
+              ),
+              _buildDetailRow(
+                  'Name', _nameController, false, 'MRD', _mrdController),
               //Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 150,),
               //_buildDetailRow('Sex', _genderController, 'MRD', _mrnController),
             ]),
             SizedBox(height: 25),
             _buildSection('Surgery Details', [
               Divider(color: Colors.blueGrey[50], thickness: 2, endIndent: 150),
-              SizedBox(height: gap2,),
-              _buildDetailRow('Department', _departmentController, true, 'OT Number', _otNumberController),
-              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 400,),
-              SizedBox(height: gap2,),
-              _buildDetailRow('Surgery Name', _surgeryNameController, true, 'Technician', _technicianController),
-              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 400,),
-              SizedBox(height: gap2,),
-              _buildDetailRow('Surgeon', _surgeonController, false, 'Nurse', _nurseController),
-              Divider(color: Colors.blueGrey[50],thickness: 2, endIndent: 400,),
-              SizedBox(height: gap2,),
+              SizedBox(
+                height: gap2,
+              ),
+              _buildDetailRow('Department', _departmentController, true,
+                  'OT Number', _otNumberController),
+              Divider(
+                color: Colors.blueGrey[50],
+                thickness: 2,
+                endIndent: 400,
+              ),
+              SizedBox(
+                height: gap2,
+              ),
+              _buildDetailRow('Surgery Name', _surgeryNameController, true,
+                  'Technician', _technicianController),
+              Divider(
+                color: Colors.blueGrey[50],
+                thickness: 2,
+                endIndent: 400,
+              ),
+              SizedBox(
+                height: gap2,
+              ),
+              _buildDetailRow('Surgeon', _surgeonController, false, 'Nurse',
+                  _nurseController),
+              Divider(
+                color: Colors.blueGrey[50],
+                thickness: 2,
+                endIndent: 400,
+              ),
+              SizedBox(
+                height: gap2,
+              ),
               _buildLastRow('Anaesthesia Type', _surgeonController),
             ]),
             Container(
               alignment: Alignment.centerRight,
               padding: EdgeInsets.fromLTRB(0, 0, 350, 10),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TimeMonitoring(otNumber: _otNumberController.text,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TimeMonitoring(
+                                  otNumber: _otNumberController.text,
                                   patientName: _nameController.text,
-                                surgeryId:
-                                widget.surgeryId,
-                                surgeryDate:
-                                widget.surgeryDate,
-                                // Pass DateTime value
-                                doctorName:
-                                _surgeonController.text,
-                                department:
-                                _departmentController.text,
-                                procedureName:
-                                _surgeryNameController.text,
-                                technician:
-                                _technicianController.text,
-                                nurse: _nurseController.text,
-                                specialEquipment:
-                                widget.specialEquipment,
-                                caller:"DetailsConfimation",
-                              )));
-                },
-                child: Text('Confirm', style: TextStyle(color: Colors.white)),
-                style: MyElevatedButtonTheme.elevatedButtonTheme1.style
-              ),
+                                  surgeryId: widget.surgeryId,
+                                  surgeryDate: widget.surgeryDate,
+                                  // Pass DateTime value
+                                  doctorName: _surgeonController.text,
+                                  department: _departmentController.text,
+                                  procedureName: _surgeryNameController.text,
+                                  technician: _technicianController.text,
+                                  nurse: _nurseController.text,
+                                  specialEquipment: widget.specialEquipment,
+                                  caller: "DetailsConfimation",
+                                )));
+                  },
+                  child: Text('Confirm', style: TextStyle(color: Colors.white)),
+                  style: MyElevatedButtonTheme.elevatedButtonTheme1.style),
             ),
           ],
         ),
@@ -191,15 +207,16 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(title,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ...children,
         SizedBox(height: 10),
       ],
     );
   }
 
-  Widget _buildDetailRow(String label1, TextEditingController controller1, bool showDropdown,
-      String label2, TextEditingController controller2) {
+  Widget _buildDetailRow(String label1, TextEditingController controller1,
+      bool showDropdown, String label2, TextEditingController controller2) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -208,58 +225,70 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //SizedBox(height: 10,),
-              Text(label1, style: TextStyle(fontSize: subtitleFontSize, fontWeight: FontWeight.bold,color: subtitle)),
+              Text(label1,
+                  style: TextStyle(
+                      fontSize: subtitleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: subtitle)),
               //SizedBox(height: 2,),
-              showDropdown ?
-              DropdownMenu(
-                  controller: label1 =='Department' ? _departmentController : _surgeryNameController,
-                  hintText: "Select $label1",
-                  menuHeight: 250,
-                  //width: null,
-                  enableSearch: true,
-                  expandedInsets: label1=='Department'? null: EdgeInsets.fromLTRB(0, 0, 180, 0),
-                  inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
-                  onSelected: (String? value) {
-                    setState(() {
-                      switch(label1) {
-                        case 'Department':
-                          selectedDepartment = value!;
-                          _updateSurgeryDropdown(value);
-                          // if (_departmentController == null || _departmentController.text.isEmpty) {
-                          //   // If department is cleared, clear Surgery Name and reset its items
-                          //   _surgeryNameController.clear();
-                          //   dropdownItemsSurgery = []; // Assuming you have a way to reset this list
-                          // } else {
-                          //   // Update Surgery dropdown based on selected department
-                          //   _updateSurgeryDropdown(value);
-                          // }
-                          //break;
-                        case 'Surgery Name':
-                          selectedSurgery = value!;
-                          //break;
-                      }
-
-                    });
-                  },
-                  dropdownMenuEntries:
-                  label1=='Department'?
-                  Constants.departmentList.map((item) {
-                    return DropdownMenuEntry(
-                        value: item,
-                        label: item);
-                  }).toList() :
-                  dropdownItemsSurgery.isNotEmpty ?
-                  dropdownItemsSurgery.map((item)  {
-                    return DropdownMenuEntry(
-                        value: item,
-                        label: item);
-                  }).toList():
-                  [const DropdownMenuEntry(value: '', label: 'No surgeries available')],
-              ):
-              TextFormField(
-                controller: controller1,
-                style: TextStyle(fontSize: 16),
-                decoration: InputDecoration(border: InputBorder.none, ),),
+              showDropdown
+                  ? DropdownMenu(
+                      controller: label1 == 'Department'
+                          ? _departmentController
+                          : _surgeryNameController,
+                      hintText: "Select $label1",
+                      menuHeight: 250,
+                      //width: null,
+                      enableSearch: true,
+                      expandedInsets: label1 == 'Department'
+                          ? null
+                          : EdgeInsets.fromLTRB(0, 0, 180, 0),
+                      inputDecorationTheme:
+                          InputDecorationTheme(border: InputBorder.none),
+                      onSelected: (String? value) {
+                        setState(() {
+                          switch (label1) {
+                            case 'Department':
+                              selectedDepartment = value!;
+                              _updateSurgeryDropdown(value);
+                            // if (_departmentController == null || _departmentController.text.isEmpty) {
+                            //   // If department is cleared, clear Surgery Name and reset its items
+                            //   _surgeryNameController.clear();
+                            //   dropdownItemsSurgery = []; // Assuming you have a way to reset this list
+                            // } else {
+                            //   // Update Surgery dropdown based on selected department
+                            //   _updateSurgeryDropdown(value);
+                            // }
+                            //break;
+                            case 'Surgery Name':
+                              selectedSurgery = value!;
+                            //break;
+                          }
+                        });
+                      },
+                      dropdownMenuEntries: label1 == 'Department'
+                          ? Constants.departmentList.map((item) {
+                              return DropdownMenuEntry(
+                                  value: item, label: item);
+                            }).toList()
+                          : dropdownItemsSurgery.isNotEmpty
+                              ? dropdownItemsSurgery.map((item) {
+                                  return DropdownMenuEntry(
+                                      value: item, label: item);
+                                }).toList()
+                              : [
+                                  const DropdownMenuEntry(
+                                      value: '',
+                                      label: 'No surgeries available')
+                                ],
+                    )
+                  : TextFormField(
+                      controller: controller1,
+                      style: TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                    ),
             ],
           ),
         ),
@@ -267,9 +296,18 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label2, style: TextStyle(fontSize: subtitleFontSize, fontWeight: FontWeight.bold,color: subtitle)),
-              TextFormField(controller: controller2, style: TextStyle(fontSize: 16),
-                decoration: InputDecoration(border: InputBorder.none, ),),
+              Text(label2,
+                  style: TextStyle(
+                      fontSize: subtitleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: subtitle)),
+              TextFormField(
+                controller: controller2,
+                style: TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+              ),
             ],
           ),
         ),
@@ -286,20 +324,25 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //SizedBox(height: 10,),
-              Text(label, style: TextStyle(fontSize: subtitleFontSize, fontWeight: FontWeight.bold,color: subtitle)),
+              Text(label,
+                  style: TextStyle(
+                      fontSize: subtitleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: subtitle)),
               DropdownMenu(
                   //label: const Text('Select Anesthesia'),
                   hintText: 'Select Anesthesia',
-                  inputDecorationTheme: InputDecorationTheme(border: InputBorder.none),
+                  inputDecorationTheme:
+                      InputDecorationTheme(border: InputBorder.none),
                   onSelected: (String? anesthesia) {
                     setState(() {
                       selectedAnesthesiaType = anesthesia!;
                     });
                   },
-                  dropdownMenuEntries: Constants.anesthesiaTypes.map((anesthesia) {
+                  dropdownMenuEntries:
+                      Constants.anesthesiaTypes.map((anesthesia) {
                     return DropdownMenuEntry(
-                        value: anesthesia,
-                        label: anesthesia);
+                        value: anesthesia, label: anesthesia);
                   }).toList())
             ],
           ),
@@ -310,10 +353,11 @@ class _DetailsConfirmationState extends State<DetailsConfirmation> {
 
   void _updateSurgeryDropdown(String department) {
     setState(() {
-      dropdownItemsSurgery =  Constants.surgeryMap[department]?? [];
+      dropdownItemsSurgery = Constants.surgeryMap[department] ?? [];
       print("_departmentController::$_departmentController");
       print("dropdownItemsSurgery $dropdownItemsSurgery");
-      selectedSurgery = (dropdownItemsSurgery.isNotEmpty ? dropdownItemsSurgery.first : '')!;
+      selectedSurgery =
+          (dropdownItemsSurgery.isNotEmpty ? dropdownItemsSurgery.first : '')!;
       print("selectedSurgery $selectedSurgery");
       //menuController_surgery = selectedSurgery.toString() as TextEditingController;
     });
