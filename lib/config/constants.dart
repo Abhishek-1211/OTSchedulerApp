@@ -11,6 +11,9 @@ class Constants {
   'Dissociative Anesthesia',
   'Total Intravenous Anesthesia'];
 
+  static const List<String> surgeryTypes = ['Emergency',
+    'Add-on'];
+
   static const List<String> departmentList = ['Gastrointestinal Surgery',
     'General Surgery',
     'Cardiology -Angiography',

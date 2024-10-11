@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http; // Import the http package
@@ -9,6 +10,7 @@ import 'package:my_flutter_app/TimeMonitoring/CapturedRecord.dart';
 import 'package:my_flutter_app/config/customThemes/MyAppBar.dart';
 import 'package:my_flutter_app/config/customThemes/utilities/Utilities.dart';
 
+import '../config/constants.dart';
 import '../config/customThemes/elevatedButtonTheme.dart';
 import 'DetailsConfirmation.dart';
 
@@ -33,7 +35,6 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
   bool isSubmitted = false;
   bool isSurgeryDone = false;
 
-
   static const double leftMargin = 180;
   //String displayMessage =
 
@@ -41,180 +42,204 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
   String baseUrl = 'http://127.0.0.1:8000/api';
 
   String displayText1 = 'Surgery List';
-  String displayText2 = 'View all scheduled surgeries across all operation theatres';
+  String displayText2 =
+      'View all scheduled surgeries across all operation theatres';
 
+  String? selectedSurgeryType;
 
   @override
   void initState() {
-
     _fetchPatientList(DateTime.now());
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.only(left: leftMargin, right: 320, top: 10,),
-        child: Column (
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-                Text(displayText2,
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600])),
-                Divider(color: Colors.blueGrey[50], thickness: 2),
-              ],
-            )),
-            SizedBox(height: 20),
-            //Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w400),),
-            Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w800,color: Colors.blueGrey),),
-            SizedBox(height: 4),
-            SizedBox(
-              width: 260,
-              height: 45,
-              child: TextField(
-                decoration: Utilities.otSearchBoxDecoration,
-                // decoration: InputDecoration(
-                //   hintText: 'Filter by OT number',
-                //   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                //   filled: true,
-                //   //constraints: BoxConstraints.tightFor(),
-                //   fillColor: Colors.grey[50],
-                // ),
-              ),
-            ),
-            SizedBox(height:25),
-            Flexible(
-                // width:MediaQuery.sizeOf(context).width/1.5,
-                // height:800,
-              fit: FlexFit.tight,
-                child:
-                ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) =>  Divider(color: Colors.blue.shade50,thickness: 2,),
-                    itemCount: patientList.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Row(crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(patientList[index], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
-
-                        ],),
-                        subtitle: Row(
-                          children: [
-                            Container(
-                              width : 250,
-                              child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text('Procedure: ${procedureList[index]}'),
-                                // Text(
-                                //     'Surgery ID: ${surgery_id[index]}'),
-                                Text('Surgeon: ${doctorList[index]}'),
-                              ],
-                                                        ),
-                            ),
-                            SizedBox(width: 500,),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context)=>DetailsConfirmation(
-                                      patientName:
-                                      patientList[index],
-                                      surgeryId:
-                                      surgery_id[index],
-                                      otNumber: ot_numbers[index],
-                                      surgeryDate:
-                                      surgery_date[index],
-                                      // Pass DateTime value
-                                      doctorName:
-                                      doctorList[index],
-                                      department:
-                                      departmentList[index],
-                                      procedureName:
-                                      procedureList[index],
-                                      technician:
-                                      techniciansList[index],
-                                      nurse: nursesList[index],
-                                      specialEquipment:
-                                      specialEquipmentList[
-                                      index],
-                                      mrd: mrdList[index],
-                                    )));
-                              },
-                              style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
-                              child: Text('View/Update Details',style: TextStyle(color: Colors.white),),
-                            ),
-                          ],
-                          // child: Column(
-                          //   crossAxisAlignment:
-                          //   CrossAxisAlignment.start,
-                          //   children: [
-                          //     Text('Procedure: ${procedureList[index]}'),
-                          //     // Text(
-                          //     //     'Surgery ID: ${surgery_id[index]}'),
-                          //     Text('Surgeon: ${doctorList[index]}'),
-                          //   ],
-                          // ),
-                        ),
-                        titleTextStyle: TextStyle(color: Colors.blueGrey),
-                      );
-                    })
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top:5,bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+        appBar: MyAppBar(),
+        body: Padding(
+          padding: const EdgeInsets.only(
+            left: leftMargin,
+            right: 320,
+            top: 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IntrinsicWidth(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 50,
-                    width: 180,
-                    child: ElevatedButton(
-                        style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
-                        onPressed: () {
-                          _showDialogForm(0);
-                        },
-                        child: Text(
-                          '           Add\nEmergency Surgery',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15),
-                        )),
-                  ),
-                  SizedBox(width: 600),
-                  Container(
-                    height: 50,
-                    width: 180,
-                    child: ElevatedButton(
-                      //style: ElevatedButton.styleFrom( disabledForegroundColor: Colors.red.withOpacity(0.38), disabledBackgroundColor: Colors.red.withOpacity(0.12)),
-                        style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
-                        onPressed: () {
-                          _showDialogForm(1);
-                        },
-                        child: Text(
-                          '        Add\nAdd-on Surgery',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15),
-                        )),
-                  ),
+                  Text(displayText1,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  Text(displayText2,
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+                  Divider(color: Colors.blueGrey[50], thickness: 2),
                 ],
+              )),
+              SizedBox(height: 20),
+              //Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w400),),
+              Text(
+                'OT NUMBER',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.blueGrey),
               ),
-            ),
-
-          ],
-        ),
-      )
-    );
+              SizedBox(height: 4),
+              SizedBox(
+                width: 260,
+                height: 45,
+                child: TextField(
+                  decoration: Utilities.otSearchBoxDecoration,
+                  // decoration: InputDecoration(
+                  //   hintText: 'Filter by OT number',
+                  //   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                  //   filled: true,
+                  //   //constraints: BoxConstraints.tightFor(),
+                  //   fillColor: Colors.grey[50],
+                  // ),
+                ),
+              ),
+              SizedBox(height: 25),
+              Flexible(
+                  // width:MediaQuery.sizeOf(context).width/1.5,
+                  // height:800,
+                  fit: FlexFit.tight,
+                  child: ListView.separated(
+                      separatorBuilder: (BuildContext context, int index) =>
+                          Divider(
+                            color: Colors.blue.shade50,
+                            thickness: 2,
+                          ),
+                      itemCount: patientList.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                patientList[index],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Row(
+                            children: [
+                              Container(
+                                width: 250,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Procedure: ${procedureList[index]}'),
+                                    // Text(
+                                    //     'Surgery ID: ${surgery_id[index]}'),
+                                    Text('Surgeon: ${doctorList[index]}'),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 500,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailsConfirmation(
+                                                patientName: patientList[index],
+                                                surgeryId: surgery_id[index],
+                                                otNumber: ot_numbers[index],
+                                                surgeryDate:
+                                                    surgery_date[index],
+                                                // Pass DateTime value
+                                                doctorName: doctorList[index],
+                                                department:
+                                                    departmentList[index],
+                                                procedureName:
+                                                    procedureList[index],
+                                                technician:
+                                                    techniciansList[index],
+                                                nurse: nursesList[index],
+                                                specialEquipment:
+                                                    specialEquipmentList[index],
+                                                mrd: mrdList[index],
+                                              )));
+                                },
+                                style: MyElevatedButtonTheme
+                                    .elevatedButtonTheme2.style,
+                                child: Text(
+                                  'View/Update Details',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                            // child: Column(
+                            //   crossAxisAlignment:
+                            //   CrossAxisAlignment.start,
+                            //   children: [
+                            //     Text('Procedure: ${procedureList[index]}'),
+                            //     // Text(
+                            //     //     'Surgery ID: ${surgery_id[index]}'),
+                            //     Text('Surgeon: ${doctorList[index]}'),
+                            //   ],
+                            // ),
+                          ),
+                          titleTextStyle: TextStyle(color: Colors.blueGrey),
+                        );
+                      })),
+              Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      // height: 50,
+                      // width: 180,
+                      child: ElevatedButton(
+                          style:
+                              MyElevatedButtonTheme.elevatedButtonTheme2.style,
+                          onPressed: () {
+                            _showDialogForm(0);
+                          },
+                          child: Text(
+                            'Emergency/Add-on Surgery',
+                            //'           Add\nEmergency/Add-on Surgery',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15),
+                          )),
+                    ),
+                    //SizedBox(width: 600),
+                    // Container(
+                    //   height: 50,
+                    //   width: 180,
+                    //   child: ElevatedButton(
+                    //     //style: ElevatedButton.styleFrom( disabledForegroundColor: Colors.red.withOpacity(0.38), disabledBackgroundColor: Colors.red.withOpacity(0.12)),
+                    //       style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
+                    //       onPressed: () {
+                    //         _showDialogForm(1);
+                    //       },
+                    //       child: Text(
+                    //         '        Add\nAdd-on Surgery',
+                    //         style: TextStyle(
+                    //             color: Colors.white,
+                    //             fontWeight: FontWeight.w500,
+                    //             fontSize: 15),
+                    //       )),
+                    // ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
-
-
 
   Future<void> _fetchPatientList(DateTime date) async {
     try {
@@ -240,22 +265,22 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
         print("patientListScreen_fetchPatientList(): ${response.body}");
         final List<Map<String, dynamic>> patients = data
             .where((element) =>
-        element['surgery_date'] ==
-            DateFormat('MM/dd/yyyy').format(date))
+                element['surgery_date'] ==
+                DateFormat('MM/dd/yyyy').format(date))
             .map<Map<String, dynamic>>((e) => {
-          'patientName': e['patient_name'] as String,
-          'scheduledSurgeryId': e['scheduled_surgery_id'] as int,
-          'otNumber': e['ot_number'] as String,
-          'surgery_date': DateFormat('MM/dd/yyyy')
-              .parse(e['surgery_date'] as String),
-          'doctor_name': e['doctor_name'] as String,
-          'department' : e['department'] as String,
-          'procedure_name': e['procedure_name'] as String,
-          'technician': e['technician_tl'] as String,
-          'nurse': e['nurse_tl'] as String,
-          'specialEquipment': e['special_equipment'] as String,
-          'mrd':e['mrd'] as String,
-        })
+                  'patientName': e['patient_name'] as String,
+                  'scheduledSurgeryId': e['scheduled_surgery_id'] as int,
+                  'otNumber': e['ot_number'] as String,
+                  'surgery_date': DateFormat('MM/dd/yyyy')
+                      .parse(e['surgery_date'] as String),
+                  'doctor_name': e['doctor_name'] as String,
+                  'department': e['department'] as String,
+                  'procedure_name': e['procedure_name'] as String,
+                  'technician': e['technician_tl'] as String,
+                  'nurse': e['nurse_tl'] as String,
+                  'specialEquipment': e['special_equipment'] as String,
+                  'mrd': e['mrd'] as String,
+                })
             .toList();
 
         if (data.isEmpty) {
@@ -312,9 +337,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
               .map<String>((e) => e['specialEquipment'] as String)
               .toList();
 
-          mrdList = patients
-              .map<String>((e) => e['mrd'] as String)
-              .toList();
+          mrdList = patients.map<String>((e) => e['mrd'] as String).toList();
           isSubmitted = true;
         });
 
@@ -338,7 +361,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content:
-          Text('Failed to fetch patient list. Please try again later.'),
+              Text('Failed to fetch patient list. Please try again later.'),
         ),
       );
     }
@@ -371,6 +394,7 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
   }
 
   void _showDialogForm(int id) {
+    final _formKey = GlobalKey<FormState>();
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -384,11 +408,12 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(2.0))),
             scrollable: true,
-            title: const Text('Please Enter Patient Details'),
+            title: const Text('Please Enter the Patient details'),
             //content: const Text('Thank you!!!Your inputs have been recorded successfully'),
             content: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(2.0),
               child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
                     TextFormField(
@@ -397,13 +422,29 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                         labelText: 'Patient Name',
                         //icon: Icon(Icons.account_box)
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter patient name';
+                        }
+                        return null;
+                      },
                     ),
                     TextFormField(
                       controller: mrdController,
-                      decoration: InputDecoration(
-                        labelText: 'MRD Number',
-                        //icon: Icon(Icons.account_box)
-                      ),
+                      decoration: InputDecoration(labelText: 'MRD Number'),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter MRD number';
+                        }
+                        if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                          return 'Please enter a valid positive number';
+                        }
+                        return null;
+                      },
                     ),
                     TextFormField(
                       controller: surgeonName,
@@ -411,20 +452,41 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                         labelText: 'Surgeon Name',
                         //icon: Icon(Icons.account_box)
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter surgeon name';
+                        }
+                        return null;
+                      },
                     ),
                     TextFormField(
-                      controller: department,
-                      decoration: InputDecoration(
-                        labelText: 'Department',
-                        //icon: Icon(Icons.account_box)
-                      ),
-                    ),
+                        controller: department,
+                        decoration: InputDecoration(
+                          labelText: 'Department',
+                          //icon: Icon(Icons.account_box)
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter department';
+                          }
+                          return null;
+                        }),
                     TextFormField(
                       controller: otNumber,
-                      decoration: InputDecoration(
-                        labelText: 'OT Number',
-                        //icon: Icon(Icons.account_box)
-                      ),
+                      decoration: InputDecoration(labelText: 'OT Number'),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter OT number';
+                        }
+                        if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                          return 'Please enter a valid positive number';
+                        }
+                        return null;
+                      },
                     ),
                     TextFormField(
                       controller: surgeryName,
@@ -432,7 +494,48 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                         labelText: 'Surgery Name',
                         //icon: Icon(Icons.account_box)
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter surgery name';
+                        }
+                        return null;
+                      },
                     ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          //labelText: 'Select Surgery Type',
+                          // Only show an underline border
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors
+                                    .grey), // Custom color for the underline
+                          ),
+                          // focusedBorder: UnderlineInputBorder(
+                          //   borderSide: BorderSide(color: Colors.blue), // Custom color when focused
+                          // ),
+                        ),
+                        hint: Text("Select Surgery Type"),
+                        value: selectedSurgeryType,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a surgery type';
+                          }
+                          return null;
+                        },
+                        onChanged: (String? surgeryType) {
+                          setState(() {
+                            selectedSurgeryType = surgeryType!;
+                          });
+                        },
+                        items: Constants.surgeryTypes.map((String type) {
+                          return DropdownMenuItem<String>(
+                            value: type,
+                            child: Text(type),
+                          );
+                        }).toList()),
                   ],
                 ),
               ),
@@ -444,30 +547,32 @@ class _PatientListScreenState2 extends State<PatientListScreen2> {
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(2)))),
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        // MaterialPageRoute(
-                        //     builder: (context) => CapturedRecord.emergency(
-                        //       patientName: nameController.text,
-                        //       otNumber: otNumber.text,
-                        //       //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
-                        //       surgeryDate: selectedDate!,
-                        //       surgeryId: id,
-                        //       doctorName: surgeonName.text,
-                        //       procedureName: surgeryName.text,
-                        //     ))
-                      MaterialPageRoute(builder: (context) => DetailsConfirmation.emergency(
-                            patientName: nameController.text,
-                            otNumber: otNumber.text,
-                            //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
-                            surgeryDate: DateTime.now(),
-                            surgeryId: id,
-                            doctorName: surgeonName.text,
-                            procedureName: surgeryName.text,
-                        mrd: mrdController.text,
-                          ) )
-                    );
+                    if (_formKey.currentState!.validate()) {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          // MaterialPageRoute(
+                          //     builder: (context) => CapturedRecord.emergency(
+                          //       patientName: nameController.text,
+                          //       otNumber: otNumber.text,
+                          //       //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
+                          //       surgeryDate: selectedDate!,
+                          //       surgeryId: id,
+                          //       doctorName: surgeonName.text,
+                          //       procedureName: surgeryName.text,
+                          //     ))
+                          MaterialPageRoute(
+                              builder: (context) => DetailsConfirmation.emergency(
+                                    patientName: nameController.text,
+                                    otNumber: otNumber.text,
+                                    //surgeryDate: DateTime(DateTime.now().year-DateTime.now().month-DateTime.now().day),
+                                    surgeryDate: DateTime.now(),
+                                    surgeryId: id,
+                                    doctorName: surgeonName.text,
+                                    procedureName: surgeryName.text,
+                                    mrd: mrdController.text,
+                                  )));
+                    }
                   },
                   child: Text(
                     "Submit",
