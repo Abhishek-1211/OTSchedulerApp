@@ -42,6 +42,8 @@ class _SchedulerInputState extends State<SchedulerInput> {
   String baseUrl = 'http://127.0.0.1:8000/api';
   List<dynamic> previousScheduledData = [];
 
+  var uploadButton;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,6 +162,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
             Text(uploadFileText, style: TextStyle(color: Colors.grey[600])),
             SizedBox(height: 10),
             ElevatedButton(
+              //key: uploadButton,
               onPressed: isDateSelected ? () {
                 // Handle file browsing
                 _pickFile();
@@ -278,6 +281,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
       // _file = null;
     });
 
+    print(_file);
     try {
 
       print('_selectedDate: $selectedDate');
@@ -292,11 +296,25 @@ class _SchedulerInputState extends State<SchedulerInput> {
           SnackBar(
             backgroundColor: Colors.redAccent,
             content:
-            Text('Selected date does not match date in the uploaded file.PLease select correct date'),
+            Text('Selected date does not match date in the uploaded file.Please select correct date'),
           ),
         );
         return;
       }
+
+      // if (_file ==null) {
+      //   // setState(() {
+      //   //   _notificationMessage = 'Selected date does not match date in the uploaded file';
+      //   // });
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       backgroundColor: Colors.redAccent,
+      //       content:
+      //       Text('Please upload the file'),
+      //     ),
+      //   );
+      //   return;
+      // }
 
       List<int> fileBytes =
       _file != null ? await _file!.readAsBytes() : _webFile!;
@@ -352,6 +370,8 @@ class _SchedulerInputState extends State<SchedulerInput> {
           //_notificationMessage = ' '; // Show processing message
           _webFile = null;
           _file = null;
+          uploadFileText = 'Upload your file here';
+          //isDateSelected = false;
         });
 
         Navigator.push(
@@ -474,7 +494,7 @@ class _SchedulerInputState extends State<SchedulerInput> {
         _notificationMessage =
         'Error: $e'; // Update notification message with error
       });
-      print('Error-2: $e');
+      print('Error-2 -: $e');
     }
 
   }
