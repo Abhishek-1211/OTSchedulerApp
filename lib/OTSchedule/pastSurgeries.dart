@@ -18,8 +18,7 @@ class PastSurgeries extends StatefulWidget {
   List<dynamic> pastScheduledData;
   DateTime surgeryDate;
 
-
-  PastSurgeries(this.pastScheduledData,this.surgeryDate);
+  PastSurgeries(this.pastScheduledData, this.surgeryDate);
 
   @override
   _PastSurgeriesState createState() => _PastSurgeriesState();
@@ -33,25 +32,190 @@ class _PastSurgeriesState extends State<PastSurgeries> {
   static const double leftMargin = 180;
   static const Color headerTextColor = Colors.black87;
   static const double headerTextSize = 16.0;
-  static const InputDecoration rowDecoration = InputDecoration(border: InputBorder.none,);
+  static const InputDecoration rowDecoration = InputDecoration(
+    border: InputBorder.none,
+  );
   String baseUrl = 'http://127.0.0.1:8000/api';
   bool isDownloadEnabled = true;
   int tapCount = 0;
 
   String displayText1 = 'Scheduled Surgeries';
-  String displayText2 = 'View all scheduled surgeries across all operation theaters';
+  String displayText2 =
+      'View all scheduled surgeries across all operation theaters';
 
+  String otNumberToFilter ='';
+
+  var columns;
+  var originalList;
+  var rows;
 
   @override
   void initState() {
     super.initState();
-
 
     super.initState();
 
     // Sort the data by 'OT Number'
     sortedData = widget.pastScheduledData;
     sortedData.sort((a, b) => a['ot_number'].compareTo(b['ot_number']));
+
+    columns = [
+
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.blueAccent,
+          child: Text('OT Number',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.blueAccent,
+          child: Text('Surgeon',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.greenAccent,
+          child: Text('Department',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.orangeAccent,
+          child: Text('Surgery',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.purpleAccent,
+          child: Text('Start Time',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.redAccent,
+          child: Text('End Time',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.redAccent,
+          child: Text('MRD Number',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      // DataColumn(
+      //   label: Container(
+      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      //     //color: Colors.blueAccent,
+      //     child: Text('Name of Patient', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
+      //   ),
+      // ),
+      // DataColumn(
+      //   label: Container(
+      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      //     //color: Colors.blueAccent,
+      //     child: Text('Age/Sex', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
+      //   ),
+      // ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.blueAccent,
+          child: Text('Special Equipment',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.blueAccent,
+          child: Text('Technical T/L',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          //color: Colors.blueAccent,
+          child: Text('Nursing T/L',
+              style: TextStyle(
+                  color: headerTextColor,
+                  fontSize: headerTextSize,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+    ];
+    rows = sortedData.map<DataRow>((surgery) {
+      return DataRow(
+        //onLongPress: _onRowTap(surgery),
+        //selected: false,
+        onSelectChanged: (bool? selected) {
+          if (selected != null && selected) {
+            tapCount++;
+            // setState(() {
+            //   tapCount;
+            // });
+            Future.delayed(Duration(seconds: 1), () {
+              _onRowTap(surgery, tapCount); // Handle row tap after a delay
+            }); // Handle row tap
+          }
+        },
+        cells: [
+          DataCell(Text(surgery['ot_number'])),
+          DataCell(Text(surgery['doctor_name'])),
+          DataCell(Text(surgery['department'])),
+          DataCell(Text(surgery['procedure_name'])),
+          DataCell(Text(surgery['surgery_start_time'])),
+          DataCell(Text(surgery['surgery_end_time'])),
+          DataCell(Text(surgery['mrd'])),
+          DataCell(Text(surgery['special_equipment'] ?? 'N/A')),
+          DataCell(Text(surgery['technician_tl'] ?? 'N/A')),
+          DataCell(Text(surgery['nurse_tl'] ?? 'N/A')),
+        ],
+      );
+    }).toList();
+    originalList = rows;
   }
 
   @override
@@ -73,9 +237,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
     super.dispose();
   }
 
-
   Future<bool> _checkEntriesExist(String uploadedDate) async {
-
     String apiUrl = '$baseUrl/schedule/';
     String checkUrl = apiUrl + '?surgery_date=$uploadedDate';
     print('checkUrl:$checkUrl');
@@ -86,18 +248,14 @@ class _PastSurgeriesState extends State<PastSurgeries> {
       //body: jsonEncode({'surgery_date': date}),
     );
 
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
       return data.isNotEmpty;
-    }
-    else{
+    } else {
       print('Error checking entries: ${response.statusCode}');
       return false;
     }
-
   }
-
-
 
   Future<void> _exportDataToCsv() async {
     try {
@@ -149,7 +307,8 @@ class _PastSurgeriesState extends State<PastSurgeries> {
           nursingTL,
           technicianTL,
         ]);
-      };
+      }
+      ;
 
       // Generate CSV string
       String csvString = const ListToCsvConverter().convert(rows);
@@ -158,7 +317,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
         // Generate download link for web
         final anchor = html.AnchorElement(
             href:
-            'data:text/csv;charset=utf-8,${Uri.encodeComponent(csvString)}')
+                'data:text/csv;charset=utf-8,${Uri.encodeComponent(csvString)}')
           ..setAttribute('download', 'ot_schedule.csv')
           ..click();
       } else {
@@ -183,147 +342,24 @@ class _PastSurgeriesState extends State<PastSurgeries> {
     // setState(() {
     //   isDownloadEnabled = false;
     // });
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     // Define table columns
-    final columns = [
-      // DataColumn(
-      //   label: Container(
-      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      //     color: Colors.blueAccent,
-      //     child: Text('Date', style: TextStyle(color: Colors.white)),
-      //   ),
-      // ),
-      DataColumn(
 
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.blueAccent,
-          child: Text('OT Number', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.blueAccent,
-          child: Text('Surgeon', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.greenAccent,
-          child: Text('Department', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.orangeAccent,
-          child: Text('Surgery', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.purpleAccent,
-          child: Text('Start Time', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.redAccent,
-          child: Text('End Time', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.redAccent,
-          child: Text('MRD Number', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      // DataColumn(
-      //   label: Container(
-      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      //     //color: Colors.blueAccent,
-      //     child: Text('Name of Patient', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-      //   ),
-      // ),
-      // DataColumn(
-      //   label: Container(
-      //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      //     //color: Colors.blueAccent,
-      //     child: Text('Age/Sex', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-      //   ),
-      // ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.blueAccent,
-          child:
-          Text('Special Equipment', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.blueAccent,
-          child: Text('Technical T/L', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-      DataColumn(
-        label: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          //color: Colors.blueAccent,
-          child: Text('Nursing T/L', style: TextStyle(color: headerTextColor,fontSize: headerTextSize,fontWeight: FontWeight.bold)),
-        ),
-      ),
-    ];
 
     // Define table rows
-    final rows = sortedData.map<DataRow>((surgery) {
-      return DataRow(
-        //onLongPress: _onRowTap(surgery),
-        //selected: false,
-        onSelectChanged: (bool? selected) {
-          if (selected != null && selected) {
-            tapCount++;
-            // setState(() {
-            //   tapCount;
-            // });
-            Future.delayed(Duration(seconds: 1), () {
-              _onRowTap(surgery,tapCount); // Handle row tap after a delay
-            });// Handle row tap
-          }
-        },
-        cells: [
-          DataCell(Text(surgery['ot_number'])),
-          DataCell(Text(surgery['doctor_name'])),
-          DataCell(Text(surgery['department'])),
-          DataCell(Text(surgery['procedure_name'])),
-          DataCell(Text(surgery['surgery_start_time'])),
-          DataCell(Text(surgery['surgery_end_time'])),
-          DataCell(Text(surgery['mrd'])),
-          DataCell(Text(surgery['special_equipment'] ?? 'N/A')),
-          DataCell(Text(surgery['technician_tl'] ?? 'N/A')),
-          DataCell(Text(surgery['nurse_tl'] ?? 'N/A')),
-        ],
-      );
-    }).toList();
 
 
     return Scaffold(
       appBar: MyAppBar(),
-      body:
-      Padding(
-        padding: const EdgeInsets.only(left: leftMargin, right: 80, top: 10,),
+      body: Padding(
+        padding: const EdgeInsets.only(
+          left: leftMargin,
+          right: 80,
+          top: 10,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -334,9 +370,13 @@ class _PastSurgeriesState extends State<PastSurgeries> {
             //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             //   ),
             // ),
-            IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            IntrinsicWidth(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(displayText1, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                Text(displayText1,
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                 Text(displayText2,
                     style: TextStyle(fontSize: 16, color: Colors.grey[600])),
                 Divider(color: Colors.blueGrey[50], thickness: 2),
@@ -344,54 +384,105 @@ class _PastSurgeriesState extends State<PastSurgeries> {
             )),
 
             SizedBox(height: 20),
-            Text('OT NUMBER', style: TextStyle (fontSize: 16, fontWeight: FontWeight.w800,color: Colors.blueGrey),),
+            Text(
+              'OT NUMBER',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.blueGrey),
+            ),
             SizedBox(height: 6),
             Row(
               children: [
                 SizedBox(
-                  width: 260,
+                  width: 220,
                   height: 45,
                   child: TextField(
                     decoration: Utilities.otSearchBoxDecoration,
+                    onChanged: (value) {
+                      otNumberToFilter = value;
+                    },
                   ),
                 ),
+                SizedBox(width: 10),
+                SizedBox(
+                    width: 80,
+                    height: 45,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey[200],
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        textStyle: TextStyle(fontSize: 18),
+                      ),
+                      onPressed: isDownloadEnabled ? () {
+                        setState(() {
+                          rows = _filterRows(otNumberToFilter);
+                        });
+                      } : null,
+                      child: Text(
+                        'Go',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    )
+                ),
 
-                SizedBox(width: 500,),
-                ElevatedButton (
+                //SizedBox(width: 500,),
+                Spacer(),
+                ElevatedButton(
                   style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
-                  onPressed: isDownloadEnabled ? _exportDataToCsv:null,
-                  child: Text('Download',style: TextStyle(color: Colors.white),),
+                  onPressed: isDownloadEnabled ? _exportDataToCsv : null,
+                  child: Text(
+                    'Download',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height:25),
+            SizedBox(height: 25),
+            // Expanded(
+            //   child: SingleChildScrollView(
+            //     scrollDirection: Axis.horizontal,
+            //     child: SingleChildScrollView(
+            //       child: DataTable(
+            //         columns: columns,
+            //         rows: rows,
+            //         dividerThickness: 1.5,
+            //         showCheckboxColumn: false,
+            //         decoration: BoxDecoration(
+            //           border: Border.all(color: Colors.blueGrey),
+            //           borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            //
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Colors.blueGrey), // Ensure borders are visible
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
                 child: SingleChildScrollView(
-                  child: DataTable(
-                    columns: columns,
-                    // columns: [
-                    //   DataColumn(label: Text('OT Number')),
-                    //   DataColumn(label: Text('Surgery Name')),
-                    //   DataColumn(label: Text('Surgeon Name')),
-                    //   DataColumn(label: Text('Start Time')),
-                    //   DataColumn(label: Text('End Time')),
-                    //   DataColumn(label: Text('Patient Name')),
-                    //   //DataColumn(label: Text('MRD Number')),
-                    // ],
-                    rows: rows,
-                    dividerThickness: 1.5,
-                    showCheckboxColumn: false,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-
+                  scrollDirection: Axis.horizontal, // Horizontal scrolling
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical, // Vertical scrolling
+                    child: DataTable(
+                      columns: columns, // Your columns here
+                      rows: rows, // Your rows here
+                      dividerThickness: 1.5,
+                      showCheckboxColumn: false,
                     ),
                   ),
                 ),
               ),
             ),
+
             SizedBox(height: 16),
             // Center(
             //   child: ElevatedButton(
@@ -418,7 +509,7 @@ class _PastSurgeriesState extends State<PastSurgeries> {
     );
   }
 
-  _onRowTap(surgery,tapCount) {
+  _onRowTap(surgery, tapCount) {
     print("onRowTap(): $tapCount");
     // if(tapCount>1){
     //   print("onRowTap(): if");
@@ -427,32 +518,67 @@ class _PastSurgeriesState extends State<PastSurgeries> {
     //   //   tapCount;
     //   // });
     // }else {
-      print("onRowTap(): else");
-      Navigator.push(context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  TimeMonitoring(otNumber: surgery['ot_number'],
-                    patientName: surgery['patient_name'],
-                    surgeryId:
-                    surgery['scheduled_surgery_id'],
-                    surgeryDate:
-                    widget.surgeryDate,
-                    // Pass DateTime value
-                    doctorName:
-                    surgery['doctor_name'],
-                    department:
-                    surgery['department'],
-                    procedureName:
-                    surgery['procedure_name'],
-                    technician:
-                    surgery['technician_tl'],
-                    nurse: surgery['nurse_tl'],
-                    specialEquipment:
-                    surgery['special_equipment'],
-                    caller: 'pastSurgeries',
-                  )));
+    print("onRowTap(): else");
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TimeMonitoring(
+                  otNumber: surgery['ot_number'],
+                  patientName: surgery['patient_name'],
+                  surgeryId: surgery['scheduled_surgery_id'],
+                  surgeryDate: widget.surgeryDate,
+                  // Pass DateTime value
+                  doctorName: surgery['doctor_name'],
+                  department: surgery['department'],
+                  procedureName: surgery['procedure_name'],
+                  technician: surgery['technician_tl'],
+                  nurse: surgery['nurse_tl'],
+                  specialEquipment: surgery['special_equipment'],
+                  caller: 'pastSurgeries',
+                )));
     //}
-
   }
-  
+
+
+  List<DataRow> _filterRows(String otNumber) {
+
+    print('otNumber-$otNumber');
+    if(!otNumber.isEmpty) {
+      return sortedData.where((surgery) {
+        return surgery['ot_number'].toString() == otNumberToFilter;
+      }).map<DataRow>((surgery) {
+        final index = sortedData.indexOf(surgery);
+        return DataRow(
+
+            onSelectChanged: (bool? selected) {
+              if (selected != null && selected) {
+                tapCount++;
+                // setState(() {
+                //   tapCount;
+                // });
+                Future.delayed(Duration(seconds: 1), () {
+                  _onRowTap(surgery, tapCount); // Handle row tap after a delay
+                }); // Handle row tap
+              }
+            },
+
+            cells: [
+              DataCell(Text(surgery['ot_number'])),
+              DataCell(Text(surgery['doctor_name'])),
+              DataCell(Text(surgery['department'])),
+              DataCell(Text(surgery['procedure_name'])),
+              DataCell(Text(surgery['surgery_start_time'])),
+              DataCell(Text(surgery['surgery_end_time'])),
+              DataCell(Text(surgery['mrd'])),
+              DataCell(Text(surgery['special_equipment'] ?? 'N/A')),
+              DataCell(Text(surgery['technician_tl'] ?? 'N/A')),
+              DataCell(Text(surgery['nurse_tl'] ?? 'N/A')),
+            ]
+        );
+      }).toList();
+
+    }
+    else
+    return originalList;
+  }
 }
