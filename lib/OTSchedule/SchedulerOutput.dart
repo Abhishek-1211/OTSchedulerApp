@@ -23,6 +23,8 @@ class SchedulerOutput extends StatefulWidget {
   _SchedulerOutputState createState() => _SchedulerOutputState();
 }
 
+
+
 class _SchedulerOutputState extends State<SchedulerOutput> {
   late List<MapEntry<String, dynamic>> sortedOTEntries;
 
@@ -50,6 +52,11 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
 
   String displayText1 = 'Scheduled Surgeries';
   String displayText2 = 'View all scheduled surgeries across all operation theaters';
+
+  String otNumberToFilter= " ";
+  var rows;
+
+  var originalList;
 
   @override
   void initState() {
@@ -99,6 +106,101 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
     nursingLeadsControllers = List.generate(sortedOTEntries.length, (index) =>
         TextEditingController(text: widget.scheduleData['Nursing T/L'][sortedOTEntries[index].key])
     );
+
+
+    // Define table rows
+    rows = sortedOTEntries.map<DataRow>((entry) {
+      final index = sortedOTEntries.indexOf(entry);
+      return DataRow(
+        cells: [
+          DataCell(TextField(
+            controller: otNumberControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update OT number and scheduleData on change
+              setState(() {
+                sortedOTEntries[index] = MapEntry(entry.key, int.tryParse(value) ?? entry.value);
+              });
+            },
+          )),
+          DataCell(TextField(
+            controller: surgeonControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Surgeon'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: departmentControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Department'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: surgeryControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['surgery'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: startTimeControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Start_time'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: endTimeControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['End_time'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: mrdControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['MRD'][entry.key] = value;
+            },
+          )),
+
+          DataCell(TextField(
+            controller: specialEquipmentControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Special Equipment'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: technicalLeadsControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Technicial T/L'][entry.key] = value;
+            },
+          )),
+          DataCell(TextField(
+            controller: nursingLeadsControllers[index],
+            decoration: rowDecoration,
+            onChanged: (value) {
+              // Update scheduleData on change
+              widget.scheduleData['Nursing T/L'][entry.key] = value;
+            },
+          )),
+        ],
+      );
+    }).toList();
+
+    originalList = rows;
   }
 
   @override
@@ -674,123 +776,6 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
       ),
     ];
 
-    // Define table rows
-    final rows = sortedOTEntries.map<DataRow>((entry) {
-      final index = sortedOTEntries.indexOf(entry);
-      return DataRow(
-        // color: MaterialStateColor.resolveWith((states) {
-        //   // Alternate row color
-        //   return index % 2 == 0 ? Colors.grey[200]! : Colors.white;
-        // }),
-        cells: [
-          // DataCell(TextField(
-          //   controller: dateControllers[index],
-          //   onChanged: (value) {
-          //     // Update scheduleData on change
-          //     widget.scheduleData['Date of Surgery'][entry.key] = value;
-          //   },
-          // )),
-          DataCell(TextField(
-            controller: otNumberControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update OT number and scheduleData on change
-              setState(() {
-                sortedOTEntries[index] = MapEntry(entry.key, int.tryParse(value) ?? entry.value);
-              });
-            },
-          )),
-          DataCell(TextField(
-            controller: surgeonControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['Surgeon'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: departmentControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['Department'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: surgeryControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['surgery'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: startTimeControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['Start_time'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: endTimeControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['End_time'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: mrdControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['MRD'][entry.key] = value;
-            },
-          )),
-          // DataCell(TextField(
-          //   controller: patientNameControllers[index],
-          //   decoration: rowDecoration,
-          //   onChanged: (value) {
-          //     // Update scheduleData on change
-          //     widget.scheduleData['Name of the Patient'][entry.key] = value;
-          //   },
-          // )),
-          // DataCell(TextField(
-          //   controller: ageSexControllers[index],
-          //   decoration: rowDecoration,
-          //   onChanged: (value) {
-          //     // Update scheduleData on change
-          //     widget.scheduleData['Age/Sex'][entry.key] = value;
-          //   },
-          // )),
-          DataCell(TextField(
-            controller: specialEquipmentControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['Special Equipment'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: technicalLeadsControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['Technicial T/L'][entry.key] = value;
-            },
-          )),
-          DataCell(TextField(
-            controller: nursingLeadsControllers[index],
-            decoration: rowDecoration,
-            onChanged: (value) {
-              // Update scheduleData on change
-              widget.scheduleData['Nursing T/L'][entry.key] = value;
-            },
-          )),
-        ],
-      );
-    }).toList();
 
     return Scaffold(
       appBar: MyAppBar(),
@@ -821,14 +806,43 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
             Row(
               children: [
                 SizedBox(
-                  width: 260,
+                  width: 220,
                   height: 45,
                   child: TextField(
                     decoration: Utilities.otSearchBoxDecoration,
+                    onChanged: (value) {
+                      otNumberToFilter = value;
+                    },
                   ),
                 ),
 
-                SizedBox(width: 500), // Old - 900
+                SizedBox(width: 10),
+                SizedBox(
+                    width: 80,
+                    height: 45,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey[200],
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(15))),
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        textStyle: TextStyle(fontSize: 18),
+                      ),
+                      onPressed: isDownloadEnabled ? () {
+                        setState(() {
+                          rows = _filterRows(otNumberToFilter);
+                        });
+                      } : null,
+                      child: Text(
+                        'Go',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    )
+                ),
+                //SizedBox(width: 500), // Old - 900
+                Spacer(),
                 ElevatedButton (
                   style: MyElevatedButtonTheme.elevatedButtonTheme2.style,
                   onPressed: isDownloadEnabled ? _exportDataToCsv:null,
@@ -838,26 +852,24 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
             ),
             SizedBox(height:25),
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueGrey), // Ensure borders are visible
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
                 child: SingleChildScrollView(
-                  child: DataTable(
-                    columns: columns,
-                    // columns: [
-                    //   DataColumn(label: Text('OT Number')),
-                    //   DataColumn(label: Text('Surgery Name')),
-                    //   DataColumn(label: Text('Surgeon Name')),
-                    //   DataColumn(label: Text('Start Time')),
-                    //   DataColumn(label: Text('End Time')),
-                    //   DataColumn(label: Text('Patient Name')),
-                    //   //DataColumn(label: Text('MRD Number')),
-                    // ],
-                    rows: rows,
-                    dividerThickness: 1.5,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    //scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: columns,
+                      rows: rows,
+                      dividerThickness: 1.5,
+                      // decoration: BoxDecoration(
+                      //   border: Border.all(color: Colors.blueGrey),
+                      //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      //
+                      // ),
                     ),
                   ),
                 ),
@@ -888,4 +900,106 @@ class _SchedulerOutputState extends State<SchedulerOutput> {
       // ),
     );
   }
+
+  List<DataRow> _filterRows(String otNumber) {
+
+    if(!otNumber.isEmpty){
+      return sortedOTEntries.where((entry) {
+        return entry.value.toString()== otNumber;
+      }).map<DataRow>((entry) {
+        final index = sortedOTEntries.indexOf(entry);
+        return DataRow(
+          cells: [
+            DataCell(TextField(
+              controller: otNumberControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update OT number and scheduleData on change
+                setState(() {
+                  sortedOTEntries[index] = MapEntry(entry.key, int.tryParse(value) ?? entry.value);
+                });
+              },
+            )),
+            DataCell(TextField(
+              controller: surgeonControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['Surgeon'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: departmentControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['Department'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: surgeryControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['surgery'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: startTimeControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['Start_time'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: endTimeControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['End_time'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: mrdControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['MRD'][entry.key] = value;
+              },
+            )),
+
+            DataCell(TextField(
+              controller: specialEquipmentControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['Special Equipment'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: technicalLeadsControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['Technicial T/L'][entry.key] = value;
+              },
+            )),
+            DataCell(TextField(
+              controller: nursingLeadsControllers[index],
+              decoration: rowDecoration,
+              onChanged: (value) {
+                // Update scheduleData on change
+                widget.scheduleData['Nursing T/L'][entry.key] = value;
+              },
+            )),
+          ],
+        );
+      }).toList();
+    }
+    else
+      return originalList;
+
+  }
+
 }
